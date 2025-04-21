@@ -76,6 +76,7 @@ export default function ExplorePage() {
                            transition={{ type: "spring", stiffness: 300 }}
                            className="bg-[#5691a4] text-white p-6 rounded-lg shadow hover:shadow-lg hover:bg-gray-700 transition"
                         >
+                           <img src={quiz.quiz_cover_url} alt={quiz.description} className="w-full h-40 object-cover rounded-lg mb-2" />
                            <p className="text-b text-gray-300 font-bold">{quiz.description}</p>
                            <br />
                            <h5 className="text-m font-semibold mb-2">By: {quiz.name}</h5>
