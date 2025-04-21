@@ -37,10 +37,10 @@ export default async function RootLayout({
         >
           <ClientOnly>
             <InitUserStore />
-            <div className="min-w-dvw flex min-h-dvh flex-col">
+            <main className="flex min-h-screen flex-col items-center bg-black">
               <Navbar />
-              {children}
-            </div>
+              <div className="w-full flex-1">{children}</div>
+            </main>
           </ClientOnly>
         </ThemeProvider>
       </body>
