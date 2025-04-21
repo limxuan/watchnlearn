@@ -33,7 +33,7 @@ export default function ExplorePage() {
          });
 
          if (error) {
-            console.error(error.message);
+            console.log(error.message);
             return;
          }
          setMostPlayed(mostPlayed);
@@ -47,7 +47,7 @@ export default function ExplorePage() {
             .limit(3);
 
          if (recentQuizzesRes.error) {
-            console.error(recentQuizzesRes.error.message);
+            console.log(recentQuizzesRes.error.message);
             return;
          }
          const recentQuizzesData = recentQuizzesRes.data || [];
@@ -62,7 +62,7 @@ export default function ExplorePage() {
          <nav className="text-foreground px-4 py-8">
             <div className="max-w-5xl mx-auto">
 
-               <h1 className="text-3xl font-bold mb-6 text-center text-[#f6f8d5]">🔥 Explore Hot Quizzes</h1>
+               <h1 className="text-3xl font-bold mb-6 text-center text-[#f6f8d5]">Popular Quizzes</h1>
                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -76,7 +76,9 @@ export default function ExplorePage() {
                            transition={{ type: "spring", stiffness: 300 }}
                            className="bg-[#5691a4] text-white p-6 rounded-lg shadow hover:shadow-lg hover:bg-gray-700 transition"
                         >
-                           <img src={quiz.quiz_cover_url} alt={quiz.description} className="w-full h-40 object-cover rounded-lg mb-2" />
+                           {quiz.quiz_cover_url && (
+                              <img src={quiz.quiz_cover_url} alt={quiz.description} className="w-full h-40 object-cover rounded-lg mb-2" />
+                           )}
                            <p className="text-b text-gray-300 font-bold">{quiz.description}</p>
                            <br />
                            <h5 className="text-m font-semibold mb-2">By: {quiz.name}</h5>
@@ -85,7 +87,7 @@ export default function ExplorePage() {
                   ))}
                </motion.div>
 
-               <h1 className="text-3xl font-bold mt-12 mb-6 text-center text-[#f6f8d5]">🕒 Most Recent</h1>
+               <h1 className="text-3xl font-bold mt-12 mb-6 text-center text-[#f6f8d5]">Recently Created</h1>
                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -99,6 +101,9 @@ export default function ExplorePage() {
                            transition={{ type: "spring", stiffness: 300 }}
                            className="bg-gray-800 text-white p-6 rounded-lg shadow hover:shadow-lg hover:bg-gray-700 transition"
                         >
+                           {quiz.quiz_cover_url && (
+                              <img src={quiz.quiz_cover_url} alt={quiz.description} className="w-full h-40 object-cover rounded-lg mb-2" />
+                           )}
                            <p className="text-b text-gray-300 font-bold">{quiz.description}</p>
                            <br />
                            <h5 className="text-m font-semibold mb-2">By: {quiz.name}</h5>
@@ -107,7 +112,7 @@ export default function ExplorePage() {
                   ))}
                </motion.div>
 
-               <h1 className="text-3xl font-bold mt-12 mb-6 text-center text-[#f6f8d5]">🎮 Most Played</h1>
+               <h1 className="text-3xl font-bold mt-12 mb-6 text-center text-[#f6f8d5]">Most Played Quizzes</h1>
                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -121,6 +126,9 @@ export default function ExplorePage() {
                            transition={{ type: "spring", stiffness: 300 }}
                            className="bg-gray-800 text-white p-6 rounded-lg shadow hover:shadow-lg hover:bg-gray-700 transition"
                         >
+                           {quiz.quiz_cover_url && (
+                              <img src={quiz.quiz_cover_url} alt={quiz.description} className="w-full h-40 object-cover rounded-lg mb-2" />
+                           )}
                            <p className="text-b text-gray-300 font-bold">{quiz.description}</p>
                            <br />
                            <h5 className="text-m font-semibold mb-2">By: {quiz.name}</h5>
