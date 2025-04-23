@@ -1,11 +1,16 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
-import useUserStore from "@/stores/useUserStore";
+import { createClient } from "@/utils/supabase/server";
+import { Card, CardHeader } from "@/components/ui/card";
+import { CardContent, CardFooter } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+import { CalendarIcon, Users } from "lucide-react";
+import StartQuizButton from "@/components/quiz/StartQuizButton";
+import QuizNotFound from "@/components/quiz/QuizNotFound";
+import FlexCenter from "@/components/flex-center";
 
 type Quiz = {
   quizId: string;
@@ -18,58 +23,112 @@ type Quiz = {
   createdAt: string;
 };
 
-function QuizNotFound() {
-  const router = useRouter();
-  return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-md p-8 shadow-md">
-      <h1 className="text-xl font-bold">Quiz not found!!</h1>
-      <Button
-        variant="secondary"
-        className="hover:border-3 flex items-center gap-2 transition-all duration-200 ease-in-out hover:gap-5"
-        onClick={() => router.push("/")}
-      >
-        Return to home <ArrowRightIcon />
-      </Button>
-    </div>
-  );
-}
+export default async function QuizDetailsPage({
+  params,
+}: {
+  params: { quizId: string };
+}) {
+  const supabase = await createClient();
+  const { data: quiz, error } = await supabase
+    .from("quizzes")
+    .select(
+      `
+    *,
+    users (
+      username,
+      pfp_url
+    )
+  `,
+    )
+    .eq("quiz_id", params.quizId)
+    .single();
 
-export default function QuizPage() {
-  const { quizId } = useParams();
+  if (!quiz) return <QuizNotFound />;
 
-  const [quiz, setQuiz] = useState<Quiz | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { count: quizAttemptsCount, error: countError } = await supabase
+    .from("quiz_attempts")
+    .select("*", { count: "exact", head: true })
+    .eq("quiz_id", params.quizId);
 
-  useEffect(() => {
-    async function fetchQuiz() {
-      try {
-        const res = await fetch(`/api/quiz/${quizId}`);
-        if (!res.ok) throw new Error("Quiz not found");
+  if (countError) {
+    console.log(countError);
+  }
 
-        const data = await res.json();
-        setQuiz(data);
-      } catch (err) {
-        setQuiz(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchQuiz();
-  }, [quizId]);
-
-  if (loading) return <Spinner />;
+  console.log({ quiz, quizAttemptsCount });
+  const formattedDate = new Date(quiz.created_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
-    <main className="flex h-full w-full items-center justify-center bg-blue-600 p-4">
-      {quiz ? (
-        <div className="">
-          <h1 className="text-2xl font-bold">Quiz: {quiz.name}</h1>
-          {/* <pre className="mt-4">{JSON.stringify(quiz, null, 2)}</pre> */}
-        </div>
-      ) : (
-        <QuizNotFound />
-      )}
-    </main>
+    <FlexCenter>
+      <div className="lg: container mb-0 max-w-4xl lg:mb-8">
+        <Card className="overflow-hidden">
+          <div className="relative h-[150px] w-full lg:h-[300px]">
+            <Image
+              src={quiz.quiz_cover_url || "/placeholder.svg"}
+              alt={quiz.name}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+
+          <CardHeader>
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:gap-8">
+              <div>
+                <h1 className="text-xl font-bold tracking-tight lg:text-3xl">
+                  {quiz.name}
+                </h1>
+                <div className="mt-2 flex items-center gap-2 text-muted-foreground">
+                  <CalendarIcon className="h-4 w-4" />
+                  <span className="lg:text-md text-sm">
+                    Created on {formattedDate}
+                  </span>
+                </div>
+              </div>
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Users className="h-3.5 w-3.5" />
+                <span>{quizAttemptsCount} attempts</span>
+              </Badge>
+            </div>
+          </CardHeader>
+
+          <CardContent className="space-y-6">
+            <p className="lg:text-md text-sm text-muted-foreground">
+              {quiz.description}
+            </p>
+
+            <Separator />
+
+            <div className="flex items-center gap-4">
+              <Avatar className="h-10 w-10 lg:h-12 lg:w-12">
+                <AvatarImage
+                  src={quiz.users.pfp_url || "/placeholder.svg"}
+                  alt={quiz.users.username}
+                />
+                <AvatarFallback>
+                  {quiz.users.username
+                    .split(" ")
+                    .map((n: any) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="lg:text-md text-sm font-medium">Lecturer</p>
+                <p className="text-xs text-muted-foreground lg:text-sm">
+                  {quiz.users.username}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+
+          <CardFooter>
+            <StartQuizButton />
+          </CardFooter>
+        </Card>
+      </div>
+    </FlexCenter>
   );
 }
