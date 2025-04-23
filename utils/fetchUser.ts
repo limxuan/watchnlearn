@@ -14,7 +14,7 @@ export const fetchUser = async () => {
   if (user) {
     const { data: userInfo } = await supabase
       .from("users")
-      .select("username, email, role, pfp_url")
+      .select("user_id, username, email, role, pfp_url")
       .eq("user_id", user.id)
       .single();
 
