@@ -11,6 +11,7 @@ export default function InitUserStore() {
       await fetchUser();
       setLoading(false);
     };
+    console.log("Initalising User");
 
     initializeUser();
   }, []);

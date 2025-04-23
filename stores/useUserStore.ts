@@ -9,6 +9,7 @@ export type UserInfo = {
 };
 
 type UserStore = {
+  initialised: boolean;
   user: UserInfo | null;
   setUser: (userData: UserInfo) => void;
   clearUser: () => void;
@@ -17,6 +18,7 @@ type UserStore = {
 const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
+      initialised: false,
       user: null,
       setUser: (userData) => set({ user: userData }),
       clearUser: () => set({ user: null }),
