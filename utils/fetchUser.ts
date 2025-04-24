@@ -7,6 +7,8 @@ export const fetchUser = async () => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
 
+  const { setUser, clearUser } = useUserStore.getState();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -14,7 +16,7 @@ export const fetchUser = async () => {
   if (user) {
     const { data: userInfo } = await supabase
       .from("users")
-      .select("username, email, role, pfp_url")
+      .select("user_id, username, email, role, pfp_url")
       .eq("user_id", user.id)
       .single();
 
@@ -22,8 +24,9 @@ export const fetchUser = async () => {
     console.log(userInfo);
 
     if (userInfo) {
-      const setUser = useUserStore.getState().setUser;
       setUser(userInfo);
     }
+  } else {
+    clearUser();
   }
 };
