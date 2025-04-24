@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRightIcon } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
 import { Card, CardHeader } from "@/components/ui/card";
 import { CardContent, CardFooter } from "@/components/ui/card";
@@ -18,9 +16,12 @@ type Quiz = {
   name: string;
   description: string;
   joinCode?: string;
-  quizCoverUrl: string;
-  lastUpdatedAt: string;
-  createdAt: string;
+  quiz_cover_url: string;
+  created_at: string;
+  users: {
+    username: string;
+    pfp_url: string;
+  };
 };
 
 export default async function QuizDetailsPage({
@@ -28,8 +29,9 @@ export default async function QuizDetailsPage({
 }: {
   params: { quizId: string };
 }) {
+  const { quizId } = await params;
   const supabase = await createClient();
-  const { data: quiz, error } = await supabase
+  const { data: q, error } = await supabase
     .from("quizzes")
     .select(
       `
@@ -40,15 +42,16 @@ export default async function QuizDetailsPage({
     )
   `,
     )
-    .eq("quiz_id", params.quizId)
+    .eq("quiz_id", quizId)
     .single();
 
-  if (!quiz) return <QuizNotFound />;
+  if (!q) return <QuizNotFound />;
+  const quiz = q as Quiz;
 
   const { count: quizAttemptsCount, error: countError } = await supabase
     .from("quiz_attempts")
     .select("*", { count: "exact", head: true })
-    .eq("quiz_id", params.quizId);
+    .eq("quiz_id", quizId);
 
   if (countError) {
     console.log(countError);
