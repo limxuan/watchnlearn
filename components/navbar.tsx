@@ -7,6 +7,7 @@ import { X, Menu } from "lucide-react";
 import Link from "next/link";
 import { Geist } from "next/font/google";
 import { usePathname } from "next/navigation";
+import useQuizStore from "@/stores/useQuizStore";
 
 const lato = Geist({
   subsets: ["latin"],
@@ -19,6 +20,7 @@ export default function Navbar() {
   const user = useUserStore((state) => state.user);
   const router = useRouter();
   const pathname = usePathname();
+  const { quizOngoing } = useQuizStore();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -64,46 +66,52 @@ export default function Navbar() {
   };
 
   return (
-    <nav
-      className={`${lato.className} flex w-full items-center justify-between border-b px-10 py-3 text-sm font-semibold`}
-    >
-      {/* Logo */}
-      <span
-        className="cursor-pointer text-center text-lg font-bold"
-        onClick={() => router.push("/")}
-      >
-        watch&learn
-      </span>
-
-      {/* Desktop Navigation */}
-      <div className="hidden items-center gap-6 md:flex">{renderLinks()}</div>
-
-      <div className="hidden md:block">
-        <AuthButton closeMenuAction={() => setIsMenuOpen(false)} />
-      </div>
-
-      <button
-        className="md:hidden"
-        onClick={() => setIsMenuOpen(true)}
-        aria-label="Open menu"
-      >
-        <Menu size={24} />
-      </button>
-
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-50 flex h-full w-full flex-col items-center justify-center gap-8 overflow-y-hidden bg-black bg-opacity-80 text-white backdrop-blur-lg transition-all duration-300 ease-in-out">
-          <button
-            className="absolute right-6 top-6"
-            onClick={() => setIsMenuOpen(false)}
-            aria-label="Close menu"
+    <>
+      {!quizOngoing && (
+        <nav
+          className={`${lato.className} flex w-full items-center justify-between border-b px-10 py-3 text-sm font-semibold`}
+        >
+          {/* Logo */}
+          <span
+            className="cursor-pointer text-center text-lg font-bold"
+            onClick={() => router.push("/")}
           >
-            <X size={30} />
+            watch&learn
+          </span>
+
+          {/* Desktop Navigation */}
+          <div className="hidden items-center gap-6 md:flex">
+            {renderLinks()}
+          </div>
+
+          <div className="hidden md:block">
+            <AuthButton closeMenuAction={() => setIsMenuOpen(false)} />
+          </div>
+
+          <button
+            className="md:hidden"
+            onClick={() => setIsMenuOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu size={24} />
           </button>
 
-          {renderLinks()}
-          <AuthButton closeMenuAction={() => setIsMenuOpen(false)} />
-        </div>
+          {isMenuOpen && (
+            <div className="fixed inset-0 z-50 flex h-full w-full flex-col items-center justify-center gap-8 overflow-y-hidden bg-black bg-opacity-80 text-white backdrop-blur-lg transition-all duration-300 ease-in-out">
+              <button
+                className="absolute right-6 top-6"
+                onClick={() => setIsMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                <X size={30} />
+              </button>
+
+              {renderLinks()}
+              <AuthButton closeMenuAction={() => setIsMenuOpen(false)} />
+            </div>
+          )}
+        </nav>
       )}
-    </nav>
+    </>
   );
 }
