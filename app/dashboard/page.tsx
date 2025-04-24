@@ -22,7 +22,7 @@ export default function DashboardPage() {
             Dashboard Page
           </div>
           <div>
-            Welcome {user!.username} ({user?.role})
+            Welcome {user!.username} ({user?.role}) - {user.user_id}
           </div>
           <button onClick={handleSignOut}>sign out</button>
         </>
