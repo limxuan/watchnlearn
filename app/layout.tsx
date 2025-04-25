@@ -1,13 +1,8 @@
-// app/layout.tsx
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import Link from "next/link";
 import "./globals.css";
 import ClientOnly from "@/components/client-only";
-import AuthButton from "@/components/user-profile";
 import Navbar from "@/components/navbar";
-import { createClient } from "@/utils/supabase/server";
-import useUserStore, { UserInfo } from "@/stores/useUserStore";
 import InitUserStore from "@/components/init-user-store";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -31,7 +26,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="h-screen w-screen">
       <head />
       <body className={`${geistSans.className} bg-background text-foreground`}>
         <ThemeProvider
@@ -42,10 +37,10 @@ export default async function RootLayout({
         >
           <ClientOnly>
             <InitUserStore />
-            <main className="flex min-h-screen flex-col items-center">
+            <div className="min-w-screen flex min-h-screen flex-col">
               <Navbar />
-              <div className="w-full flex-1">{children}</div>
-            </main>
+              {children}
+            </div>
           </ClientOnly>
         </ThemeProvider>
       </body>
