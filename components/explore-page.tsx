@@ -177,7 +177,7 @@ export default function ExplorePage() {
          {
             isModalOpen && selectedQuiz && (
                <div className="fixed inset-0 backdrop-blur bg-black bg-opacity-50 z-50 flex items-center justify-center">
-                  <div className="bg-[#6a92b2] w-[1000px] h-[600px] p-6 rounded-lg shadow-lg relative">
+                  <div className="bg-[#6a92b2] w-[1000px] h-[600px] p-6 rounded-lg shadow-lg relative overflow-y-scroll">
                      <button
                         onClick={handleCloseModal}
                         className="absolute top-2 right-4 text-[#f6f8d5] hover:text-black text-[30px] font-bold"
@@ -201,7 +201,7 @@ export default function ExplorePage() {
                      <br />
 
                      <div className="text-center mt-4">
-                        <Button asChild size="lg" variant={"default"}>
+                        <Button asChild size="lg" variant={"default"} className="hover:bg-black hover:text-[#f6f8d5]">
                            <Link href={`/quiz/${selectedQuiz.join_code}`}>Enter Quiz</Link>
                         </Button>
                      </div>
