@@ -5,6 +5,7 @@ import SlideShowQuestionComponent from "./slideshow/SlideShowQuestion";
 import GlowingQuestionWrapper from "./GlowingCursorWrapper";
 import QuestionLoaderHeader from "./QuestionLoaderHeader";
 import { AuroraBackground } from "@/components/background/aurora-background";
+import { unstable_ViewTransition as ViewTransition } from "react";
 
 export default function QuestionLoader({
   questionsData,
@@ -25,19 +26,17 @@ export default function QuestionLoader({
 
   return (
     <AuroraBackground>
-      {questions.map((q, index) => (
-        <GlowingQuestionWrapper
-          key={q.question_id}
-          style={{ display: index === currentIndex ? "relative" : "none" }}
-        >
-          <div className="max-h-screen w-full max-w-3xl space-y-5 rounded-xl lg:space-y-8">
-            <QuestionLoaderHeader />
-            <div className="max-w-xl lg:max-w-3xl">
-              <QuestionComponent question={q} />
+      {questions.map(
+        (q, index) =>
+          index === currentIndex && (
+            <div className="max-h-screen w-full max-w-3xl space-y-5 rounded-xl lg:space-y-8">
+              <QuestionLoaderHeader />
+              <div className="max-w-xl lg:max-w-3xl">
+                <QuestionComponent question={q} />
+              </div>
             </div>
-          </div>
-        </GlowingQuestionWrapper>
-      ))}
+          ),
+      )}
     </AuroraBackground>
   );
 }
