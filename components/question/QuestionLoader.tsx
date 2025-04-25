@@ -29,7 +29,10 @@ export default function QuestionLoader({
       {questions.map(
         (q, index) =>
           index === currentIndex && (
-            <div className="max-h-screen w-full max-w-3xl space-y-5 rounded-xl lg:space-y-8">
+            <div
+              className="max-h-screen w-full max-w-3xl space-y-5 rounded-xl lg:space-y-8"
+              key={index}
+            >
               <QuestionLoaderHeader />
               <div className="max-w-xl lg:max-w-3xl">
                 <QuestionComponent question={q} />

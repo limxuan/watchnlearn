@@ -19,7 +19,7 @@ export default function SlideShowQuestionComponent({
 }: SlideShowQuestionProps) {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
-  const { answerQuestion } = useQuizStore();
+  const { answerQuestion, nextQuestion } = useQuizStore();
   const { setGlowColor } = useCursorGlowStore();
 
   const mappedSlides: any[] = question.image_urls!.map((url, idx) => ({
@@ -59,6 +59,9 @@ export default function SlideShowQuestionComponent({
       correctOption: correctOption?.option_id!,
       isCorrect,
     });
+    setTimeout(() => {
+      nextQuestion();
+    }, 3000);
   };
 
   return (
