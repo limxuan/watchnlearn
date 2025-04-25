@@ -20,6 +20,8 @@ export default function AnswerOptions({
 }: AnswerOptionsProps) {
   const { setGlowColor, resetGlow, setHeight } = useCursorGlowStore();
   const { currentIndex, answers } = useQuizStore();
+  const isAnswerSelected = selectedAnswerId != null;
+
   return (
     <div
       className={cn(
@@ -27,30 +29,44 @@ export default function AnswerOptions({
         className,
       )}
     >
-      {options.map((option) => (
-        <Card
-          key={option.option_id}
-          onMouseOver={() => {
-            if (currentIndex === answers.length) {
-              setGlowColor("bg-yellow-100");
-            }
-          }}
-          onMouseLeave={() => {
-            if (currentIndex === answers.length) resetGlow();
-          }}
-          className={cn(
-            "cursor-pointer border border-white/20 bg-gray-500/10 p-4 transition-colors hover:shadow-lg",
-            selectedAnswerId === option.option_id
-              ? "border-primary/40 bg-primary/20"
-              : "hover:border-white/40 hover:bg-background/90",
-          )}
-          onClick={() => onSelectAnswerAction(option.option_id)}
-        >
-          <div className="text-base text-sm text-white md:text-lg">
-            {option.option_text}
-          </div>
-        </Card>
-      ))}
+      {options.map((option) => {
+        const optionClasses = cn(
+          "border border-white/20 bg-gray-500/10 p-4 transition-colors hover:shadow-lg backdrop-blur-lg",
+          {
+            "cursor-pointer": !isAnswerSelected, // Only show the pointer when the option is clickable
+            "border-primary/40 bg-green-200/50":
+              isAnswerSelected &&
+              option.is_correct &&
+              selectedAnswerId !== null,
+            "border-primary/40 bg-red-200/50":
+              isAnswerSelected &&
+              selectedAnswerId === option.option_id &&
+              !option.is_correct,
+            "hover:border-white/40 hover:bg-background/90": !isAnswerSelected,
+            "opacity-50 pointer-events-none cursor-default":
+              isAnswerSelected && selectedAnswerId !== option.option_id, // Disable cursor when disabled
+          },
+        );
+        return (
+          <Card
+            key={option.option_id}
+            onMouseOver={() => {
+              if (currentIndex === answers.length) {
+                setGlowColor("bg-yellow-100");
+              }
+            }}
+            onMouseLeave={() => {
+              if (currentIndex === answers.length) resetGlow();
+            }}
+            className={optionClasses}
+            onClick={() => onSelectAnswerAction(option.option_id)}
+          >
+            <div className="text-sm text-white md:text-lg">
+              {option.option_text}
+            </div>
+          </Card>
+        );
+      })}
     </div>
   );
 }

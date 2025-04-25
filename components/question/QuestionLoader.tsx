@@ -1,37 +1,44 @@
 "use client";
-import useQuizStore, { Question } from "@/stores/useQuizStore";
+import useQuizStore, { Question, Quiz } from "@/stores/useQuizStore";
 import { useEffect } from "react";
 import SlideShowQuestionComponent from "./slideshow/SlideShowQuestion";
 import GlowingQuestionWrapper from "./GlowingCursorWrapper";
+import QuestionLoaderHeader from "./QuestionLoaderHeader";
+import { AuroraBackground } from "@/components/background/aurora-background";
 
 export default function QuestionLoader({
   questionsData,
+  quizData,
 }: {
   questionsData: Question[];
+  quizData: Quiz;
 }) {
-  const { loadQuestions, questions, currentIndex } = useQuizStore();
+  const { setQuiz, loadQuestions, questions, currentIndex, setStartTimestamp } =
+    useQuizStore();
 
   useEffect(() => {
+    setQuiz(quizData);
+    setStartTimestamp(Date.now());
     loadQuestions(questionsData);
-    console.log("client", questionsData);
+    console.log("client", questionsData, quizData);
   }, [loadQuestions, questionsData]);
 
   return (
-    <>
+    <AuroraBackground>
       {questions.map((q, index) => (
         <GlowingQuestionWrapper
           key={q.question_id}
           style={{ display: index === currentIndex ? "relative" : "none" }}
         >
           <div className="max-h-screen w-full max-w-3xl space-y-5 rounded-xl lg:space-y-8">
-            <div className="bg-purple-900">headers</div>
+            <QuestionLoaderHeader />
             <div className="max-w-xl lg:max-w-3xl">
               <QuestionComponent question={q} />
             </div>
           </div>
         </GlowingQuestionWrapper>
       ))}
-    </>
+    </AuroraBackground>
   );
 }
 

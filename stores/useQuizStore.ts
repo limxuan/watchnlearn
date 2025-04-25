@@ -39,22 +39,40 @@ export type Question = {
   is_active: boolean;
 };
 
+export type Quiz = {
+  quiz_id: string;
+  user_id: string;
+  name: string;
+  description: string;
+  created_at: string;
+};
+
 type QuizStore = {
+  quiz: Quiz | null;
   questions: Question[];
   currentIndex: number;
   answers: AnswerHistory[];
   quizOngoing: boolean;
+  startTimestamp: number;
+  endTimestamp: number;
+  setQuiz: (quiz: Quiz) => void;
   loadQuestions: (qs: Question[]) => void;
   answerQuestion: (answer: AnswerHistory) => void;
   nextQuestion: () => void;
   resetQuiz: () => void;
+  setStartTimestamp: (timestamp: number) => void;
+  setEndTimestamp: (timestamp: number) => void;
 };
 
 const useQuizStore = create<QuizStore>((set) => ({
+  quiz: null,
   questions: [],
   currentIndex: 0,
   answers: [],
   quizOngoing: false,
+  startTimestamp: 0,
+  endTimestamp: 0,
+  setQuiz: (quiz) => set({ quiz }),
   loadQuestions: (qs) =>
     set({ questions: qs, currentIndex: 0, answers: [], quizOngoing: true }),
   answerQuestion: (answer) =>
@@ -72,6 +90,8 @@ const useQuizStore = create<QuizStore>((set) => ({
       answers: [],
       quizOngoing: false,
     })),
+  setStartTimestamp: (timestamp) => set({ startTimestamp: timestamp }),
+  setEndTimestamp: (timestamp) => set({ endTimestamp: timestamp }),
 }));
 
 export default useQuizStore;

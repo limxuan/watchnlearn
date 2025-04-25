@@ -14,7 +14,7 @@ type CursorGlowStore = {
 const useCursorGlowStore = create<CursorGlowStore>((set) => ({
   x: 0,
   y: 0,
-  height: 300,
+  height: 0,
   glowColor: "bg-blue-200",
   setCoordinates: (x, y) => set({ x, y }),
   setGlowColor: (color) => set({ glowColor: color }),
