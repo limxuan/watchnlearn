@@ -1,4 +1,4 @@
-import QuestionLoader from "@/components/question/slideshow/QuestionLoader";
+import QuestionLoader from "@/components/question/QuestionLoader";
 import { Question } from "@/stores/useQuizStore";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
@@ -48,6 +48,5 @@ export default async function Attempt({
     }),
   );
 
-  console.log({ questions });
-  return <QuestionLoader questionsData={questions} />;
+  return <QuestionLoader questionsData={questions.reverse()} />;
 }

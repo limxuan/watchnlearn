@@ -23,7 +23,7 @@ export default function AnswerOptions({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 gap-3 px-2 md:grid-cols-2 md:px-0",
+        "grid grid-cols-1 gap-2 px-2 md:grid-cols-2 md:gap-3 md:px-0",
         className,
       )}
     >
@@ -46,7 +46,7 @@ export default function AnswerOptions({
           )}
           onClick={() => onSelectAnswerAction(option.option_id)}
         >
-          <div className="text-base text-white md:text-lg">
+          <div className="text-base text-sm text-white md:text-lg">
             {option.option_text}
           </div>
         </Card>

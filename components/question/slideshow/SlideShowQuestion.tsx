@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { SlideShowQuestion } from "@/types/quiz";
 import QuestionHeader from "./QuestionHeader";
 import SlideViewer from "./SlideViewer";
 import SlideNavigation from "./SlideNavigation";
 import AnswerOptions from "./AnswerOptions";
 import { Card } from "@/components/ui/card";
 import useQuizStore, { Question } from "@/stores/useQuizStore";
-import { Slide } from "@/types/quiz";
 import useCursorGlowStore from "@/stores/useCursorGlowStore";
 
 interface SlideShowQuestionProps {
@@ -22,9 +20,9 @@ export default function SlideShowQuestionComponent({
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
   const { answerQuestion } = useQuizStore();
-  const { setGlowColor, setHeight } = useCursorGlowStore();
+  const { setGlowColor } = useCursorGlowStore();
 
-  const mappedSlides: Slide[] = question.image_urls!.map((url, idx) => ({
+  const mappedSlides: any[] = question.image_urls!.map((url, idx) => ({
     id: idx.toString(),
     imageUrl: url,
     alt: url,
@@ -51,7 +49,6 @@ export default function SlideShowQuestionComponent({
     );
     const isCorrect = answerId === correctOption?.option_id;
     setGlowColor(isCorrect ? "bg-green-300" : "bg-red-300");
-    setHeight();
 
     setSelectedAnswerId(answerId);
     answerQuestion({

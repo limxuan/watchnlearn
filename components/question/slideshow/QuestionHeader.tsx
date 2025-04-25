@@ -16,7 +16,7 @@ export default function QuestionHeader({
   return (
     <div
       className={cn(
-        "relative border-b border-white/20 bg-gray-500/10 p-6",
+        "relative border-b border-white/20 bg-gray-500/10 p-4 lg:p-6",
         className,
       )}
     >

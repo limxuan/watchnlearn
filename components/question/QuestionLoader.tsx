@@ -2,7 +2,6 @@
 import useQuizStore, { Question } from "@/stores/useQuizStore";
 import { useEffect } from "react";
 import SlideShowQuestionComponent from "./slideshow/SlideShowQuestion";
-import FlexCenter from "../flex-center";
 import GlowingQuestionWrapper from "./GlowingCursorWrapper";
 
 export default function QuestionLoader({
@@ -24,8 +23,11 @@ export default function QuestionLoader({
           key={q.question_id}
           style={{ display: index === currentIndex ? "relative" : "none" }}
         >
-          <div className="w-full max-w-xl space-y-8 rounded-xl lg:max-w-3xl">
-            <QuestionComponent question={q} />
+          <div className="max-h-screen w-full max-w-3xl space-y-5 rounded-xl lg:space-y-8">
+            <div className="bg-purple-900">headers</div>
+            <div className="max-w-xl lg:max-w-3xl">
+              <QuestionComponent question={q} />
+            </div>
           </div>
         </GlowingQuestionWrapper>
       ))}
