@@ -1,30 +1,28 @@
 // route.ts
-import { createClient } from '@supabase/supabase-js';
-import { NextResponse } from 'next/server';
-
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // Use service role to allow access to all rows
-);
+import { createClient } from "@/utils/supabase/client";
+import { NextResponse } from "next/server";
+const supabase = createClient();
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const type = searchParams.get('type') || 'weekly'; // weekly or monthly
+  const type = searchParams.get("type") || "weekly"; // weekly or monthly
 
   const now = new Date();
-  const days = type === 'monthly' ? 30 : 7;
-  const since = new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
+  const days = type === "monthly" ? 30 : 7;
+  const since = new Date(
+    now.getTime() - days * 24 * 60 * 60 * 1000,
+  ).toISOString();
 
   // 1. Get XP transactions within timeframe
   const { data, error } = await supabase
-    .from('xp_transactions')
-    .select('user_id, xp_amount, created_at')
-    .gte('created_at', since);
+    .from("xp_transactions")
+    .select("user_id, xp_amount, created_at")
+    .gte("created_at", since);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error)
+    return NextResponse.json({ error: error.message }, { status: 500 });
 
-  console.log('XP Transactions Data:', data); // Log the fetched data for verification
+  console.log("XP Transactions Data:", data); // Log the fetched data for verification
 
   // 2. Aggregate XP by user_id
   const xpByUser: Record<string, number> = {};
@@ -38,13 +36,14 @@ export async function GET(req: Request) {
 
   // 3. Get usernames for those user_ids
   const { data: usersData, error: userErr } = await supabase
-    .from('users')
-    .select('user_id, username')
-    .in('user_id', userIds);
+    .from("users")
+    .select("user_id, username")
+    .in("user_id", userIds);
 
-  if (userErr) return NextResponse.json({ error: userErr.message }, { status: 500 });
+  if (userErr)
+    return NextResponse.json({ error: userErr.message }, { status: 500 });
 
-  console.log('Users Data:', usersData); // Log the user data for verification
+  console.log("Users Data:", usersData); // Log the user data for verification
 
   // 4. Combine and sort
   const leaderboard = usersData
@@ -55,7 +54,7 @@ export async function GET(req: Request) {
     }))
     .sort((a, b) => b.xp - a.xp);
 
-  console.log('Leaderboard:', leaderboard); // Log the final leaderboard data
+  console.log("Leaderboard:", leaderboard); // Log the final leaderboard data
 
   return NextResponse.json(leaderboard);
 }
