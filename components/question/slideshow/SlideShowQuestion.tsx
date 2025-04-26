@@ -1,22 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import QuestionHeader from "./QuestionHeader";
+import QuestionHeader from "../QuestionHeader";
 import SlideViewer from "./SlideViewer";
 import SlideNavigation from "./SlideNavigation";
-import AnswerOptions from "./AnswerOptions";
+import AnswerOptions from "../AnswerOptions";
 import { Card } from "@/components/ui/card";
 import useQuizStore, { Question } from "@/stores/useQuizStore";
 
-interface SlideShowQuestionProps {
-  question: Question;
-  onAnswer?: (answerId: string) => void;
-}
-
 export default function SlideShowQuestionComponent({
   question,
-}: SlideShowQuestionProps) {
-  const timeoutToNextQuestion = 3000;
+}: {
+  question: Question;
+}) {
+  const timeoutToNextQuestion = 1500;
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
   const { answerQuestion, nextQuestion } = useQuizStore();

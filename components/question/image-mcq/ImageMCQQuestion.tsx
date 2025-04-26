@@ -46,7 +46,7 @@ export default function ImageMCQQuestionComponent({
       setIsSubmitted(true);
       setTimeout(() => {
         nextQuestion();
-      }, 3000);
+      }, 1500);
     }
   };
 

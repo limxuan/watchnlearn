@@ -48,7 +48,5 @@ export default async function Attempt({
     }),
   );
 
-  return (
-    <QuestionLoader quizData={quizData} questionsData={questions.reverse()} />
-  );
+  return <QuestionLoader quizData={quizData} questionsData={questions} />;
 }

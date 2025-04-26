@@ -6,6 +6,10 @@ import QuestionLoaderHeader from "./QuestionLoaderHeader";
 import { AuroraBackground } from "@/components/background/aurora-background";
 import ImageMCQQuestionComponent from "@/components/question/image-mcq/ImageMCQQuestion";
 import { AnimatePresence, motion } from "framer-motion";
+import VideoQuestionComponent from "./video/VideoQuestion";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
+import useUserStore from "@/stores/useUserStore";
 
 export default function QuestionLoader({
   questionsData,
@@ -14,8 +18,15 @@ export default function QuestionLoader({
   questionsData: Question[];
   quizData: Quiz;
 }) {
-  const { setQuiz, loadQuestions, questions, currentIndex, setStartTimestamp } =
-    useQuizStore();
+  const {
+    setQuiz,
+    loadQuestions,
+    questions,
+    currentIndex,
+    setStartTimestamp,
+    completedTimestamp: endTimestamp,
+  } = useQuizStore();
+  const router = useRouter();
 
   // Track direction for animation
   const [direction, setDirection] = useState(0);
@@ -28,11 +39,16 @@ export default function QuestionLoader({
     console.log("client", questionsData, quizData);
   }, [loadQuestions, questionsData, quizData, setQuiz, setStartTimestamp]);
 
-  // Determine animation direction when current index changes
   useEffect(() => {
     setDirection(currentIndex > prevIndex ? 1 : -1);
     setPrevIndex(currentIndex);
   }, [currentIndex, prevIndex]);
+
+  useEffect(() => {
+    if (endTimestamp) {
+      router.push(`/quiz/${quizData.quiz_id}/feedback`);
+    }
+  }, [endTimestamp, router]);
 
   const variants = {
     enter: (direction: number) => ({
@@ -89,6 +105,8 @@ function QuestionComponent({ question }: { question: Question }) {
       return <SlideShowQuestionComponent question={question} />;
     case "image-mcq":
       return <ImageMCQQuestionComponent question={question} />;
+    case "video":
+      return <VideoQuestionComponent question={question} />;
     default:
       return <div>❌ Unknown question type: {question.question_type}</div>;
   }

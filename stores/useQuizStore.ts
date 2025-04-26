@@ -54,14 +54,14 @@ type QuizStore = {
   answers: AnswerHistory[];
   quizOngoing: boolean;
   startTimestamp: number;
-  endTimestamp: number;
+  completedTimestamp: number;
   setQuiz: (quiz: Quiz) => void;
   loadQuestions: (qs: Question[]) => void;
   answerQuestion: (answer: AnswerHistory) => void;
   nextQuestion: () => void;
   resetQuiz: () => void;
   setStartTimestamp: (timestamp: number) => void;
-  setEndTimestamp: (timestamp: number) => void;
+  setCompletedTimestamp: (timestamp: number) => void;
 };
 
 const useQuizStore = create<QuizStore>((set) => ({
@@ -71,7 +71,7 @@ const useQuizStore = create<QuizStore>((set) => ({
   answers: [],
   quizOngoing: false,
   startTimestamp: 0,
-  endTimestamp: 0,
+  completedTimestamp: 0,
   setQuiz: (quiz) => set({ quiz }),
   loadQuestions: (qs) =>
     set({ questions: qs, currentIndex: 0, answers: [], quizOngoing: true }),
@@ -80,9 +80,18 @@ const useQuizStore = create<QuizStore>((set) => ({
       answers: [...state.answers, answer],
     })),
   nextQuestion: () =>
-    set((state) => ({
-      currentIndex: state.currentIndex + 1,
-    })),
+    set((state) => {
+      const isLastQuestion = state.currentIndex >= state.questions.length - 1;
+      if (isLastQuestion) {
+        return {
+          completedTimestamp: Date.now(),
+        };
+      } else {
+        return {
+          currentIndex: state.currentIndex + 1,
+        };
+      }
+    }),
   resetQuiz: () =>
     set(() => ({
       questions: [],
@@ -91,7 +100,7 @@ const useQuizStore = create<QuizStore>((set) => ({
       quizOngoing: false,
     })),
   setStartTimestamp: (timestamp) => set({ startTimestamp: timestamp }),
-  setEndTimestamp: (timestamp) => set({ endTimestamp: timestamp }),
+  setCompletedTimestamp: (timestamp) => set({ completedTimestamp: timestamp }),
 }));
 
 export default useQuizStore;
