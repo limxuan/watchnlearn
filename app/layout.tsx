@@ -26,7 +26,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="h-screen w-screen">
+    <html lang="en" suppressHydrationWarning className="h-dvh w-dvw">
       <head />
       <body className={`${geistSans.className} bg-background text-foreground`}>
         <ThemeProvider
@@ -37,7 +37,7 @@ export default async function RootLayout({
         >
           <ClientOnly>
             <InitUserStore />
-            <div className="min-w-screen flex min-h-screen flex-col">
+            <div className="min-w-dvw flex min-h-dvh flex-col">
               <Navbar />
               {children}
             </div>
