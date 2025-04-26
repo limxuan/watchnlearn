@@ -16,7 +16,7 @@ interface SlideShowQuestionProps {
 export default function SlideShowQuestionComponent({
   question,
 }: SlideShowQuestionProps) {
-  const timeoutToNextQuestion = 0;
+  const timeoutToNextQuestion = 3000;
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
   const { answerQuestion, nextQuestion } = useQuizStore();
