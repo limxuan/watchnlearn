@@ -94,7 +94,7 @@ export default function ExplorePage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4"
                >
                   {loading
                      ? renderSkeletonCards(3) : quizzes.map((quiz, id) => (
@@ -122,7 +122,7 @@ export default function ExplorePage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4"
                >
                   {loading
                      ? renderSkeletonCards(3) : recent.map((quiz, id) => (
@@ -150,7 +150,7 @@ export default function ExplorePage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4"
                >
                   {loading
                      ? renderSkeletonCards(3) : mostPlayed.map((quiz, id) => (
