@@ -14,9 +14,9 @@ function PrevButton({ onClick, disabled, className }: NavigationButtonProps) {
       variant="secondary"
       size="icon"
       className={cn(
-        "rounded-full bg-white/10 hover:bg-white/20 text-white shadow-lg border border-white/20",
-        disabled && "opacity-50 cursor-not-allowed",
-        className
+        "rounded-full border border-white/20 bg-white/10 text-white shadow-lg hover:bg-white/20",
+        disabled && "cursor-not-allowed opacity-50",
+        className,
       )}
       onClick={onClick}
       disabled={disabled}
@@ -33,9 +33,9 @@ function NextButton({ onClick, disabled, className }: NavigationButtonProps) {
       variant="secondary"
       size="icon"
       className={cn(
-        "rounded-full bg-white/10 hover:bg-white/20 text-white shadow-lg border border-white/20",
-        disabled && "opacity-50 cursor-not-allowed",
-        className
+        "rounded-full border border-white/20 bg-white/10 text-white shadow-lg hover:bg-white/20",
+        disabled && "cursor-not-allowed opacity-50",
+        className,
       )}
       onClick={onClick}
       disabled={disabled}
@@ -53,17 +53,27 @@ interface DotsProps {
   className?: string;
 }
 
-function Dots({ currentSlide, totalSlides, onSelectSlide, className }: DotsProps) {
+function Dots({
+  currentSlide,
+  totalSlides,
+  onSelectSlide,
+  className,
+}: DotsProps) {
   return (
-    <div className={cn("flex justify-center items-center py-4 gap-2", className)}>
+    <div
+      className={cn(
+        "flex items-center justify-center gap-2 bg-gray-500/10 py-4",
+        className,
+      )}
+    >
       {Array.from({ length: totalSlides }).map((_, index) => (
         <button
           key={index}
           className={cn(
-            "w-2 h-2 rounded-full transition-all duration-300",
-            index === currentSlide 
-              ? "bg-white w-4" 
-              : "bg-white/20 hover:bg-white/40"
+            "h-2 w-2 rounded-full transition-all duration-300",
+            index === currentSlide
+              ? "w-4 bg-white"
+              : "bg-white/20 hover:bg-white/40",
           )}
           onClick={() => onSelectSlide(index)}
           aria-label={`Go to slide ${index + 1}`}

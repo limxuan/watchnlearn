@@ -16,8 +16,7 @@ interface ImageMCQQuestionProps {
 export default function ImageMCQQuestionComponent({
   question,
 }: ImageMCQQuestionProps) {
-  const { answerQuestion, nextQuestion, timeoutToNextQuestion } =
-    useQuizStore();
+  const { answerQuestion, nextQuestion } = useQuizStore();
   const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -53,12 +52,14 @@ export default function ImageMCQQuestionComponent({
 
   return (
     <div className="flex w-full flex-col space-y-6">
-      <Card className="border border-white/20 bg-background/80 p-4 shadow-2xl md:p-6">
-        <h1 className="mb-4 text-lg font-semibold text-white md:mb-6 md:text-2xl">
-          {question.question_text}
-        </h1>
+      <Card className="overflow-hidden border border-white/20 bg-black/30 shadow-2xl backdrop-blur-md">
+        <div className="bg-gray-500/10 p-4 lg:p-6">
+          <h1 className="text-lg font-semibold text-white md:text-2xl">
+            {question.question_text}
+          </h1>
+        </div>
 
-        <div className="grid grid-cols-2 gap-2 md:gap-4">
+        <div className="grid grid-cols-2 gap-2 bg-gray-500/10 p-4 pt-0 md:gap-4">
           {question.question_options.map((answer) => {
             const isSelected = selectedAnswerId === answer.option_id;
             const isCorrect = answer.option_id === correctOptionId;

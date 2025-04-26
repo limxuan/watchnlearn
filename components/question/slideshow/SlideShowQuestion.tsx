@@ -62,7 +62,7 @@ export default function SlideShowQuestionComponent({
   };
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex h-full w-full flex-col">
       <Card className="overflow-hidden border border-white/20 bg-black/30 shadow-2xl backdrop-blur-md">
         <QuestionHeader
           question={question.question_text}
