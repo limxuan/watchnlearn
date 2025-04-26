@@ -68,36 +68,39 @@ export default function Navbar() {
   return (
     <>
       {!quizOngoing && (
-        <nav
-          className={`${lato.className} flex w-full items-center justify-between border-b px-10 py-3 text-sm font-semibold`}
-        >
-          {/* Logo */}
-          <span
-            className="cursor-pointer text-center text-lg font-bold"
-            onClick={() => router.push("/")}
+        <>
+          <nav
+            className={`${lato.className} sticky top-0 z-50 flex w-full items-center justify-between border-b bg-black/30 px-10 py-3 text-sm font-semibold backdrop-blur-lg`}
           >
-            watch&learn
-          </span>
+            {/* Logo */}
+            <span
+              className="cursor-pointer text-center text-lg font-bold"
+              onClick={() => router.push("/")}
+            >
+              watch&learn
+            </span>
 
-          {/* Desktop Navigation */}
-          <div className="hidden items-center gap-6 md:flex">
-            {renderLinks()}
-          </div>
+            {/* Desktop Navigation */}
+            <div className="hidden items-center gap-6 md:flex">
+              {renderLinks()}
+            </div>
 
-          <div className="hidden md:block">
-            <AuthButton closeMenuAction={() => setIsMenuOpen(false)} />
-          </div>
+            <div className="hidden md:block">
+              <AuthButton closeMenuAction={() => setIsMenuOpen(false)} />
+            </div>
 
-          <button
-            className="md:hidden"
-            onClick={() => setIsMenuOpen(true)}
-            aria-label="Open menu"
-          >
-            <Menu size={24} />
-          </button>
+            <button
+              className="md:hidden"
+              onClick={() => setIsMenuOpen(true)}
+              aria-label="Open menu"
+            >
+              <Menu size={24} />
+            </button>
+          </nav>
 
+          {/* 🛑 Move Fullscreen Menu OUTSIDE of nav */}
           {isMenuOpen && (
-            <div className="fixed inset-0 z-50 flex h-full w-full flex-col items-center justify-center gap-8 overflow-y-hidden bg-black bg-opacity-80 text-white backdrop-blur-lg transition-all duration-300 ease-in-out">
+            <div className="fixed inset-0 z-[999] flex h-full w-full flex-col items-center justify-center gap-8 overflow-y-hidden bg-black bg-opacity-80 text-white backdrop-blur-lg transition-all duration-300 ease-in-out">
               <button
                 className="absolute right-6 top-6"
                 onClick={() => setIsMenuOpen(false)}
@@ -110,7 +113,7 @@ export default function Navbar() {
               <AuthButton closeMenuAction={() => setIsMenuOpen(false)} />
             </div>
           )}
-        </nav>
+        </>
       )}
     </>
   );

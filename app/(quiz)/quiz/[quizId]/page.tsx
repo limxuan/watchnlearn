@@ -66,7 +66,7 @@ export default async function QuizDetailsPage({
 
   return (
     <FlexCenter>
-      <div className="lg: container mb-0 max-w-4xl lg:mb-8">
+      <div className="lg: container mb-0 max-w-4xl">
         <Card className="overflow-hidden">
           <div className="relative h-[150px] w-full lg:h-[300px]">
             <Image
@@ -74,7 +74,6 @@ export default async function QuizDetailsPage({
               alt={quiz.name}
               fill
               className="object-cover"
-              priority
             />
           </div>
 
