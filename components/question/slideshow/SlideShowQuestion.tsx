@@ -17,6 +17,7 @@ interface SlideShowQuestionProps {
 export default function SlideShowQuestionComponent({
   question,
 }: SlideShowQuestionProps) {
+  const timeoutToNextQuestion = 0;
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
   const { answerQuestion, nextQuestion } = useQuizStore();
@@ -61,7 +62,7 @@ export default function SlideShowQuestionComponent({
     });
     setTimeout(() => {
       nextQuestion();
-    }, 3000);
+    }, timeoutToNextQuestion);
   };
 
   return (

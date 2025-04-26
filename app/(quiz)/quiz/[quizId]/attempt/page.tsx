@@ -15,7 +15,6 @@ export default async function Attempt({
     .select("*")
     .eq("quiz_id", quizId)
     .single();
-  console.log({ quizData });
   if (!quizData) return redirect("/quiz");
   if (quizFetchError) console.log(quizFetchError);
 

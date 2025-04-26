@@ -2,10 +2,10 @@
 import useQuizStore, { Question, Quiz } from "@/stores/useQuizStore";
 import { useEffect } from "react";
 import SlideShowQuestionComponent from "./slideshow/SlideShowQuestion";
-import GlowingQuestionWrapper from "./GlowingCursorWrapper";
 import QuestionLoaderHeader from "./QuestionLoaderHeader";
 import { AuroraBackground } from "@/components/background/aurora-background";
 import { unstable_ViewTransition as ViewTransition } from "react";
+import ImageMCQQuestionComponent from "@/components/question/image-mcq/ImageMCQQuestion";
 
 export default function QuestionLoader({
   questionsData,
@@ -30,11 +30,11 @@ export default function QuestionLoader({
         (q, index) =>
           index === currentIndex && (
             <div
-              className="max-h-screen w-full max-w-3xl space-y-5 rounded-xl px-4 lg:space-y-8"
+              className="max-h-screen w-full max-w-5xl space-y-5 rounded-xl px-4 lg:space-y-8"
               key={index}
             >
               <QuestionLoaderHeader />
-              <div className="max-w-xl lg:max-w-3xl">
+              <div className="max-w-xl lg:max-w-5xl">
                 <QuestionComponent question={q} />
               </div>
             </div>
@@ -48,6 +48,8 @@ function QuestionComponent({ question }: { question: Question }) {
   switch (question.question_type) {
     case "slideshow":
       return <SlideShowQuestionComponent question={question} />;
+    case "image-mcq":
+      return <ImageMCQQuestionComponent question={question} />;
     default:
       return <div>❌ Unknown question type: {question.question_type}</div>;
   }

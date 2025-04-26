@@ -23,7 +23,7 @@ export default function QuestionLoaderHeader() {
   const formattedTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
   return (
-    <div className="w-full max-w-xl space-y-4 rounded-xl lg:max-w-3xl">
+    <div className="w-full max-w-xl space-y-4 rounded-xl lg:max-w-5xl">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between lg:gap-4">
         <div className="hidden items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-4 py-2 shadow-md backdrop-blur-md md:flex">
           <BookOpen className="text-white lg:h-5 lg:w-5" />
