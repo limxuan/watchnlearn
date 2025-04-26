@@ -30,7 +30,7 @@ export default function QuestionLoader({
         (q, index) =>
           index === currentIndex && (
             <div
-              className="max-h-screen w-full max-w-5xl space-y-5 rounded-xl px-4 lg:space-y-8"
+              className="max-h-dvh w-full max-w-5xl space-y-5 rounded-xl px-4 lg:space-y-8"
               key={index}
             >
               <QuestionLoaderHeader />
