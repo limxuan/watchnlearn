@@ -7,7 +7,6 @@ import SlideNavigation from "./SlideNavigation";
 import AnswerOptions from "./AnswerOptions";
 import { Card } from "@/components/ui/card";
 import useQuizStore, { Question } from "@/stores/useQuizStore";
-import useCursorGlowStore from "@/stores/useCursorGlowStore";
 
 interface SlideShowQuestionProps {
   question: Question;
@@ -21,8 +20,6 @@ export default function SlideShowQuestionComponent({
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
   const { answerQuestion, nextQuestion } = useQuizStore();
-  const { setGlowColor } = useCursorGlowStore();
-
   const mappedSlides: any[] = question.image_urls!.map((url, idx) => ({
     id: idx.toString(),
     imageUrl: url,
@@ -49,7 +46,6 @@ export default function SlideShowQuestionComponent({
       (option) => option.is_correct,
     );
     const isCorrect = answerId === correctOption?.option_id;
-    setGlowColor(isCorrect ? "bg-green-300" : "bg-red-300");
 
     setSelectedAnswerId(answerId);
     answerQuestion({
