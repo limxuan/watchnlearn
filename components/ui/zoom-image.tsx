@@ -99,7 +99,7 @@ export default function ZoomImage({
       />
 
       <div
-        className="absolute bottom-4 right-4 z-10"
+        className="absolute bottom-2 right-2 z-10 md:bottom-4 md:right-4"
         onClick={(e) => {
           e.stopPropagation();
           setIsZoomed(true);
@@ -108,9 +108,9 @@ export default function ZoomImage({
         <Button
           variant="secondary"
           size="icon"
-          className="rounded-full border border-white/20 bg-white/10 text-white shadow-lg hover:bg-white/20"
+          className="h-6 rounded-full border border-white/20 bg-white/10 text-white shadow-lg backdrop-blur-sm hover:bg-white/20 md:h-10"
         >
-          <Search className="h-4 w-4" />
+          <Search className="h-3 w-3 md:h-4 md:w-4" />
         </Button>
       </div>
 

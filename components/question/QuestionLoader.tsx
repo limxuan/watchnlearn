@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import VideoQuestionComponent from "./video/VideoQuestion";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import PictureToPictureQuestionComponent from "./picture-to-picture/PictureToPictureQuestion";
 
 export default function QuestionLoader({
   questionsData,
@@ -88,11 +89,11 @@ export default function QuestionLoader({
 
   return (
     <AuroraBackground>
-      <div className="max-h-dvh w-full max-w-3xl space-y-5 overflow-hidden rounded-xl p-4 px-4 lg:space-y-8">
+      <div className="max-h-dvh w-full max-w-3xl space-y-5 rounded-xl p-4 px-4 lg:space-y-8">
         <QuestionLoaderHeader />
 
         <AnimatePresence initial={false} mode="wait" custom={direction}>
-          {questions.map(
+          {questions.toReversed().map(
             (q, index) =>
               index === currentIndex && (
                 <motion.div
@@ -128,6 +129,8 @@ function QuestionComponent({ question }: { question: Question }) {
       return <ImageMCQQuestionComponent question={question} />;
     case "video":
       return <VideoQuestionComponent question={question} />;
+    case "picture-to-picture":
+      return <PictureToPictureQuestionComponent question={question} />;
     default:
       return <div>❌ Unknown question type: {question.question_type}</div>;
   }
