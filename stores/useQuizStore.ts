@@ -8,7 +8,7 @@ export type QuestionTypes =
   | "image-mcq"
   | "hotspot-mcq";
 
-type AnswerHistory = {
+export type AnswerHistory = {
   questionId: string;
   questionType: QuestionTypes;
   questionText: string;
@@ -16,6 +16,16 @@ type AnswerHistory = {
   correctOption: string;
   isCorrect: boolean;
   mistakeCount: number;
+};
+
+export type QuestionAttempt = {
+  question_attempt_id: string;
+  attempt_id: string;
+  question_id: string;
+  selected_option_id: string;
+  correct_option_id: string;
+  is_correct: boolean;
+  mistake_count: number;
 };
 
 export type QuestionOption = {
