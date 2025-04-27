@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, GraduationCap, Trophy } from "lucide-react";
+import { User, GraduationCap, Trophy, Clock } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 interface UserInfoCardProps {
@@ -9,6 +9,7 @@ interface UserInfoCardProps {
   scorePercentage: number;
   correctQuestions: number;
   totalQuestions: number;
+  timeTaken: string;
 }
 
 export default function UserInfoCard({
@@ -17,6 +18,7 @@ export default function UserInfoCard({
   scorePercentage,
   correctQuestions,
   totalQuestions,
+  timeTaken,
 }: UserInfoCardProps) {
   // Determine score color based on percentage
   const getScoreColor = () => {
@@ -65,6 +67,16 @@ export default function UserInfoCard({
           className="mb-4 h-1.5 bg-white/10"
           indicatorclassname={`${scorePercentage >= 80 ? "bg-emerald-400/80" : scorePercentage >= 60 ? "bg-amber-400/80" : "bg-rose-400/80"}`}
         />
+
+        <div className="mb-2 flex items-center gap-3 sm:mb-0">
+          <div className="rounded-full bg-white/10 p-2">
+            <Clock className="h-5 w-5 text-sky-300/90" />
+          </div>
+          <div>
+            <p className="text-xs text-white/60">Time Taken</p>
+            <p className="text-base font-bold">{timeTaken}</p>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

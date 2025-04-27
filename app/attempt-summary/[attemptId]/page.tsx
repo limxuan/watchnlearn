@@ -43,6 +43,26 @@ type QuizAttempt = {
   difficulty_rating: number;
 };
 
+async function calculateDifficultyRating(quizId: string): Promise<number> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("quiz_attempts")
+    .select("difficulty_rating")
+    .eq("quiz_id", quizId);
+
+  if (error || !data || data.length === 0) {
+    throw new Error("Failed to fetch difficulty ratings");
+  }
+
+  const totalDifficulty = data.reduce(
+    (sum, attempt) => sum + (attempt.difficulty_rating ?? 0),
+    0,
+  );
+  const averageDifficulty = totalDifficulty / data.length;
+
+  return averageDifficulty;
+}
+
 async function getQuizAttempt(attemptId: string): Promise<{
   quizAttempt: QuizAttempt;
   questionAttempts: QuestionAttempt[];
@@ -87,6 +107,7 @@ export default async function QuizSummaryPage({
   const attemptUser = await getUser(quizAttempt.user_id);
   const creator = await getQuizCreator(quizAttempt.quiz_id);
   const quiz = await getQuiz(quizAttempt.quiz_id);
+  const difficultyRating = await calculateDifficultyRating(quizAttempt.quiz_id);
 
   const timeTaken =
     new Date(quizAttempt.completed_at).getTime() -
@@ -108,14 +129,14 @@ export default async function QuizSummaryPage({
               quizTitle={quiz.name}
               quizDescription={quiz.description}
               scorePercentage={scorePercentage}
-              timeTaken={`${minutes}m ${seconds}s`}
-              difficultyRating={quizAttempt.difficulty_rating}
+              difficultyRating={difficultyRating}
               lecturerName={creator.username}
               lecturerAvatar={creator.pfp_url}
             />
 
             {/* User info card */}
             <UserInfoCard
+              timeTaken={`${minutes}m ${seconds}s`}
               studentName={attemptUser.username}
               studentAvatar={attemptUser.pfp_url}
               scorePercentage={scorePercentage}

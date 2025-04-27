@@ -7,7 +7,6 @@ interface QuizSummaryHeaderProps {
   quizTitle: string;
   quizDescription: string;
   scorePercentage: number;
-  timeTaken: string;
   difficultyRating: number;
   lecturerAvatar: string;
   lecturerName: string;
@@ -16,12 +15,10 @@ interface QuizSummaryHeaderProps {
 export default function QuizSummaryHeader({
   quizTitle,
   quizDescription,
-  timeTaken,
   difficultyRating,
   lecturerName,
   lecturerAvatar,
 }: QuizSummaryHeaderProps) {
-  // Determine difficulty label
   const getDifficultyLabel = () => {
     if (difficultyRating >= 4) return "Hard";
     if (difficultyRating >= 2) return "Medium";
@@ -49,16 +46,6 @@ export default function QuizSummaryHeader({
         </div>
 
         <div className="flex flex-wrap items-center justify-between">
-          <div className="mb-2 flex items-center gap-3 sm:mb-0">
-            <div className="rounded-full bg-white/10 p-2">
-              <Clock className="h-5 w-5 text-sky-300/90" />
-            </div>
-            <div>
-              <p className="text-xs text-white/60">Time Taken</p>
-              <p className="text-base font-bold">{timeTaken}</p>
-            </div>
-          </div>
-
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-white/10 p-2">
               <BarChart3 className="h-5 w-5 text-violet-300/90" />
