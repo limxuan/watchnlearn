@@ -37,6 +37,7 @@ export type Question = {
   question_options: QuestionOption[];
   updated_at: string;
   is_active: boolean;
+  matches?: [string, string][];
 };
 
 export type Quiz = {
