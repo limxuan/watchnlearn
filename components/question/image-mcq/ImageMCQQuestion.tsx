@@ -41,6 +41,7 @@ export default function ImageMCQQuestionComponent({
         selectedOption: selectedAnswerId,
         correctOption: correctOptionId!,
         isCorrect,
+        mistakeCount: 0,
       });
 
       setIsSubmitted(true);

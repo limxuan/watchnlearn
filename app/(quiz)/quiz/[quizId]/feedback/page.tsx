@@ -60,7 +60,9 @@ export default function FeedbackPage() {
   const handleSubmit = () => {
     if (rating > 0) {
       setSubmitted(true);
-      SaveQuestionAttempt();
+      SaveQuestionAttempt().then((attemptId) =>
+        router.push(`/attempt-summary/${attemptId}`),
+      );
     }
   };
 

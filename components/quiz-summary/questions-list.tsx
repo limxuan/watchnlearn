@@ -317,31 +317,34 @@ function QuestionCard({
                   </>
                 )}
 
-                {correctOption?.option_url && !attempt.is_correct && (
-                  <div>
-                    <p className="text-xs text-white/60 sm:text-sm">
-                      Selected Image:
-                    </p>
-                    <p className="mt-1 text-sm sm:text-base">
-                      <Image
-                        src={correctOption.option_url}
-                        alt=""
-                        width={500}
-                        height={200}
-                      />
-                    </p>
-                  </div>
-                )}
-
                 {attempt.correct_option_id && !attempt.is_correct && (
-                  <div>
-                    <p className="text-xs text-white/60 sm:text-sm">
-                      Correct Option:
-                    </p>
-                    <p className="mt-1 text-sm sm:text-base">
-                      {correctOption?.option_text}
-                    </p>
-                  </div>
+                  <>
+                    {correctOption?.option_text && (
+                      <div>
+                        <p className="text-xs text-white/60 sm:text-sm">
+                          Correct Option:
+                        </p>
+                        <p className="mt-1 text-sm sm:text-base">
+                          {correctOption?.option_text}
+                        </p>
+                      </div>
+                    )}
+                    {correctOption?.option_url && (
+                      <div>
+                        <p className="text-xs text-white/60 sm:text-sm">
+                          Correct Image:
+                        </p>
+                        <p className="mt-1 text-sm sm:text-base">
+                          <Image
+                            src={correctOption.option_url}
+                            alt=""
+                            width={500}
+                            height={200}
+                          />
+                        </p>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {attempt.mistake_count && (

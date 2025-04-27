@@ -10,6 +10,7 @@ import VideoQuestionComponent from "./video/VideoQuestion";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import PictureToPictureQuestionComponent from "./picture-to-picture/PictureToPictureQuestion";
+import ImageHotspotQuestionComponent from "./image-to-hotspot/ImageToHotspotQuestion";
 
 export default function QuestionLoader({
   questionsData,
@@ -131,6 +132,8 @@ function QuestionComponent({ question }: { question: Question }) {
       return <VideoQuestionComponent question={question} />;
     case "picture-to-picture":
       return <PictureToPictureQuestionComponent question={question} />;
+    case "label-to-hotspot":
+      return <ImageHotspotQuestionComponent question={question} />;
     default:
       return <div>❌ Unknown question type: {question.question_type}</div>;
   }

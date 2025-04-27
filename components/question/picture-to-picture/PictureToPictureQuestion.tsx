@@ -1,18 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, Maximize2, RefreshCcw } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Check, RefreshCcw } from "lucide-react";
+import { cn, shuffleArray } from "@/lib/utils";
 import ZoomImage from "@/components/ui/zoom-image";
-import { Question } from "@/stores/useQuizStore";
+import useQuizStore, { Question } from "@/stores/useQuizStore";
 import { ArrowRight } from "lucide-react";
-
-interface PictureMatchingQuestionProps {
-  question: Question;
-  onSubmit?: (matches: PictureMatchingPair[]) => void;
-}
 
 interface PictureMatchingPair {
   source_option_id: string;
@@ -21,16 +16,27 @@ interface PictureMatchingPair {
 
 export default function PictureMatchingQuestionComponent({
   question,
-}: PictureMatchingQuestionProps) {
+}: {
+  question: Question;
+}) {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [userMatches, setUserMatches] = useState<PictureMatchingPair[]>([]);
-  const [allCorrect, setAllCorrect] = useState(false);
   const [incorrectSelection, setIncorrectSelection] = useState<string | null>(
     null,
   );
+  const [sourceOptions, setSourceOptions] = useState<string[]>([]);
+  const [targetOptions, setTargetOptions] = useState<string[]>([]);
+  const [mistakeCount, setMistakeCount] = useState<number>(0);
+  const { answerQuestion, nextQuestion } = useQuizStore();
 
-  const sourceOptions = question.matches?.map((match) => match[0]) ?? [];
-  const targetOptions = question.matches?.map((match) => match[1]) ?? [];
+  useEffect(() => {
+    setSourceOptions(
+      shuffleArray(question.matches?.map((match) => match[0]) ?? []),
+    );
+    setTargetOptions(
+      shuffleArray(question.matches?.map((match) => match[1]) ?? []),
+    );
+  }, []);
 
   const handleOptionClick = (optionId: string) => {
     if (isMatchCorrect(optionId)) return;
@@ -61,6 +67,7 @@ export default function PictureMatchingQuestionComponent({
 
     if (!isCorrect) {
       setIncorrectSelection(optionId);
+      setMistakeCount((mistakeCount) => mistakeCount + 1);
       setTimeout(() => {
         setIncorrectSelection(null);
         setSelectedOptionId(null);
@@ -79,8 +86,16 @@ export default function PictureMatchingQuestionComponent({
     setSelectedOptionId(null);
 
     if (updatedMatches.length === question.matches?.length) {
-      setAllCorrect(true);
-      console.log("All correct!");
+      nextQuestion();
+      answerQuestion({
+        questionId: question.question_id,
+        questionType: question.question_type,
+        questionText: question.question_text,
+        selectedOption: "",
+        correctOption: "",
+        isCorrect: true,
+        mistakeCount: mistakeCount,
+      });
     }
   };
 
@@ -110,30 +125,14 @@ export default function PictureMatchingQuestionComponent({
   const handleReset = () => {
     setUserMatches([]);
     setSelectedOptionId(null);
-    setAllCorrect(false);
     setIncorrectSelection(null);
   };
-
-  if (allCorrect) {
-    return (
-      <Card className="flex items-center justify-center border border-green-500/20 bg-green-500/10 p-8 text-center">
-        <div className="space-y-4">
-          <div className="mx-auto w-fit rounded-full bg-green-500/20 p-4">
-            <Check className="h-8 w-8 text-green-500" />
-          </div>
-          <h3 className="text-xl font-semibold text-green-500">
-            Well done! All matches are correct!
-          </h3>
-        </div>
-      </Card>
-    );
-  }
 
   const renderOption = (optionId: string) => (
     <div key={optionId} className="space-y-2">
       <Card
         className={cn(
-          "group relative aspect-video cursor-pointer overflow-hidden border transition-all duration-200 md:aspect-square",
+          "group relative aspect-video h-20 cursor-pointer overflow-hidden border-2 transition-all duration-200 md:aspect-square md:h-full",
           isOptionSelected(optionId)
             ? "border-primary bg-primary/20"
             : isMatchCorrect(optionId)
@@ -187,13 +186,6 @@ export default function PictureMatchingQuestionComponent({
           <RefreshCcw className="mr-2 h-4 w-4" />
           <span className="hidden md:inline">Reset</span>
         </Button>
-      </div>
-
-      {/* Status */}
-      <div className="rounded-lg bg-white/5 py-1 text-center text-white/80 lg:px-4 lg:py-2">
-        {selectedOptionId
-          ? "Now select a matching image"
-          : "Select an image to start matching"}
       </div>
 
       {/* Options */}
