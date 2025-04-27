@@ -29,6 +29,7 @@ export default function VideoQuestionComponent({
       selectedOption: answerId,
       correctOption: correctOption?.option_id!,
       isCorrect,
+      mistakeCount: 0,
     });
     setTimeout(() => {
       nextQuestion();

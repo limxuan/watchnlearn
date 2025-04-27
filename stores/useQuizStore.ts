@@ -4,9 +4,9 @@ export type QuestionTypes =
   | "slideshow"
   | "video"
   | "picture-to-picture"
-  | "label-matching"
+  | "label-to-hotspot"
   | "image-mcq"
-  | "image-hotspot";
+  | "hotspot-mcq";
 
 type AnswerHistory = {
   questionId: string;
@@ -15,6 +15,7 @@ type AnswerHistory = {
   selectedOption: string;
   correctOption: string;
   isCorrect: boolean;
+  mistakeCount: number;
 };
 
 export type QuestionOption = {

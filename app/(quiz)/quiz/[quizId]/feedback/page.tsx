@@ -45,9 +45,10 @@ export default function FeedbackPage() {
         .insert({
           attempt_id: attemptData!.attempt_id,
           question_id: opt.questionId,
-          selected_option_id: opt.selectedOption,
-          correct_option_id: opt.correctOption,
+          selected_option_id: opt.selectedOption || null,
+          correct_option_id: opt.correctOption || null,
           is_correct: opt.isCorrect,
+          mistake_count: opt.mistakeCount || null,
         })
         .then(({ error }) => {
           console.log({ error });

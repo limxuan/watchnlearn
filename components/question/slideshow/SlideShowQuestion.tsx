@@ -52,6 +52,7 @@ export default function SlideShowQuestionComponent({
       selectedOption: answerId,
       correctOption: correctOption?.option_id!,
       isCorrect,
+      mistakeCount: 0,
     });
     setTimeout(() => {
       nextQuestion();
