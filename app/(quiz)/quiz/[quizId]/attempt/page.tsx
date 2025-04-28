@@ -21,7 +21,8 @@ export default async function Attempt({
   const { data: questionsData, error: questionFetchError } = await supabase
     .from("questions")
     .select("*")
-    .eq("quiz_id", quizId);
+    .eq("quiz_id", quizId)
+    .eq("is_active", true);
 
   if (!questionsData) return redirect("/quiz?message=no-questions");
   if (questionFetchError) console.log(questionFetchError);
