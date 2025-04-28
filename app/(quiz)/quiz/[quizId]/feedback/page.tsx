@@ -14,7 +14,8 @@ export default function FeedbackPage() {
   const [hoverRating, setHoverRating] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const { user } = useUserStore();
-  const { startTimestamp, completedTimestamp, answers, quiz } = useQuizStore();
+  const { startTimestamp, completedTimestamp, answers, quiz, resetQuiz } =
+    useQuizStore();
   const supabase = createClient();
   const router = useRouter();
 
@@ -60,6 +61,7 @@ export default function FeedbackPage() {
   const handleSubmit = () => {
     if (rating > 0) {
       setSubmitted(true);
+      resetQuiz();
       SaveQuestionAttempt().then((attemptId) =>
         router.push(`/attempt-summary/${attemptId}`),
       );

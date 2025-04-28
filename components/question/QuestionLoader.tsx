@@ -89,7 +89,7 @@ export default function QuestionLoader({
   };
 
   return (
-    <AuroraBackground>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       <div className="max-h-dvh w-full max-w-3xl space-y-5 rounded-xl p-4 px-4 lg:space-y-8">
         <QuestionLoaderHeader />
 
@@ -118,7 +118,7 @@ export default function QuestionLoader({
           )}
         </AnimatePresence>
       </div>
-    </AuroraBackground>
+    </div>
   );
 }
 
