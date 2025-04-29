@@ -3,6 +3,9 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import useUserStore from "@/stores/useUserStore";
 import InitUserStore from "@/components/init-user-store";
+import { useEffect } from "react";
+import StudentDashboard from "@/components/dashboard/StudentDashboard/StudentDashboard";
+import LecturerDashboard from "@/components/dashboard/LecturerDashboard/LecturerDashboard";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -14,21 +17,18 @@ export default function DashboardPage() {
     router.push("/sign-in");
   };
 
+  useEffect(() => {
+    if (user?.role === "admin") {
+      router.push("/badges-management");
+    }
+  }, [user, router]);
+
+  if (!user) return <InitUserStore />;
+
   return (
     <>
-      {user ? (
-        <>
-          <div className="flex w-full flex-1 flex-col gap-12">
-            Dashboard Page
-          </div>
-          <div>
-            Welcome {user!.username} ({user?.role}) - {user.user_id}
-          </div>
-          <button onClick={handleSignOut}>sign out</button>
-        </>
-      ) : (
-        <InitUserStore />
-      )}
+      {user.role == "student" && <StudentDashboard />}
+      {user.role == "lecturer" && <LecturerDashboard />}
     </>
   );
 }
