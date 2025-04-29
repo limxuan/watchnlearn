@@ -1,8 +1,9 @@
 .all {
-    font-family: 'DejaVu Sans Mono', monospace;
-    background-color: black;
-    color: #333;
-    margin: 0;
+    font-family: 'Canva Sans', sans-serif;
+    background-color: #205781;
+    color: #F6F8D5;
+    margin: 20px;
+    margin-top: 1px;
     padding: 0;
   }
 
@@ -15,137 +16,380 @@
     font-weight: bold;
 }
 
-.QuizDisplay {
-    border: 4px solid #4F959D;
-    background-color: #F6F8D5;
-    margin: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    background-size: auto;
-    color: #205781;
+.badgesContainer{
+    background-color: #205781;
+    display: flex;
+    align-items: center;
+    gap: 4.5px;
+    flex-wrap: wrap;
+    margin-top:4px;
+    cursor: pointer;
 }
 
-.topQuizDisplay {
+.badgesContainer:hover{
+    background-color: #F8F9DC;
+}
+
+.settingButton {
+    margin-left: auto;
+    margin-right: 10px;
+
+}
+
+.settingButton img {
+    width: 23px;
+    height: 23px;
+    margin-left: 21%;
+    filter: brightness(110%)
+    invert(100%)
+    hue-rotate(203deg)
+    saturate(5);
+    mix-blend-mode: color-dodge;
+    background-color: white
+  }
+
+.settingTitle {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin: 6px;
+    margin-bottom: 16px;
+}
+
+.settingTitle img {
+    width: 27px;
+    height: 27px;
+    margin-left: 6px;
+    filter: brightness(110%)
+    invert(100%)
+    hue-rotate(203deg)
+    saturate(5);
+    mix-blend-mode: color-dodge;
+    background-color: white
+}
+
+.passwordContainer{
+    margin: 10px;
+}
+
+.dashContent {
+    margin-left: 45px;
+    margin-top: 60px;
+    display: flex; /* Enable Flexbox for horizontal layout of stats and graph */
+    align-items: flex-start;
+    gap: 70px; /* Spacing between stats and graph */
+
+  }
+
+.dashboardStats {
+    align-items: flex-start;
+
+}
+
+.currentStreak {
+    width: 290px;
+    height: 150px;
+    border: 0.1px solid lightblue;
+    border-radius: 20px;
+    background-color: #4F959D;
+  }
+
+.currentStreak h1 {
+    font-weight: bold;
+    font-size: large;
+    margin-top: 10px;
+    margin-left: 30px;
+
+}
+
+.currentStreak h2 {
+    font-weight: bold;
+    font-size: 50px;
+    margin-left: 60px;
+}
+
+.currentStreak h3 {
+    font-weight: bold;
+    font-size: 20px;
+    margin-top: 9%;
+    margin-left: 19%;
+}
+
+.currentStreak p {
+    font-size: 15px;
+    margin-right: 20px;
+    text-align: right; 
+}
+
+.currentStreak img {
+    margin-top: 15px;
+    margin-left: 10px;
+    filter: brightness(110%) /* Make it brighter to separate from background*/
+            invert(100%) /* Invert colors (white becomes black-ish) */
+            hue-rotate(203deg) /* Colorize */
+            saturate(5);
+    mix-blend-mode: color-dodge;
+    background-color: white;
+}
+
+
+.streak{
+    display: flex;
+}
+
+.lifetimeScore{
+    width: 290px;
+    height: 150px;
+    border: 0.1px solid lightblue;
+    border-radius: 20px;
+    margin-top: 30px;
+    background-color: #4F959D;
+}
+
+.lifetimeScore h1{
+    font-weight: bold;
+    font-size: large;
+    margin-top: 15px;
+    margin-left: 30px;
+}
+
+.lifetimeScore h2 {
+    font-weight: bold;
+    font-size: 45px;
+    margin-top: 3%;
+    margin-left: 23%;
+}
+
+.lifetimeScore p {
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 8%;
+    margin-left: 18%;
+}
+
+.graphContainer{
+    width:65%;
+    height: 300px;
+}
+
+.recentQuiz h1 {
+  margin-left: 30px;
+  margin-top: 20px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.recentQuiz {
+  margin-left: 45px;
+  margin-top: 70px;
+  width: 90%;
+}
+
+.recentQuizContainer {
+  margin-left: 45px;
+  margin-top: 20px;
+  width: 90%;
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
+  gap: 30px; /* Spacing between the boxes */
+}
+
+.singleRecentQuiz {
+  border: 1px solid #fff;
+  border-radius: 20px;
+  width: calc(50% - 30px); 
+  height: auto; /* Adjust height as needed based on content */
+  padding: 15px;
+  cursor: pointer;
+  color: #98D2C0;
+  background-color:#1B496C;
+  position: relative; /* Make sure the container is a positioning context */
+  overflow: hidden;  /*hide overflowing part*/
+}
+  
+.namePercentage {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-}
-
-.titleDisplay {
-    font-size: 19px;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  
+  .namePercentage h1 {
+    font-size: 30px;
     font-weight: bold;
-}
-
-.tabDisplay {
-    text-align: right;
-}
-
-.tab {
-    padding: 10px;
-    display: inline-block;
-    cursor: pointer;
-}
-
-.activeTab {
-    border-bottom: 2px solid darkorange;
-    font-weight: bold;
-    transition: 0.1s;
-}
-
-.AllrecentQuizContainer {
-    overflow: auto;
-    border-radius: 5px;
-    padding: 30px;
-    display: flex;
-    gap: 30px;
-}
-
-.SingleRecentQuizContainer {
-    width: 295px;
-    height: 130px;
-    background-color: #98D2C0;
-    border: 3px solid #4F959D ;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: bold;
-    color: black;
-    flex-shrink: 0;
-    cursor: pointer;
-}
-
-.achievementContainer{
-    border: 1px solid white;
-    padding: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 50px;
-    /*justify-content: center;*/
-    /*flex-wrap: wrap;*/
-}
-
-.SingleAchievementContainer{
-    width: 200px;
-    height: 150px;
-    border: 1px solid red;
-    border-radius: 10px;
-    background-color: white;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: bottom; /* Pushes content to top and bottom => space-between */
-    padding: 1rem;
-    cursor: pointer;    
-}
-
-.achievementText {
-    color: black;
-    text-align: center;
     margin: 0;
-    border: 1px solid #ccc;
-
-    /*flex: 1 1 250px;  Allow shrinking/growing, with base width of 250px  
-    max-width: 45%;
-    min-width: 200px;
-    height: 200px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 1rem;
-    cursor: pointer;
-    background-color: white;
-    color: black;
-    box-sizing: border-box;
-    text-align: center;
-
+}
+  
+  .namePercentage p {
+    font-size: 19px;
+    color: #F6F8D5;
+  }
+  
+  .desCode {
     display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  
+  .desCode p {
+    font-size: 1rem;
+    color: #658C80;
+    margin-left: 7px;
+  }
+  
+  .desCode .joinCode {
+    font-size: 0.9rem;
+    background-color: #4169E1;
+    color: #F6F8D5;
+    padding: 8px 12px;
+    border-radius: 15px;
+    border: none;
+  }
+  
+  .startComplete {
+    display: flex;
+    justify-content: space-between; /* Push start and complete sections to the edges */
+    align-items: center; /* Vertically center items */
+    font-size: 0.9rem;
+    color: #F6F8D5;
+    margin: 10px,0,10px,0;
+  }
+  
+  .startDate {
+    display: flex; /* Stack label and date vertically */
     flex-direction: column;
-    justify-content: flex-end;
-*/
-}
+    align-items: flex-start; /* Align items to the start (left) */
+  }
 
-
-@media (max-width: 1024px) {
-    .SingleAchievementContainer {
-      width: 200px;
-      height: 180px;
-    }
+  .startDate h1 {
+    color: #98D2C0;
+    margin: 0px;
+    font-size: 20px;
   }
   
-  @media (max-width: 768px) {
-    .SingleAchievementContainer {
-      width: 45%; /* Two per row */
-      height: 160px;
-    }
+  .completeDate {
+    display: flex; /* Stack label and date vertically */
+    flex-direction: column;
+    align-items: flex-end; /* Align items to the end (right) */
+  }
+
+  .completeDate h1 {
+    color: #98D2C0;
+    margin: 0px;
+    font-size: 20px;
+
   }
   
-  @media (max-width: 480px) {
-    .SingleAchievementContainer {
-      width: 100%; /* Stack vertically */
-      height: 150px;
+  .startCompleteImg {
+    margin: 0 10px; /* Add horizontal margin around the arrow */
+    width: 35px;
+    height: 35px; 
+    filter: brightness(1) invert(1);
+  }
+  
+  
+
+  
+
+
+@media (max-width: 768px) {
+    .dashContent {
+        flex-direction: column; /* Stack items vertically on mobile */
+        margin-left: 15px;
+        margin-top: 30px;
+        gap: 30px; /* Spacing between stats and graph */
     }
+
+    .dashboardStats {
+        display: flex; /* Arrange streak and score side by side on mobile */
+        justify-content: space-between;
+        gap: 15px;
+        align-items: stretch; /* Ensure items try to be the same height */
+        width: 100%;
+    }
+  
+    .currentStreak {
+      width: calc(50% - 15px); /*Take up roughly half the width with some spacing */
+      height: auto;
+    }
+  
+    .lifetimeScore {
+      width: calc(50% - 15px); 
+      margin-top: 0;
+      height: auto; 
+    }
+  
+    .currentStreak h1 {
+      margin-left: 9%;
+      margin-top: 5px;
+      font-size: medium;
+    }
+  
+    .currentStreak h2 {
+      font-size: 30px;
+      margin-top: 6px;
+      margin-left: 15%;
+    }
+  
+    .currentStreak h3 {
+      font-size: 11px;
+      margin-top: 5%;
+      margin-bottom: 10%;
+      margin-left: 10%;
+    }
+  
+    .currentStreak p {
+      font-size: 12px;
+      margin-right: 12px;
+      padding-bottom: 6px;
+    }
+  
+    .currentStreak img {
+      width: 50px;
+      height: 50px;
+      margin-top: 3px;
+      margin-left: 5px;
+    }
+  
+    .lifetimeScore h1 {
+      margin-left: 9%;
+      margin-top: 5px;
+      font-size: medium;
+    }
+  
+    .lifetimeScore h2 {
+      font-size: 30px;
+      margin-top: 2%;
+      margin-left: 13%;
+    }
+  
+    .lifetimeScore p {
+      font-size: 11px;
+      margin-top: 5%;
+      margin-bottom: 10%;
+      margin-left: 10%;
+    }
+
+    .graphContainer {
+        width: 100%; /* Take up roughly half the width with some spacing */
+      }
+
+    .recentQuiz {
+        margin-left: 0px;
+    }
+
+    .recentQuizContainer {
+        margin-left: 11%;
+      }
+    
+    .singleRecentQuiz {
+        width: 100%;
+    }
+
+
+
+
   }
 
 
@@ -154,34 +398,7 @@
 
 
 
-/*
-.AllrecentQuizContainer {
-    overflow: auto;
-    border:1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 30px
-}
 
-.RecentQuizContainer{
-    padding: 10px;
-    border:1px solid #ccc;
-    display: flex;
-    gap: 30px;
-}
 
-.SingleRecentQuizContainer {
-    width: 200px;
-    height: 130px;
-    background-color: white;
-    border: 3px solid red ;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: bold;
-    color: black;
-    flex-shrink: 0;
-}
-*/
+/*background-image: none;  Initially hide the background image */
+/*transition: background-image 0.3s ease-in-out; /* Optional: Add a smooth transition */
