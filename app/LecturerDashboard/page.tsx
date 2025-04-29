@@ -107,7 +107,6 @@ const StudentDashboard = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [newUsername, setNewUsername] = useState('');
   const [newPfpUrl, setNewPfpUrl] = useState('');
-  const [newPassword, setNewPassword] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [currentPasswordInput, setCurrentPasswordInput] = useState('');
   const [isCurrentPasswordCorrect, setIsCurrentPasswordCorrect] = useState(false);
@@ -234,7 +233,6 @@ const handleEditProfile = async () => {
   } else {
     setShowConfirmation(true);
     if (Object.keys(updates).length > 0) {
-      // Optionally, you might want to refetch user info here to update the UI immediately
     }
 
     setCurrentPasswordInput('');
@@ -592,8 +590,11 @@ interface Quiz {
                           if (e.target.files && e.target.files.length > 0) {
                             const file = e.target.files[0];
                             const newUrl = await uploadProfilePicture(file);
+
+                            // change table here/
                             if (newUrl) {
                               setNewPfpUrl(newUrl);
+                            
                             } else {
                               console.error("Failed to upload profile picture.");
                             }
@@ -732,7 +733,7 @@ interface Quiz {
                 </div>
                 <div className="relative">
                   <div
-                    className="absolute inset-y-0 left-[-8px] h-full w-0.5 bg-grey md:left-[-8px] md:top-auto md:bottom-auto md:h-auto md:w-full md:bg-transparent"
+                    className="absolute t-y-0 left-[-8px] h-full w-0.5 bg-grey md:left-[-8px] md:top-auto md:bottom-auto md:h-auto md:w-full md:bg-transparent"
                     style={{ height: '35px' }}
                   />
                   <Button className="ml-4">Log Out</Button>
