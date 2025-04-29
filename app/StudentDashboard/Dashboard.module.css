@@ -1,0 +1,187 @@
+.all {
+    font-family: 'DejaVu Sans Mono', monospace;
+    background-color: black;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+
+.pageHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.QuizDisplay {
+    border: 4px solid #4F959D;
+    background-color: #F6F8D5;
+    margin: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-size: auto;
+    color: #205781;
+}
+
+.topQuizDisplay {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.titleDisplay {
+    font-size: 19px;
+    font-weight: bold;
+}
+
+.tabDisplay {
+    text-align: right;
+}
+
+.tab {
+    padding: 10px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.activeTab {
+    border-bottom: 2px solid darkorange;
+    font-weight: bold;
+    transition: 0.1s;
+}
+
+.AllrecentQuizContainer {
+    overflow: auto;
+    border-radius: 5px;
+    padding: 30px;
+    display: flex;
+    gap: 30px;
+}
+
+.SingleRecentQuizContainer {
+    width: 295px;
+    height: 130px;
+    background-color: #98D2C0;
+    border: 3px solid #4F959D ;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.achievementContainer{
+    border: 1px solid white;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 50px;
+    /*justify-content: center;*/
+    /*flex-wrap: wrap;*/
+}
+
+.SingleAchievementContainer{
+    width: 200px;
+    height: 150px;
+    border: 1px solid red;
+    border-radius: 10px;
+    background-color: white;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: bottom; /* Pushes content to top and bottom => space-between */
+    padding: 1rem;
+    cursor: pointer;    
+}
+
+.achievementText {
+    color: black;
+    text-align: center;
+    margin: 0;
+    border: 1px solid #ccc;
+
+    /*flex: 1 1 250px;  Allow shrinking/growing, with base width of 250px  
+    max-width: 45%;
+    min-width: 200px;
+    height: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 1rem;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    box-sizing: border-box;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+*/
+}
+
+
+@media (max-width: 1024px) {
+    .SingleAchievementContainer {
+      width: 200px;
+      height: 180px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .SingleAchievementContainer {
+      width: 45%; /* Two per row */
+      height: 160px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .SingleAchievementContainer {
+      width: 100%; /* Stack vertically */
+      height: 150px;
+    }
+  }
+
+
+
+
+
+
+
+/*
+.AllrecentQuizContainer {
+    overflow: auto;
+    border:1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 30px
+}
+
+.RecentQuizContainer{
+    padding: 10px;
+    border:1px solid #ccc;
+    display: flex;
+    gap: 30px;
+}
+
+.SingleRecentQuizContainer {
+    width: 200px;
+    height: 130px;
+    background-color: white;
+    border: 3px solid red ;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    flex-shrink: 0;
+}
+*/
