@@ -11,8 +11,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "Watch&Learn",
+  description: "THE quiz platform for Visual Learners",
 };
 
 const geistSans = Geist({
@@ -37,7 +37,7 @@ export default async function RootLayout({
         >
           <ClientOnly>
             <InitUserStore />
-            <main className="flex min-h-screen flex-col items-center bg-black">
+            <div className="min-w-dvw flex min-h-dvh flex-col">
               <Navbar />
               <div className="w-full flex-1">{children}</div>
             </main>
