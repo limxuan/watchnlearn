@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Check, RefreshCcw } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn, shuffleArray } from "@/lib/utils";
 import ZoomImage from "@/components/ui/zoom-image";
 import useQuizStore, { Question } from "@/stores/useQuizStore";
 import { ArrowRight } from "lucide-react";
+import ResetButton from "@/components/question/ResetButton";
 
 interface PictureMatchingPair {
   source_option_id: string;
@@ -173,19 +173,11 @@ export default function PictureMatchingQuestionComponent({
   return (
     <div className="flex w-full flex-col gap-4">
       {/* Header */}
-      <div className="relative flex items-center justify-between rounded-lg border border-b border-white/20 bg-gray-500/30 p-1 backdrop-blur-lg lg:p-6">
+      <div className="relative flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-1 text-card-foreground shadow-xl backdrop-blur-xl lg:p-6">
         <h1 className="pl-1 text-sm font-semibold text-white lg:pr-16 lg:text-2xl">
           {question.question_text}
         </h1>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleReset}
-          className="bg-transparent text-white/60 hover:text-white"
-        >
-          <RefreshCcw className="mr-2 h-4 w-4" />
-          <span className="hidden md:inline">Reset</span>
-        </Button>
+        <ResetButton onClick={handleReset} />
       </div>
 
       {/* Options */}

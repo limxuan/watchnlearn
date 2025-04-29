@@ -3,9 +3,22 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Question, QuestionOption } from "@/stores/useQuizStore";
 import { cn } from "@/lib/utils";
-import { RefreshCw } from "lucide-react";
+import useQuizStore, { Question } from "@/stores/useQuizStore";
+import ResetButton from "@/components/question/ResetButton";
+
+const HOTSPOT_COLORS = [
+  "oklch(80.8% 0.114 19.571)",
+  "oklch(88.2% 0.059 254.128)",
+  "oklch(92.5% 0.084 155.995)", // Gray
+];
+
+const HOTSPOT_BG_CLASSES = ["bg-red-500", "bg-blue-400", "bg-green-300"];
+const HOTSPOT_TEXT_CLASSES = [
+  "text-red-500",
+  "text-blue-400",
+  "text-green-300",
+];
 
 export default function ImageHotspotQuestionComponent({
   question,
@@ -15,43 +28,38 @@ export default function ImageHotspotQuestionComponent({
   const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
   const [matches, setMatches] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
+  const { answerQuestion, nextQuestion } = useQuizStore();
+  const [mistakeCount, setMistakeCount] = useState(0);
 
-  const validOptions = question.question_options.filter(
-    (opt) =>
-      opt.is_active && opt.pos_x !== undefined && opt.pos_y !== undefined,
-  );
-
-  const handleLabelClick = (option: QuestionOption) => {
+  const handleLabelClick = (optionId: string) => {
     if (showResults) return;
-    setSelectedLabel((prev) =>
-      prev === option.option_id ? null : option.option_id,
-    );
+    setSelectedLabel((prev) => (prev === optionId ? null : optionId));
   };
 
-  const handleHotspotClick = (optionId: string) => {
+  const handleHotspotClick = (hotspotId: string) => {
     if (showResults) return;
     if (!selectedLabel) return;
 
     setMatches((prev) => {
       const newMatches = { ...prev };
 
-      // Remove previous match for this hotspot
-      const existing = Object.entries(newMatches).find(
-        ([_, value]) => value === optionId,
+      // Remove any existing matches for this hotspot
+      const existingLabelForHotspot = Object.entries(newMatches).find(
+        ([_, value]) => value === hotspotId,
       );
-      if (existing) {
-        delete newMatches[existing[0]];
+      if (existingLabelForHotspot) {
+        delete newMatches[existingLabelForHotspot[0]];
       }
 
-      // Remove old match for this label
+      // If this label was already matched somewhere else, remove that match
       if (newMatches[selectedLabel]) {
         delete newMatches[selectedLabel];
       }
 
-      // Set new match
+      // Add new match
       return {
         ...newMatches,
-        [selectedLabel]: optionId,
+        [selectedLabel]: hotspotId,
       };
     });
 
@@ -60,7 +68,29 @@ export default function ImageHotspotQuestionComponent({
 
   const handleSubmit = () => {
     setShowResults(true);
-    console.log("ANSWERS SUBMITTEDD!!!");
+
+    const correctQuestions = Object.entries(matches).filter(
+      ([k, v]) => k === v,
+    ).length;
+    console.log({ correctQuestions });
+    setTimeout(() => {
+      if (correctQuestions != question.question_options.length) {
+        setMistakeCount((prev) => prev + 1);
+        handleReset();
+      } else {
+        console.log({ mistakeCount });
+        answerQuestion({
+          questionId: question.question_id,
+          questionType: question.question_type,
+          questionText: question.question_text,
+          isCorrect: true,
+          selectedOption: "",
+          correctOption: "",
+          mistakeCount: mistakeCount,
+        });
+        nextQuestion();
+      }
+    }, 1500);
   };
 
   const handleReset = () => {
@@ -69,87 +99,79 @@ export default function ImageHotspotQuestionComponent({
     setShowResults(false);
   };
 
-  const isHotspotMatched = (optionId: string) => {
-    return Object.values(matches).includes(optionId);
+  const isHotspotMatched = (hotspotId: string) => {
+    return Object.values(matches).includes(hotspotId);
   };
 
-  const getHotspotColor = (optionId: string) => {
-    const matched = Object.entries(matches).find(
-      ([_, value]) => value === optionId,
+  const getHotspotColor = (hotspotId: string) => {
+    const matchedLabel = Object.entries(matches).find(
+      ([_, value]) => value === hotspotId,
     );
-    if (!matched) return "transparent";
-
-    const option = validOptions.find((o) => o.option_id === matched[0]);
-    return option?.is_correct ? "#22c55e" : "#ef4444"; // green if correct, red if wrong
+    if (!matchedLabel) return "transparent";
+    const hotspotIndex = question.question_options.findIndex(
+      (h) => h.option_id === matchedLabel[0],
+    );
+    return HOTSPOT_COLORS[hotspotIndex % HOTSPOT_COLORS.length];
   };
 
-  const isCorrectMatch = (optionId: string) => {
+  const isCorrectMatch = (hotspotId: string) => {
     if (!showResults) return false;
-    const matched = Object.entries(matches).find(
-      ([_, value]) => value === optionId,
+    const matchedLabel = Object.entries(matches).find(
+      ([_, value]) => value === hotspotId,
     );
-    if (!matched) return false;
+    if (!matchedLabel) return false;
 
-    const selected = validOptions.find((opt) => opt.option_id === matched[0]);
-    const target = validOptions.find((opt) => opt.option_id === optionId);
-    return selected?.option_id === target?.option_id;
+    return matchedLabel[0] === hotspotId;
   };
 
   return (
     <div className="flex w-full flex-col gap-4 md:gap-6">
-      <Card className="border border-white/20 bg-background/80 p-4 md:p-6">
-        <div className="mb-4 flex items-center justify-between md:mb-6">
-          <h2 className="text-lg font-semibold text-white md:text-xl">
+      <Card className="flex flex-col items-center border border-white/20 bg-gray-500/10 p-4 md:p-7">
+        <div className="mb-4 flex w-full items-center justify-between md:mb-6">
+          <h2 className="pl-1 text-sm font-semibold text-white lg:pr-16 lg:text-2xl">
             {question.question_text}
           </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleReset}
-            className="text-white/60 hover:text-white"
-          >
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Reset
-          </Button>
+          <ResetButton onClick={handleReset} />
         </div>
 
-        <div className="relative mx-auto aspect-[16/9] w-full max-w-4xl">
-          {question.image_urls?.[0] && (
-            <img
-              src={question.image_urls[0]}
-              alt={question.question_text}
-              className="h-full w-full object-contain"
-            />
+        <div className="relative w-full max-w-xl">
+          <img
+            src={question.image_urls![0]}
+            alt={question.question_text}
+            className="w-full bg-blue-300 object-contain"
+          />
+
+          {question.question_options.map(
+            ({ option_id, pos_x, pos_y, option_text }) => (
+              <button
+                key={option_id}
+                onClick={() => handleHotspotClick(option_id)}
+                className={cn(
+                  `absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-200 md:h-10 md:w-10 ${getHotspotColor}`,
+                  isHotspotMatched(option_id)
+                    ? "ring-2"
+                    : selectedLabel
+                      ? "animate-pulse cursor-pointer ring-2 ring-white"
+                      : "cursor-pointer ring-2 ring-white/50 hover:ring-white",
+                  showResults && isCorrectMatch(option_id)
+                    ? "ring-green-500"
+                    : showResults && isHotspotMatched(option_id)
+                      ? "ring-red-500"
+                      : "",
+                )}
+                style={{
+                  left: `${pos_x}%`,
+                  top: `${pos_y}%`,
+                  backgroundColor: getHotspotColor(option_id),
+                }}
+              >
+                <span className="sr-only">Hotspot for {option_text}</span>
+              </button>
+            ),
           )}
-
-          {validOptions.map((option) => (
-            <button
-              key={option.option_id}
-              onClick={() => handleHotspotClick(option.option_id)}
-              className={cn(
-                "absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-200 md:h-10 md:w-10",
-                isHotspotMatched(option.option_id)
-                  ? "ring-2"
-                  : selectedLabel
-                    ? "animate-pulse cursor-pointer ring-2 ring-white"
-                    : "cursor-pointer ring-2 ring-white/50 hover:ring-white",
-                showResults && isCorrectMatch(option.option_id)
-                  ? "ring-green-500"
-                  : showResults && isHotspotMatched(option.option_id)
-                    ? "ring-red-500"
-                    : "",
-              )}
-              style={{
-                left: `${option.pos_x}%`,
-                top: `${option.pos_y}%`,
-                backgroundColor: getHotspotColor(option.option_id),
-              }}
-            >
-              <span className="sr-only">Hotspot for {option.option_text}</span>
-            </button>
-          ))}
         </div>
 
+        {/* Helper text */}
         <p className="mt-4 text-center text-white/70">
           {showResults
             ? "Review your answers above"
@@ -160,32 +182,33 @@ export default function ImageHotspotQuestionComponent({
       </Card>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-        {validOptions.map((option) => (
+        {question.question_options.map(({ option_id, option_text }, index) => (
           <Button
-            key={option.option_id}
-            onClick={() => handleLabelClick(option)}
+            key={option_id}
+            onClick={() => handleLabelClick(option_id)}
             className={cn(
-              "relative h-12 transition-all duration-200 md:h-14",
-              selectedLabel === option.option_id
-                ? "ring-2 ring-offset-2"
-                : matches[option.option_id] && !showResults
-                  ? "opacity-75"
-                  : "",
-              showResults && matches[option.option_id] === option.option_id
+              "relative h-12 rounded-md border bg-gray-500/30 px-4 py-2 transition-all duration-200 hover:text-black md:h-14",
+              selectedLabel === option_id
+                ? [
+                    HOTSPOT_BG_CLASSES[index % HOTSPOT_BG_CLASSES.length],
+                    "text-white",
+                    "ring-2 ring-offset-2",
+                  ]
+                : matches[option_id] && !showResults
+                  ? [
+                      "opacity-75",
+                      HOTSPOT_TEXT_CLASSES[index % HOTSPOT_TEXT_CLASSES.length],
+                    ]
+                  : HOTSPOT_TEXT_CLASSES[index % HOTSPOT_TEXT_CLASSES.length],
+              showResults && matches[option_id] === option_id
                 ? "ring-2 ring-green-500"
-                : showResults && matches[option.option_id]
+                : showResults && matches[option_id]
                   ? "ring-2 ring-red-500"
                   : "",
             )}
-            style={{
-              backgroundColor:
-                selectedLabel === option.option_id ? "#0ea5e9" : "transparent",
-              borderColor: "#0ea5e9",
-              color: selectedLabel === option.option_id ? "white" : "#0ea5e9",
-            }}
             disabled={showResults}
           >
-            {option.option_text}
+            {option_text}
           </Button>
         ))}
       </div>
@@ -194,7 +217,8 @@ export default function ImageHotspotQuestionComponent({
         onClick={handleSubmit}
         className="mt-2 w-full"
         disabled={
-          Object.keys(matches).length !== validOptions.length || showResults
+          Object.keys(matches).length !== question.question_options.length ||
+          showResults
         }
       >
         Check Answers

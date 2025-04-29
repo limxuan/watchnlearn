@@ -120,7 +120,7 @@ export default async function QuizSummaryPage({
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4 text-white md:p-8">
+    <div className="min-h-dvh bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4 text-white md:p-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="space-y-6">

@@ -14,7 +14,7 @@ function PrevButton({ onClick, disabled, className }: NavigationButtonProps) {
       variant="secondary"
       size="icon"
       className={cn(
-        "rounded-full border border-white/20 bg-white/10 text-white shadow-lg hover:bg-white/20",
+        "rounded-full border border-white/20 bg-white/10 text-white shadow-lg backdrop-blur-sm hover:bg-white/20",
         disabled && "cursor-not-allowed opacity-50",
         className,
       )}
@@ -33,7 +33,7 @@ function NextButton({ onClick, disabled, className }: NavigationButtonProps) {
       variant="secondary"
       size="icon"
       className={cn(
-        "rounded-full border border-white/20 bg-white/10 text-white shadow-lg hover:bg-white/20",
+        "rounded-full border border-white/20 bg-white/10 text-white shadow-lg backdrop-blur-sm hover:bg-white/20",
         disabled && "cursor-not-allowed opacity-50",
         className,
       )}

@@ -49,7 +49,7 @@ export default function FeedbackPage() {
           selected_option_id: opt.selectedOption || null,
           correct_option_id: opt.correctOption || null,
           is_correct: opt.isCorrect,
-          mistake_count: opt.mistakeCount || null,
+          mistake_count: opt.mistakeCount === null ? null : opt.mistakeCount,
         })
         .then(({ error }) => {
           console.log({ error });

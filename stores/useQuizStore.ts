@@ -15,7 +15,7 @@ export type AnswerHistory = {
   selectedOption: string;
   correctOption: string;
   isCorrect: boolean;
-  mistakeCount: number;
+  mistakeCount?: number;
 };
 
 export type QuestionAttempt = {

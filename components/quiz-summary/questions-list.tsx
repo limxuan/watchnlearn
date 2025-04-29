@@ -217,7 +217,6 @@ function QuestionCard({
     null,
   );
   useEffect(() => {
-    console.log({ attempt });
     fetchQuestion(attempt.question_id).then((q) => {
       setQuestion(q.data);
     });
@@ -347,7 +346,9 @@ function QuestionCard({
                   </>
                 )}
 
-                {attempt.mistake_count && (
+                {(
+                  ["picture-to-picture", "label-to-hotspot"] as QuestionTypes[]
+                ).includes(question.question_type) && (
                   <div>
                     <p className="text-xs text-white/60 sm:text-sm">
                       Mistakes Made
@@ -371,7 +372,9 @@ function QuestionCard({
                   </div>
                 )}
 
-                {question.question_type === "picture-to-picture" && (
+                {(
+                  ["picture-to-picture", "label-to-hotspot"] as QuestionTypes[]
+                ).includes(question.question_type) && (
                   <div className="rounded-md bg-white/5 p-2 backdrop-blur-md sm:p-3">
                     <p className="mb-1 text-xs text-white/60 sm:mb-2 sm:text-sm">
                       Note:
