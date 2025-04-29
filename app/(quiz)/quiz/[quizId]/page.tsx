@@ -27,7 +27,7 @@ type Quiz = {
 export default async function QuizDetailsPage({
   params,
 }: {
-  params: { quizId: string };
+  params: Promise<{ quizId: string }>;
 }) {
   const { quizId } = await params;
   const supabase = await createClient();
@@ -133,5 +133,4 @@ export default async function QuizDetailsPage({
       </div>
     </FlexCenter>
   );
-
 }

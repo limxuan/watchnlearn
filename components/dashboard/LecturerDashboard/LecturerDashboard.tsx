@@ -654,17 +654,17 @@ const LecturerDashboard = () => {
                               setIsCollapseOpen(false);
                               setCurrentPasswordError("");
                             } else {
-                              if (user?.password === currentPasswordInput) {
-                                setIsCurrentPasswordCorrect(true);
-                                setIsCollapseOpen(true);
-                                setCurrentPasswordError("");
-                              } else {
-                                setIsCurrentPasswordCorrect(false);
-                                setIsCollapseOpen(false);
-                                setCurrentPasswordError(
-                                  "Incorrect current password.",
-                                );
-                              }
+                              // if (user?.password === currentPasswordInput) {
+                              //   setIsCurrentPasswordCorrect(true);
+                              //   setIsCollapseOpen(true);
+                              //   setCurrentPasswordError("");
+                              // } else {
+                              //   setIsCurrentPasswordCorrect(false);
+                              //   setIsCollapseOpen(false);
+                              //   setCurrentPasswordError(
+                              //     "Incorrect current password.",
+                              //   );
+                              // }
                             }
                           }}
                         >

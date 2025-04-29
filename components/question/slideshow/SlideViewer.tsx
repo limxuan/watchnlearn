@@ -1,25 +1,15 @@
 "use client";
 
-import { Slide } from "@/types/quiz";
 import ZoomImage from "@/components/ui/zoom-image";
 import { cn } from "@/lib/utils";
 
-interface SlideViewerProps {
-  slide: Slide;
-  className?: string;
-}
-
-export default function SlideViewer({ slide, className }: SlideViewerProps) {
+export default function SlideViewer({ slide, className }: any) {
   return (
     <div className={cn("relative bg-background/40", className)}>
       {slide.imageUrl ? (
-        <ZoomImage
-          src={slide.imageUrl}
-          alt={slide.alt}
-          aspectRatio="video"
-        />
+        <ZoomImage src={slide.imageUrl} alt={slide.alt} aspectRatio="video" />
       ) : (
-        <div className="flex items-center justify-center h-full text-white/60">
+        <div className="flex h-full items-center justify-center text-white/60">
           No image available
         </div>
       )}

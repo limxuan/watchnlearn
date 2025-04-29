@@ -95,7 +95,7 @@ async function getQuizAttempt(attemptId: string): Promise<{
 export default async function QuizSummaryPage({
   params,
 }: {
-  params: { attemptId: string };
+  params: Promise<{ attemptId: string }>;
 }) {
   const data = await getQuizAttempt((await params).attemptId);
 

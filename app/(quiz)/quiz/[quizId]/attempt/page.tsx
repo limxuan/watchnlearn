@@ -3,11 +3,7 @@ import { Question } from "@/stores/useQuizStore";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-export default async function Attempt({
-  params,
-}: {
-  params: { quizId: string };
-}) {
+export default async function Attempt({ params }: { params: Promise<any> }) {
   const supabase = await createClient();
   const { quizId } = await params;
   const { data: quizData, error: quizFetchError } = await supabase

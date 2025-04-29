@@ -126,7 +126,7 @@ export default async function SummaryStats({
               <Progress
                 value={Math.round((stats.correct / stats.total) * 100)}
                 className="h-1.5 bg-white/10"
-                indicatorclassname="bg-sky-400/80"
+                // indicatorclassname="bg-sky-400/80"
               />
             </div>
           ))}

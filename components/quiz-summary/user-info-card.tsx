@@ -65,7 +65,7 @@ export default function UserInfoCard({
         <Progress
           value={scorePercentage}
           className="mb-4 h-1.5 bg-white/10"
-          indicatorclassname={`${scorePercentage >= 80 ? "bg-emerald-400/80" : scorePercentage >= 60 ? "bg-amber-400/80" : "bg-rose-400/80"}`}
+          // indicatorclassname={`${scorePercentage >= 80 ? "bg-emerald-400/80" : scorePercentage >= 60 ? "bg-amber-400/80" : "bg-rose-400/80"}`}
         />
 
         <div className="mb-2 flex items-center gap-3 sm:mb-0">
