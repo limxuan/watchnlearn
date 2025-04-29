@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type QuestionTypes =
   | "slideshow"
@@ -76,43 +77,68 @@ type QuizStore = {
   setCompletedTimestamp: (timestamp: number) => void;
 };
 
-const useQuizStore = create<QuizStore>((set) => ({
-  quiz: null,
-  questions: [],
-  currentIndex: 0,
-  answers: [],
-  quizOngoing: false,
-  startTimestamp: 0,
-  completedTimestamp: 0,
-  setQuiz: (quiz) => set({ quiz }),
-  loadQuestions: (qs) =>
-    set({ questions: qs, currentIndex: 0, answers: [], quizOngoing: true }),
-  answerQuestion: (answer) =>
-    set((state) => ({
-      answers: [...state.answers, answer],
-    })),
-  nextQuestion: () =>
-    set((state) => {
-      const isLastQuestion = state.currentIndex >= state.questions.length - 1;
-      if (isLastQuestion) {
-        return {
-          completedTimestamp: Date.now(),
-        };
-      } else {
-        return {
-          currentIndex: state.currentIndex + 1,
-        };
-      }
-    }),
-  resetQuiz: () =>
-    set(() => ({
+const useQuizStore = create<QuizStore>()(
+  persist(
+    (set) => ({
+      quiz: null,
       questions: [],
       currentIndex: 0,
       answers: [],
       quizOngoing: false,
-    })),
-  setStartTimestamp: (timestamp) => set({ startTimestamp: timestamp }),
-  setCompletedTimestamp: (timestamp) => set({ completedTimestamp: timestamp }),
-}));
+      startTimestamp: 0,
+      completedTimestamp: 0,
+      setQuiz: (quiz) => set({ quiz }),
+      loadQuestions: (qs) =>
+        set({ questions: qs, currentIndex: 0, answers: [], quizOngoing: true }),
+      answerQuestion: (answer) =>
+        set((state) => ({
+          answers: [...state.answers, answer],
+        })),
+      nextQuestion: () =>
+        set((state) => {
+          const isLastQuestion =
+            state.currentIndex >= state.questions.length - 1;
+          if (isLastQuestion) {
+            return {
+              completedTimestamp: Date.now(),
+              quizOngoing: false,
+            };
+          } else {
+            return {
+              currentIndex: state.currentIndex + 1,
+            };
+          }
+        }),
+      resetQuiz: () =>
+        set(() => ({
+          quiz: null,
+          questions: [],
+          currentIndex: 0,
+          answers: [],
+          quizOngoing: false,
+          startTimestamp: 0,
+          completedTimestamp: 0,
+        })),
+      setStartTimestamp: (timestamp) => set({ startTimestamp: timestamp }),
+      setCompletedTimestamp: (timestamp) =>
+        set({ completedTimestamp: timestamp }),
+    }),
+    {
+      name: "quiz-storage", // unique name for the storage item
+      storage: createJSONStorage(() => localStorage), // (optional) by default, it uses localStorage
+      // Here, I've added a `partialize` similar to your user store example
+      // You can adjust which properties you want to persist based on your needs.
+      partialize: (state) => ({
+        quiz: state.quiz,
+        questions: state.questions,
+        currentIndex: state.currentIndex,
+        answers: state.answers,
+        quizOngoing: state.quizOngoing,
+        startTimestamp: state.startTimestamp,
+        completedTimestamp: state.completedTimestamp,
+      }),
+    },
+  ),
+);
 
 export default useQuizStore;

@@ -35,32 +35,40 @@ export default function QuestionLoader({
   const [prevIndex, setPrevIndex] = useState(0);
 
   useEffect(() => {
-    setQuiz(quizData);
-    setStartTimestamp(Date.now());
+    if (questions.length === 0) {
+      setQuiz(quizData);
+      setStartTimestamp(Date.now());
 
-    // append question matches if available for picture to picture question type
-    Promise.all(
-      questionsData.map((question) => {
-        if (question.question_type !== "picture-to-picture") return question;
-        return supabase
-          .from("question_matches")
-          .select("source_option_id, target_option_id")
-          .eq("question_id", question.question_id)
-          .then(({ data }) => {
-            return {
-              ...question,
-              matches: data!.map(({ source_option_id, target_option_id }) => [
-                source_option_id,
-                target_option_id,
-              ]),
-            };
-          });
-      }),
-    ).then((q) => {
-      loadQuestions(q as Question[]);
-    });
+      Promise.all(
+        questionsData.map((question) => {
+          if (question.question_type !== "picture-to-picture") return question;
+          return supabase
+            .from("question_matches")
+            .select("source_option_id, target_option_id")
+            .eq("question_id", question.question_id)
+            .then(({ data }) => {
+              return {
+                ...question,
+                matches: data!.map(({ source_option_id, target_option_id }) => [
+                  source_option_id,
+                  target_option_id,
+                ]),
+              };
+            });
+        }),
+      ).then((q) => {
+        loadQuestions(q as Question[]);
+      });
+    }
     console.log("client", questionsData, quizData);
-  }, [loadQuestions, questionsData, quizData, setQuiz, setStartTimestamp]);
+  }, [
+    loadQuestions,
+    questionsData,
+    quizData,
+    setQuiz,
+    setStartTimestamp,
+    questions,
+  ]);
 
   useEffect(() => {
     setDirection(currentIndex > prevIndex ? 1 : -1);
