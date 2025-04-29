@@ -133,4 +133,5 @@ export default async function QuizDetailsPage({
       </div>
     </FlexCenter>
   );
+
 }

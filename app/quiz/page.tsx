@@ -1,19 +1,13 @@
-import { createClient } from "@/utils/supabase/server";
-import Link from "next/link";
+'use client';
+import { useRouter } from "next/navigation";
+import React from "react";
+import ExplorePage from "@/components/explore-page";
 
-export default async function QuizPage() {
-  const supabase = await createClient();
-  const { data } = await supabase.from("quizzes").select("quiz_id");
-  console.log(data);
-  return (
-    <div className="space-y-2">
-      {data?.map((quiz) => (
-        <Link key={quiz.quiz_id} href={`/quiz/${quiz.quiz_id}`}>
-          <div className="text-blue-600 hover:underline">
-            Quiz {quiz.quiz_id}
-          </div>
-        </Link>
-      ))}
-    </div>
-  );
+export default function QuizPage() {
+   const router = useRouter();
+   return (
+      <>
+         <ExplorePage />
+      </>
+   );
 }
