@@ -252,14 +252,8 @@ function QuestionCard({
                     className={`${getQuestionTypeColor(question.question_type)} flex items-center gap-1 px-2 py-0.5 text-xs`}
                   >
                     {getQuestionTypeIcon(question.question_type)}
-                    <span className="hidden text-xs sm:inline">
+                    <span className="text-xs sm:inline">
                       {formatQuestionType(question.question_type)}
-                    </span>
-                    <span className="text-xs sm:hidden">
-                      {formatQuestionType(question.question_type).substring(
-                        0,
-                        3,
-                      )}
                     </span>
                   </Badge>
                 </div>
@@ -385,6 +379,20 @@ function QuestionCard({
                     </p>
                   </div>
                 )}
+
+                {(["hotspot-mcq"] as QuestionTypes[]).includes(
+                  question.question_type,
+                ) &&
+                  !attempt.is_correct && (
+                    <div className="rounded-md bg-white/5 p-2 backdrop-blur-md sm:p-3">
+                      <p className="mb-1 text-xs text-white/60 sm:mb-2 sm:text-sm">
+                        Note:
+                      </p>
+                      <p className="text-xs sm:text-sm">
+                        You have selected the wrong hotspot!
+                      </p>
+                    </div>
+                  )}
 
                 <div
                   className={`rounded-md p-2 sm:p-3 ${attempt.is_correct ? "bg-emerald-500/10" : "bg-rose-500/10"}`}
