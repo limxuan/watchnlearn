@@ -354,6 +354,10 @@
   .editDelete {
     gap: 8px;
   }
+
+  .uploadProfilePictureButton > label{
+    font-size: 11px;
+  }
 }
 
 /*background-image: none;  Initially hide the background image */

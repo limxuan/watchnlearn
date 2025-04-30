@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client"; //database
-import uploadProfilePicture from "@/utils/uploadProfilePicture"; //upload pfp
+import { createClient } from "@/utils/supabase/client";
+import uploadProfilePicture from "@/utils/uploadProfilePicture";
 
 import styles from "./LecturerDashboard.module.css";
-import { useRouter } from "next/navigation"; //for future navigation to specific quiz use
-
-//use grid layout
+import { useRouter } from "next/navigation";
 
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,22 +24,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronsUpDown, ChevronsUp, ChevronsDown } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { ChevronsUp, ChevronsDown } from "lucide-react";
 import {
   ChartContainer,
-  ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-import { GitCommitVertical, TrendingUp } from "lucide-react";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -71,12 +60,10 @@ import useUserStore from "@/stores/useUserStore";
 
 const LecturerDashboard = () => {
   const supabase = createClient(); //database
-  const router = useRouter(); //for future navigation to specific quiz use
-  const [isOpen, setIsOpen] = React.useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useUserStore();
-  const userId = user?.user_id; // Replace this with a real ID from your DB
+  const userId = user?.user_id;
 
   const [newUsername, setNewUsername] = useState("");
   const [newPfpUrl, setNewPfpUrl] = useState("");
@@ -155,7 +142,7 @@ const LecturerDashboard = () => {
       setNewPasswordError("New passwords don't match.");
       return;
     } else {
-      setNewPasswordError(""); // Clear any previous new password error
+      setNewPasswordError("");
     }
 
     const updates: {
@@ -165,9 +152,9 @@ const LecturerDashboard = () => {
       password?: string;
     } = {};
     if (newUsername !== user?.username) updates.username = newUsername;
-    if (newPfpUrl !== user?.pfp_url && newPfpUrl) updates.pfp_url = newPfpUrl; // Only update if new URL exists and is different
+    if (newPfpUrl !== user?.pfp_url && newPfpUrl) updates.pfp_url = newPfpUrl;
     if (newEmail !== user?.email) updates.email = newEmail;
-    if (newPasswordInput) updates.password = newPasswordInput; // Only update password if a new one is entered
+    if (newPasswordInput) updates.password = newPasswordInput;
 
     if (Object.keys(updates).length === 0) {
       alert("No changes to save.");
@@ -191,7 +178,6 @@ const LecturerDashboard = () => {
       setIsCollapseOpen(false);
       setNewPasswordInput("");
       setConfirmNewPasswordInput("");
-      // Optionally clear the newPfpUrl after successful save
       setNewPfpUrl("");
     }
   };
@@ -216,7 +202,7 @@ const LecturerDashboard = () => {
     try {
       const { data, error, count } = await supabase
         .from("quizzes")
-        .select("*", { count: "exact" }) // Use count: 'exact' for efficient counting
+        .select("*", { count: "exact" })
         .eq("user_id", userId);
 
       if (error) {
@@ -256,7 +242,6 @@ const LecturerDashboard = () => {
   useEffect(() => {
     const fetchQuizAttemptData = async () => {
       try {
-        // 1. Fetch the user's quizzes with their names
         const { data: quizzesData, error: quizzesError } = await supabase
           .from("quizzes")
           .select("quiz_id, name")
@@ -282,7 +267,6 @@ const LecturerDashboard = () => {
           {},
         );
 
-        // 2. Fetch the count of attempts for each of the user's quizzes
         const { data: attemptsData, error: attemptsError } = await supabase
           .from("quiz_attempts")
           .select("quiz_id")
@@ -299,14 +283,12 @@ const LecturerDashboard = () => {
           return;
         }
 
-        // 3. Count the attempts for each quiz
         const quizAttemptCounts: { [quizId: string]: number } = {};
         attemptsData.forEach((attempt) => {
           quizAttemptCounts[attempt.quiz_id] =
             (quizAttemptCounts[attempt.quiz_id] || 0) + 1;
         });
 
-        // 4. Format the data for the chart
         const formattedData: QuizAttemptData[] = Object.keys(
           quizAttemptCounts,
         ).map((quizId) => ({
@@ -471,7 +453,7 @@ const LecturerDashboard = () => {
       <div className={styles.pageHeader}>
         {/* ============================================================================================================ */}
         <div>
-          {isLoading ? ( // Show skeleton while loading
+          {isLoading ? (
             <div className="flex items-center space-x-4 border-b border-gray-200 p-2">
               <Skeleton className="h-12 w-12 rounded-full" />
               <div className="space-y-2">
@@ -479,7 +461,7 @@ const LecturerDashboard = () => {
                 <Skeleton className="h-4 w-[150px]" />
               </div>
             </div>
-          ) : user ? ( // Show user info when loaded
+          ) : user ? (
             <div className="flex items-center gap-4 border-b border-gray-200 p-2">
               <Avatar>
                 <AvatarImage src={user.pfp_url} alt={user.username} />
@@ -520,7 +502,7 @@ const LecturerDashboard = () => {
               </div>
             </div>
           ) : (
-            <p>No User Found</p> // Optionally show an error message
+            <p>No User Found</p>
           )}
         </div>
 
@@ -573,7 +555,7 @@ const LecturerDashboard = () => {
                         {user?.username?.slice(0, 2)?.toUpperCase() || "?"}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className={styles.uploadProfilePictureButton}>
                       <Input
                         type="file"
                         id="profilePicture"
@@ -584,7 +566,6 @@ const LecturerDashboard = () => {
                             const file = e.target.files[0];
                             const newUrl = await uploadProfilePicture(file);
 
-                            // change table here/
                             if (newUrl) {
                               setNewPfpUrl(newUrl);
                             } else {
@@ -654,17 +635,7 @@ const LecturerDashboard = () => {
                               setIsCollapseOpen(false);
                               setCurrentPasswordError("");
                             } else {
-                              // if (user?.password === currentPasswordInput) {
-                              //   setIsCurrentPasswordCorrect(true);
-                              //   setIsCollapseOpen(true);
-                              //   setCurrentPasswordError("");
-                              // } else {
-                              //   setIsCurrentPasswordCorrect(false);
-                              //   setIsCollapseOpen(false);
-                              //   setCurrentPasswordError(
-                              //     "Incorrect current password.",
-                              //   );
-                              // }
+
                             }
                           }}
                         >
@@ -769,7 +740,7 @@ const LecturerDashboard = () => {
                       <Button
                         onClick={() => {
                           setShowConfirmation(false);
-                          window.location.reload(); // Add this line here
+                          window.location.reload();
                         }}
                       >
                         OK
