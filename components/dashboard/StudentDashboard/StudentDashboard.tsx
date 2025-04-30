@@ -130,6 +130,7 @@ const StudentDashboard = () => {
     fetchXPDataForMonth(currentYear, currentMonthNumber).then(setChartData);
     fetchLifetimeAverageScore();
     fetchAttemptedQuizzes();
+    fetchUserStreak();
   }, []);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
