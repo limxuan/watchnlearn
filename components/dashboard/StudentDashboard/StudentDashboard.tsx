@@ -354,6 +354,7 @@ const StudentDashboard = () => {
     quiz: Quiz;
     correct_questions: number;
     total_questions: number;
+    attempt_id: string;
   }
 
   const [attemptedQuizzes, setAttemptedQuizzes] = useState<
@@ -371,6 +372,7 @@ const StudentDashboard = () => {
         completed_at,
         correct_questions,
         total_questions,
+        attempt_id,
         quizzes (
           quiz_id,
           name,
@@ -398,6 +400,7 @@ const StudentDashboard = () => {
                 quiz: attempt.quizzes,
                 correct_questions: attempt.correct_questions,
                 total_questions: attempt.total_questions,
+                attempt_id: attempt.attempt_id,
               });
             }
             return acc;
@@ -884,6 +887,9 @@ const StudentDashboard = () => {
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundImage = "none";
                   e.currentTarget.classList.remove(styles.showCover);
+                }}
+                onClick={() => {
+                  router.push(`/attempt-summary/${attempt.attempt_id}`);
                 }}
               >
                 <div className={styles.namePercentage}>
