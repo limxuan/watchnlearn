@@ -40,7 +40,9 @@ export default function QuizSummaryHeader({
             <BookOpen className="h-5 w-5 text-indigo-300/90" />
           </div>
           <div>
-            <h1 className="text-xl font-bold">{quizTitle}</h1>
+            <h1 className="text-xl font-bold text-blue-300 hover:underline">
+              {quizTitle}
+            </h1>
             <p className="text-sm text-white/60">{quizDescription}</p>
           </div>
         </div>
