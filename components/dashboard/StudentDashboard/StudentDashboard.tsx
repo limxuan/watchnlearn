@@ -2,12 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client"; //database
-import uploadProfilePicture from "@/utils/uploadProfilePicture"; //upload pfp
+import uploadProfilePicture from "@/utils/uploadProfilePicture";
 
 import styles from "./Dashboard.module.css";
-import { useRouter } from "next/navigation"; //for future navigation to specific quiz use
-
-//use grid layout
+import { useRouter } from "next/navigation";
 
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,25 +24,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronsUpDown, ChevronsUp, ChevronsDown } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { ChevronsUp, ChevronsDown } from "lucide-react";
+import {ChartTooltip} from "@/components/ui/chart";
 
-import { GitCommitVertical, TrendingUp } from "lucide-react";
+import { GitCommitVertical } from "lucide-react";
 import {
   LineChart,
   Line,
   XAxis,
   CartesianGrid,
-  Tooltip,
   ResponsiveContainer,
 } from "recharts";
 import {
@@ -59,7 +47,6 @@ import useUserStore from "@/stores/useUserStore";
 
 const StudentDashboard = () => {
   const supabase = createClient(); //database
-  const [isOpen, setIsOpen] = React.useState(false);
   const { user, clearUser } = useUserStore();
   const userId = user?.user_id;
   const router = useRouter();
@@ -154,7 +141,7 @@ const StudentDashboard = () => {
       setNewPasswordError("New passwords don't match.");
       return;
     } else {
-      setNewPasswordError(""); // Clear any previous new password error
+      setNewPasswordError("");
     }
 
     const updates: {
@@ -164,9 +151,9 @@ const StudentDashboard = () => {
       password?: string;
     } = {};
     if (newUsername !== user?.username) updates.username = newUsername;
-    if (newPfpUrl !== user?.pfp_url && newPfpUrl) updates.pfp_url = newPfpUrl; // Only update if new URL exists and is different
+    if (newPfpUrl !== user?.pfp_url && newPfpUrl) updates.pfp_url = newPfpUrl;
     if (newEmail !== user?.email) updates.email = newEmail;
-    if (newPasswordInput) updates.password = newPasswordInput; // Only update password if a new one is entered
+    if (newPasswordInput) updates.password = newPasswordInput;
 
     if (Object.keys(updates).length === 0) {
       alert("No changes to save.");
@@ -190,7 +177,6 @@ const StudentDashboard = () => {
       setIsCollapseOpen(false);
       setNewPasswordInput("");
       setConfirmNewPasswordInput("");
-      // Optionally clear the newPfpUrl after successful save
       setNewPfpUrl("");
     }
   };
@@ -254,11 +240,11 @@ const StudentDashboard = () => {
           totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
         setLifetimeAverageScore(average);
       } else {
-        setHasQuizAttempts(false); // Set flag indicating no attempts
-        setLifetimeAverageScore(null); // Keep the score as null
+        setHasQuizAttempts(false);
+        setLifetimeAverageScore(null);
       }
     } finally {
-      setIsLoading(false); // Assuming you have an isLoading state
+      setIsLoading(false);
     }
   };
 
@@ -475,7 +461,7 @@ const StudentDashboard = () => {
               </div>
             </div>
           ) : (
-            <p>No User Found</p> // Optionally show an error message
+            <p>No User Found</p>
           )}
         </div>
 
@@ -528,7 +514,7 @@ const StudentDashboard = () => {
                         {user?.username?.slice(0, 2)?.toUpperCase() || "?"}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className={styles.uploadProfilePictureButton}>
                       <Input
                         type="file"
                         id="profilePicture"
@@ -607,17 +593,7 @@ const StudentDashboard = () => {
                               setIsCollapseOpen(false);
                               setCurrentPasswordError("");
                             } else {
-                              // if (user?.password === currentPasswordInput) {
-                              //   setIsCurrentPasswordCorrect(true);
-                              //   setIsCollapseOpen(true);
-                              //   setCurrentPasswordError("");
-                              // } else {
-                              //   setIsCurrentPasswordCorrect(false);
-                              //   setIsCollapseOpen(false);
-                              //   setCurrentPasswordError(
-                              //     "Incorrect current password.",
-                              //   );
-                              // }
+
                             }
                           }}
                         >
@@ -728,7 +704,7 @@ const StudentDashboard = () => {
                       <Button
                         onClick={() => {
                           setShowConfirmation(false);
-                          window.location.reload(); // Add this line here
+                          window.location.reload();
                         }}
                       >
                         OK
@@ -760,7 +736,7 @@ const StudentDashboard = () => {
               </>
             ) : (
               <>
-                <h3>"No streak... yet!"</h3>
+                <h3>No streak... yet!</h3>
               </>
             )}
           </div>
@@ -861,7 +837,7 @@ const StudentDashboard = () => {
               <div className="flex gap-2 font-medium leading-none text-[#E8E9CC]">
                 Total Earned: {xptotal} xp
               </div>
-              <div className="leading-none text-[#C1C2AA] text-muted-foreground">
+              <div className="leading-none text-[#fff] text-muted-foreground">
                 Showing daily XP for {currentMonth} {currentYear}
               </div>
             </CardFooter>
@@ -922,7 +898,7 @@ const StudentDashboard = () => {
                   />
 
                   <div className={styles.completeDate}>
-                    <h1>Complete</h1>
+                    <h1>Completed</h1>
                     <p>
                       {attempt.completed_at
                         ? new Date(attempt.completed_at).toLocaleDateString()
