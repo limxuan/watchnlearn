@@ -38,7 +38,7 @@ export async function GET(req: Request) {
   // 3. Get usernames for those user_ids
   const { data: usersData, error: userErr } = await supabase
     .from("users")
-    .select("user_id, username")
+    .select("user_id, username, pfp_url")
     .in("user_id", userIds);
 
   if (userErr)
@@ -51,6 +51,7 @@ export async function GET(req: Request) {
     .map((user) => ({
       user_id: user.user_id,
       username: user.username,
+      pfp_url: user.pfp_url,
       xp: xpByUser[user.user_id] || 0,
     }))
     .sort((a, b) => b.xp - a.xp);

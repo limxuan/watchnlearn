@@ -6,6 +6,7 @@ import SummaryStats from "@/components/quiz-summary/summary-stats";
 import UserInfoCard from "@/components/quiz-summary/user-info-card";
 import { UserInfo } from "@/stores/useUserStore";
 import { QuestionAttempt, Quiz } from "@/stores/useQuizStore";
+import Link from "next/link";
 
 async function getQuiz(quizId: string): Promise<Quiz> {
   const supabase = await createClient();
@@ -125,14 +126,16 @@ export default async function QuizSummaryPage({
         <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="space-y-6">
             {/* Quiz details card */}
-            <QuizSummaryHeader
-              quizTitle={quiz.name}
-              quizDescription={quiz.description}
-              scorePercentage={scorePercentage}
-              difficultyRating={difficultyRating}
-              lecturerName={creator.username}
-              lecturerAvatar={creator.pfp_url}
-            />
+            <Link href={`/quiz/${quizAttempt.quiz_id}`}>
+              <QuizSummaryHeader
+                quizTitle={quiz.name}
+                quizDescription={quiz.description}
+                scorePercentage={scorePercentage}
+                difficultyRating={difficultyRating}
+                lecturerName={creator.username}
+                lecturerAvatar={creator.pfp_url}
+              />
+            </Link>
 
             {/* User info card */}
             <UserInfoCard

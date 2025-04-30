@@ -3,10 +3,10 @@ import useQuizStore, { Question, Quiz } from "@/stores/useQuizStore";
 import { useEffect, useState } from "react";
 import SlideShowQuestionComponent from "./slideshow/SlideShowQuestion";
 import QuestionLoaderHeader from "./QuestionLoaderHeader";
-import { AuroraBackground } from "@/components/background/aurora-background";
 import ImageMCQQuestionComponent from "@/components/question/image-mcq/ImageMCQQuestion";
 import { AnimatePresence, motion } from "framer-motion";
 import VideoQuestionComponent from "./video/VideoQuestion";
+import HotspotMCQQuestionComponent from "@/components/question/hostpot-mcq/HotspotMCQQuestion";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import PictureToPictureQuestionComponent from "./picture-to-picture/PictureToPictureQuestion";
@@ -142,6 +142,8 @@ function QuestionComponent({ question }: { question: Question }) {
       return <PictureToPictureQuestionComponent question={question} />;
     case "label-to-hotspot":
       return <ImageHotspotQuestionComponent question={question} />;
+    case "hotspot-mcq":
+      return <HotspotMCQQuestionComponent question={question} />;
     default:
       return <div>❌ Unknown question type: {question.question_type}</div>;
   }
