@@ -53,10 +53,11 @@ export default function Navbar() {
         <Link
           key={label}
           href={href}
-          className={`rounded-lg px-2 py-1 text-lg transition-colors duration-200 ${isActive
+          className={`rounded-lg px-2 py-1 text-lg transition-colors duration-200 ${
+            isActive
               ? "text-white underline-offset-1 dark:text-gray-200"
               : "text-gray-400 hover:bg-white hover:text-black"
-            }`}
+          }`}
           onClick={() => setIsMenuOpen(false)}
         >
           {label}
@@ -100,7 +101,7 @@ export default function Navbar() {
 
           {/* 🛑 Move Fullscreen Menu OUTSIDE of nav */}
           {isMenuOpen && (
-            <div className="fixed inset-0 z-[999] flex h-full w-full flex-col items-center justify-center gap-8 overflow-y-hidden bg-black bg-opacity-80 text-white backdrop-blur-lg transition-all duration-300 ease-in-out">
+            <div className="fixed inset-0 z-[998] flex h-full w-full flex-col items-center justify-center gap-8 overflow-y-hidden bg-black bg-opacity-80 text-white backdrop-blur-lg transition-all duration-300 ease-in-out">
               <button
                 className="absolute right-6 top-6"
                 onClick={() => setIsMenuOpen(false)}
