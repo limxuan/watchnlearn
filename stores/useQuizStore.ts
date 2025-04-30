@@ -101,7 +101,6 @@ const useQuizStore = create<QuizStore>()(
           if (isLastQuestion) {
             return {
               completedTimestamp: Date.now(),
-              quizOngoing: false,
             };
           } else {
             return {
