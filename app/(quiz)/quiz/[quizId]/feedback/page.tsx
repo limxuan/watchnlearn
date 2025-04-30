@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { AuroraBackground } from "@/components/background/aurora-background";
-import { cn } from "@/lib/utils";
+import { cn, isSameDay } from "@/lib/utils";
 import { Star } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import useUserStore from "@/stores/useUserStore";
 import useQuizStore from "@/stores/useQuizStore";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
+import { incrementXp } from "@/lib/supabaseClient";
 
 export default function FeedbackPage() {
   const [rating, setRating] = useState(0);
@@ -23,9 +24,10 @@ export default function FeedbackPage() {
     if (completedTimestamp == 0) {
       router.push("/quiz");
     }
-  }, [completedTimestamp]);
+  }, []);
 
   const SaveQuestionAttempt = async (): Promise<string> => {
+    // saving quiz attempt
     const { data: attemptData } = await supabase
       .from("quiz_attempts")
       .insert({
@@ -40,6 +42,7 @@ export default function FeedbackPage() {
       .select()
       .single();
 
+    // saving question attempt
     answers.forEach((opt) => {
       supabase
         .from("question_attempts")
@@ -55,6 +58,51 @@ export default function FeedbackPage() {
           console.log({ error });
         });
     });
+
+    // saving user streak
+    const { data: streakData } = await supabase
+      .from("user_streaks")
+      .select("*")
+      .eq("user_id", user?.user_id)
+      .single();
+
+    if (!streakData) {
+      await supabase
+        .from("user_streaks")
+        .insert({
+          user_id: user?.user_id,
+          current_streak: 1,
+          longest_streak: 1,
+          streak_updated_at: new Date(completedTimestamp),
+        })
+        .then(({ error }) => {
+          console.log({ error });
+        });
+    } else {
+      const today = new Date();
+      const completedDate = new Date(completedTimestamp);
+
+      if (!isSameDay(today, completedDate)) {
+        await supabase
+          .from("user_streaks")
+          .update({
+            current_streak: streakData.current_streak + 1,
+            longest_streak:
+              streakData.current_streak + 1 > streakData.longest_streak
+                ? streakData.current_streak + 1
+                : streakData.longest_streak,
+            streak_updated_at: new Date(completedTimestamp),
+          })
+          .eq("user_id", user?.user_id)
+          .then(({ error }) => {
+            console.log({ error });
+          });
+      }
+    }
+
+    // saving user xp
+    const totalXpToIncrement = answers.filter((a) => a.isCorrect).length * 10;
+    incrementXp(user!.user_id, totalXpToIncrement);
     return attemptData.attempt_id;
   };
 

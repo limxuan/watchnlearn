@@ -106,7 +106,8 @@ const StudentDashboard = () => {
         const { data: badgesData, error: badgesError } = await supabase
           .from("badges")
           .select("image_url, name")
-          .in("badge_id", badgeIds);
+          .in("badge_id", badgeIds)
+          .eq("is_active", true);
 
         if (badgesError) {
           console.error("Error fetching badge URLs:", badgesError);
@@ -131,6 +132,7 @@ const StudentDashboard = () => {
     fetchLifetimeAverageScore();
     fetchAttemptedQuizzes();
     fetchUserStreak();
+    handleBadges();
   }, []);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////

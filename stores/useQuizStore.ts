@@ -125,8 +125,6 @@ const useQuizStore = create<QuizStore>()(
     {
       name: "quiz-storage", // unique name for the storage item
       storage: createJSONStorage(() => localStorage), // (optional) by default, it uses localStorage
-      // Here, I've added a `partialize` similar to your user store example
-      // You can adjust which properties you want to persist based on your needs.
       partialize: (state) => ({
         quiz: state.quiz,
         questions: state.questions,

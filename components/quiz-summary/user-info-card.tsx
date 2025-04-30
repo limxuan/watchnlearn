@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, GraduationCap, Trophy, Clock } from "lucide-react";
+import { User, Sparkles, Trophy, Clock } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 interface UserInfoCardProps {
@@ -68,13 +68,25 @@ export default function UserInfoCard({
           // indicatorclassname={`${scorePercentage >= 80 ? "bg-emerald-400/80" : scorePercentage >= 60 ? "bg-amber-400/80" : "bg-rose-400/80"}`}
         />
 
-        <div className="mb-2 flex items-center gap-3 sm:mb-0">
-          <div className="rounded-full bg-white/10 p-2">
-            <Clock className="h-5 w-5 text-sky-300/90" />
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
+          <div className="mb-2 flex items-center gap-3 sm:mb-0">
+            <div className="rounded-full bg-white/10 p-2">
+              <Clock className="h-5 w-5 text-sky-300/90" />
+            </div>
+            <div>
+              <p className="text-xs text-white/60">Time Taken</p>
+              <p className="text-base font-bold">{timeTaken}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-white/60">Time Taken</p>
-            <p className="text-base font-bold">{timeTaken}</p>
+
+          <div className="mb-2 flex items-center gap-3 sm:mb-0">
+            <div className="rounded-full bg-white/10 p-2">
+              <Sparkles className="h-5 w-5 text-amber-400/90" />
+            </div>
+            <div>
+              <p className="text-xs text-white/60">XP Earned</p>
+              <p className="text-base font-bold">{correctQuestions * 10}</p>
+            </div>
           </div>
         </div>
       </CardContent>

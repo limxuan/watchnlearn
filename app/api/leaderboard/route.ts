@@ -1,9 +1,9 @@
 // route.ts
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
-const supabase = createClient();
 
 export async function GET(req: Request) {
+  const supabase = await createClient();
   const { searchParams } = new URL(req.url);
   const type = searchParams.get("type") || "weekly"; // weekly or monthly
 
@@ -19,6 +19,7 @@ export async function GET(req: Request) {
     .select("user_id, xp_amount, created_at")
     .gte("created_at", since);
 
+  console.log({ data, error });
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
