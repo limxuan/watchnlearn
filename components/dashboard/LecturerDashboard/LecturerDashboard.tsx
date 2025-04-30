@@ -831,7 +831,7 @@ const LecturerDashboard = () => {
               </ChartContainer>
             </CardContent>
             <CardFooter className="flex-col items-start gap-2 text-sm">
-              <div className="leading-none text-[#E8E9CC] text-muted-foreground">
+              <div className="leading-none text-[#fff] text-muted-foreground">
                 Total of {totalAttemptsAllQuizzes} attempts across all your
                 quizzes.
               </div>
