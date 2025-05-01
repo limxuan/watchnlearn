@@ -65,9 +65,9 @@
 .dashContent {
   margin-left: 45px;
   margin-top: 60px;
-  display: flex; /* Enable Flexbox for horizontal layout of stats and graph */
+  display: flex; 
   align-items: flex-start;
-  gap: 70px; /* Spacing between stats and graph */
+  gap: 70px;
 }
 
 .dashboardStats {
