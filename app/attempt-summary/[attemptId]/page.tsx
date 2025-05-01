@@ -146,6 +146,7 @@ export default async function QuizSummaryPage({
               scorePercentage={scorePercentage}
               correctQuestions={quizAttempt.correct_questions}
               totalQuestions={quizAttempt.total_questions}
+              timeInMs={timeTaken}
             />
           </div>
 

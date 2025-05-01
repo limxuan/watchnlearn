@@ -8,14 +8,18 @@ export default function QuestionLoaderHeader() {
   const { quiz, currentIndex, questions, startTimestamp, resetQuiz } =
     useQuizStore();
   const quizName = quiz?.name;
-  const [elapsedTime, setElapsedTime] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(() => {
+    return startTimestamp
+      ? Math.floor((Date.now() - startTimestamp) / 1000)
+      : 0;
+  });
   const router = useRouter();
 
   useEffect(() => {
     if (!startTimestamp) return;
 
     const interval = setInterval(() => {
-      setElapsedTime((prevTime) => prevTime + 1);
+      setElapsedTime(Math.floor((Date.now() - startTimestamp) / 1000));
     }, 1000);
 
     return () => clearInterval(interval);
@@ -23,9 +27,7 @@ export default function QuestionLoaderHeader() {
 
   const minutes = Math.floor(elapsedTime / 60);
   const seconds = elapsedTime % 60;
-  const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
-    seconds,
-  ).padStart(2, "0")}`;
+  const formattedTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
   const handleExit = () => {
     const confirmExit = confirm("Are you sure you want to exit the quiz?");
@@ -36,7 +38,6 @@ export default function QuestionLoaderHeader() {
       }, 1000);
     }
   };
-
   return (
     <div className="w-full max-w-xl space-y-4 rounded-xl lg:max-w-5xl">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between lg:gap-4">
