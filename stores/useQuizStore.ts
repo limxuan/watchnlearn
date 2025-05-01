@@ -108,7 +108,7 @@ const useQuizStore = create<QuizStore>()(
             };
           }
         }),
-      resetQuiz: () =>
+      resetQuiz: () => {
         set(() => ({
           quiz: null,
           questions: [],
@@ -117,7 +117,9 @@ const useQuizStore = create<QuizStore>()(
           quizOngoing: false,
           startTimestamp: 0,
           completedTimestamp: 0,
-        })),
+        }));
+        localStorage.removeItem("quiz-storage");
+      },
       setStartTimestamp: (timestamp) => set({ startTimestamp: timestamp }),
       setCompletedTimestamp: (timestamp) =>
         set({ completedTimestamp: timestamp }),

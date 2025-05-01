@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import useQuizStore from "@/stores/useQuizStore";
 
 export default function ExplorePage() {
   const [loading, setLoading] = useState(true);
@@ -14,6 +15,7 @@ export default function ExplorePage() {
   const [recent, setRecent] = useState<any[]>([]);
   const [selectedQuiz, setSelectedQuiz] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { quizOngoing } = useQuizStore();
 
   const handleOpenModal = (quiz: any) => {
     setSelectedQuiz(quiz);
@@ -124,7 +126,7 @@ export default function ExplorePage() {
           {/* All Quizzes */}
           <h1
             className="mb-6 text-center text-3xl font-bold text-[#f6f8d5]"
-            onClick={() => console.log({ quizzes })}
+            onClick={() => console.log({ quizOngoing })}
           >
             Popular Quizzes
           </h1>
