@@ -10,6 +10,7 @@ interface UserInfoCardProps {
   correctQuestions: number;
   totalQuestions: number;
   timeTaken: string;
+  timeInMs: number;
 }
 
 export default function UserInfoCard({
@@ -19,6 +20,7 @@ export default function UserInfoCard({
   correctQuestions,
   totalQuestions,
   timeTaken,
+  timeInMs,
 }: UserInfoCardProps) {
   // Determine score color based on percentage
   const getScoreColor = () => {
@@ -85,7 +87,15 @@ export default function UserInfoCard({
             </div>
             <div>
               <p className="text-xs text-white/60">XP Earned</p>
-              <p className="text-base font-bold">{correctQuestions * 10}</p>
+              <p className="text-base font-bold">
+                {correctQuestions * 10 +
+                  (correctQuestions > 0
+                    ? Math.max(
+                        0,
+                        Math.floor((240 - Math.floor(timeInMs / 1000)) / 5),
+                      )
+                    : 0)}
+              </p>
             </div>
           </div>
         </div>

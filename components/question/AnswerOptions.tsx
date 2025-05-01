@@ -24,10 +24,7 @@ export default function AnswerOptions({
 
   return (
     <div
-      className={cn(
-        "grid grid-cols-1 gap-2 px-2 md:grid-cols-2 md:gap-3 md:px-0",
-        className,
-      )}
+      className={cn("grid grid-cols-2 gap-2 px-2 md:gap-3 md:px-0", className)}
     >
       {options.map((option) => {
         const optionClasses = cn(

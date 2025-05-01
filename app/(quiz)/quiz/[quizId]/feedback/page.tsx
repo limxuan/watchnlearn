@@ -101,7 +101,17 @@ export default function FeedbackPage() {
     }
 
     // saving user xp
-    const totalXpToIncrement = answers.filter((a) => a.isCorrect).length * 10;
+    const correctQuestions = answers.filter((a) => a.isCorrect).length;
+    const timeTakenInSeconds = Math.floor(
+      (completedTimestamp - startTimestamp) / 1000,
+    );
+    const maxTimeAllowed = 4 * 60;
+    const speedBonus =
+      correctQuestions > 0
+        ? Math.max(0, Math.floor((maxTimeAllowed - timeTakenInSeconds) / 5))
+        : 0;
+
+    const totalXpToIncrement = correctQuestions * 10 + speedBonus;
     incrementXp(user!.user_id, totalXpToIncrement);
     return attemptData.attempt_id;
   };
