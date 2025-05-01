@@ -10,7 +10,8 @@ import HotspotMCQQuestionComponent from "@/components/question/hostpot-mcq/Hotsp
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import PictureToPictureQuestionComponent from "./picture-to-picture/PictureToPictureQuestion";
-import ImageHotspotQuestionComponent from "./image-to-hotspot/ImageToHotspotQuestion";
+import LabelHotspotQuestionComponent from "./label-to-hotspot/LabelToHotspotQuestion";
+import { AuroraBackground } from "../background/aurora-background";
 
 export default function QuestionLoader({
   questionsData,
@@ -97,7 +98,7 @@ export default function QuestionLoader({
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+    <AuroraBackground>
       <div className="max-h-dvh w-full max-w-3xl space-y-5 rounded-xl p-4 px-4 lg:space-y-8">
         <QuestionLoaderHeader />
 
@@ -126,7 +127,7 @@ export default function QuestionLoader({
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </AuroraBackground>
   );
 }
 
@@ -141,7 +142,7 @@ function QuestionComponent({ question }: { question: Question }) {
     case "picture-to-picture":
       return <PictureToPictureQuestionComponent question={question} />;
     case "label-to-hotspot":
-      return <ImageHotspotQuestionComponent question={question} />;
+      return <LabelHotspotQuestionComponent question={question} />;
     case "hotspot-mcq":
       return <HotspotMCQQuestionComponent question={question} />;
     default:

@@ -7,6 +7,7 @@ import UserInfoCard from "@/components/quiz-summary/user-info-card";
 import { UserInfo } from "@/stores/useUserStore";
 import { QuestionAttempt, Quiz } from "@/stores/useQuizStore";
 import Link from "next/link";
+import { AuroraBackground } from "@/components/background/aurora-background";
 
 async function getQuiz(quizId: string): Promise<Quiz> {
   const supabase = await createClient();

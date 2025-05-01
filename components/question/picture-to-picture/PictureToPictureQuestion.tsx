@@ -132,7 +132,7 @@ export default function PictureMatchingQuestionComponent({
     <div key={optionId} className="space-y-2">
       <Card
         className={cn(
-          "group relative aspect-video h-20 cursor-pointer overflow-hidden border-2 transition-all duration-200 md:aspect-square md:h-full",
+          "group relative aspect-video h-20 cursor-pointer overflow-hidden border-4 transition-all duration-200 md:aspect-square md:h-full",
           isOptionSelected(optionId)
             ? "border-primary bg-primary/20"
             : isMatchCorrect(optionId)
@@ -185,8 +185,8 @@ export default function PictureMatchingQuestionComponent({
         {[sourceOptions, "arrow", targetOptions].map((opt, idx) => {
           if (opt !== "arrow")
             return (
-              <Card key={idx} className="flex-1 bg-transparent">
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <Card key={idx} className="flex-1 border-0 bg-transparent">
+                <div className="grid grid-cols-1 gap-3 border-0 border-transparent md:grid-cols-2">
                   {(opt as string[]).map((optionId) => renderOption(optionId))}
                 </div>
               </Card>

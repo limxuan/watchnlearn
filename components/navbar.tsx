@@ -71,7 +71,7 @@ export default function Navbar() {
       {!quizOngoing && (
         <>
           <nav
-            className={`${lato.className} sticky top-0 z-50 flex w-full items-center justify-between border-b bg-black/30 px-10 py-3 text-sm font-semibold backdrop-blur-lg`}
+            className={`${lato.className} sticky top-0 z-50 flex w-full items-center justify-between border-b bg-background/30 px-10 py-3 text-sm font-semibold backdrop-blur-lg`}
           >
             {/* Logo */}
             <span
