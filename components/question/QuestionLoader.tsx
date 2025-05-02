@@ -134,17 +134,47 @@ export default function QuestionLoader({
 function QuestionComponent({ question }: { question: Question }) {
   switch (question.question_type) {
     case "slideshow":
-      return <SlideShowQuestionComponent question={question} />;
+      return (
+        <SlideShowQuestionComponent
+          question={question}
+          key={question.question_id}
+        />
+      );
     case "image-mcq":
-      return <ImageMCQQuestionComponent question={question} />;
+      return (
+        <ImageMCQQuestionComponent
+          question={question}
+          key={question.question_id}
+        />
+      );
     case "video":
-      return <VideoQuestionComponent question={question} />;
+      return (
+        <VideoQuestionComponent
+          question={question}
+          key={question.question_id}
+        />
+      );
     case "picture-to-picture":
-      return <PictureToPictureQuestionComponent question={question} />;
+      return (
+        <PictureToPictureQuestionComponent
+          question={question}
+          key={question.question_id}
+        />
+      );
     case "label-to-hotspot":
-      return <LabelHotspotQuestionComponent question={question} />;
+      return (
+        <LabelHotspotQuestionComponent
+          question={question}
+          key={question.question_id}
+        />
+      );
     case "hotspot-mcq":
-      return <HotspotMCQQuestionComponent question={question} />;
+      return (
+        <HotspotMCQQuestionComponent
+          question={question}
+          key={question.question_id}
+        />
+      );
     default:
       return <div>❌ Unknown question type: {question.question_type}</div>;
   }

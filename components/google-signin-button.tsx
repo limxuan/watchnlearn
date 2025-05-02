@@ -8,7 +8,7 @@ const getURL = () => {
   let url =
     process.env.NEXT_PUBLIC_SITE_URL ??
     process.env.NEXT_PUBLIC_VERCEL_URL ??
-    "http://localhost:4000";
+    "http://localhost:3000";
 
   // Add protocol if it's a bare Vercel domain
   url = url.startsWith("http") ? url : `https://${url}`;
