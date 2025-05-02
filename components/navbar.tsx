@@ -34,8 +34,9 @@ export default function Navbar() {
       "/schedule": "Schedule",
     },
     admin: {
-      "/dashboard": "Admin Panel",
-      "/users": "Users",
+      "/badges-management": "Badges",
+      "/user-management": "Users",
+      "/admin-logout": "Log Out",
     },
   };
 
