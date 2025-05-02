@@ -124,7 +124,7 @@ export default function QuestionsList({
         </h2>
 
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="mb-4 grid w-full grid-cols-3 rounded-lg bg-white/10 p-1 sm:mb-6">
+          <TabsList className="mb-4 grid w-full grid-cols-3 rounded-lg bg-white/10 p-1 text-white/50 sm:mb-6">
             <TabsTrigger
               value="all"
               className="data-[state=active]:bg-white/20"

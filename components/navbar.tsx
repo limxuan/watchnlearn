@@ -28,7 +28,6 @@ export default function Navbar() {
     student: {
       "/quiz": "Explore Quizzes",
       "/leaderboard": "Leaderboard",
-      "/dashboard": "Dashboard",
     },
     lecturer: {
       "/dashboard": "Dashboard",
@@ -53,11 +52,10 @@ export default function Navbar() {
         <Link
           key={label}
           href={href}
-          className={`rounded-lg px-2 py-1 text-lg transition-colors duration-200 ${
-            isActive
+          className={`rounded-lg px-2 py-1 text-lg transition-colors duration-200 ${isActive
               ? "text-white underline-offset-1 dark:text-gray-200"
               : "text-gray-400 hover:bg-white hover:text-black"
-          }`}
+            }`}
           onClick={() => setIsMenuOpen(false)}
         >
           {label}
@@ -71,7 +69,7 @@ export default function Navbar() {
       {!quizOngoing && (
         <>
           <nav
-            className={`${lato.className} sticky top-0 z-50 flex w-full items-center justify-between border-b bg-black/30 px-10 py-3 text-sm font-semibold backdrop-blur-lg`}
+            className={`${lato.className} sticky top-0 z-50 flex w-full items-center justify-between border-b bg-background/30 px-10 py-3 text-sm font-semibold backdrop-blur-lg`}
           >
             {/* Logo */}
             <span

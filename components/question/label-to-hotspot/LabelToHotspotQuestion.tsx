@@ -20,7 +20,7 @@ const HOTSPOT_TEXT_CLASSES = [
   "text-green-300",
 ];
 
-export default function ImageHotspotQuestionComponent({
+export default function LabelHotspotQuestionComponent({
   question,
 }: {
   question: Question;
@@ -187,7 +187,7 @@ export default function ImageHotspotQuestionComponent({
             key={option_id}
             onClick={() => handleLabelClick(option_id)}
             className={cn(
-              "relative h-12 rounded-md border bg-gray-500/30 px-4 py-2 transition-all duration-200 hover:text-black md:h-14",
+              "relative h-12 rounded-md border-primary bg-gray-500/30 px-4 py-2 transition-all duration-200 hover:text-black md:h-14",
               selectedLabel === option_id
                 ? [
                     HOTSPOT_BG_CLASSES[index % HOTSPOT_BG_CLASSES.length],

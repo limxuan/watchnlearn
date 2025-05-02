@@ -11,6 +11,7 @@
   gap: 10px;
   font-size: 20px;
   font-weight: bold;
+  justify-content: space-between;
 }
 
 .badgesContainer {
@@ -25,11 +26,6 @@
 
 .badgesContainer:hover {
   background-color: #f8f9dc;
-}
-
-.settingButton {
-  margin-left: auto;
-  margin-right: 10px;
 }
 
 .settingButton img {
@@ -269,10 +265,7 @@
   margin: 0 10px;
   width: 35px;
   height: 35px;
-  filter: brightness(110%)
-  invert(100%)
-  hue-rotate(203deg)
-  saturate(5);
+  filter: brightness(110%) invert(100%) hue-rotate(203deg) saturate(5);
   mix-blend-mode: color-dodge;
   background-color: white;
 }
@@ -294,9 +287,7 @@
   }
 
   .currentStreak {
-    width: calc(
-      50% - 15px
-    );
+    width: calc(50% - 15px);
     height: auto;
   }
 
@@ -375,13 +366,13 @@
 
   .namePercentage h1 {
     font-size: 25px;
-}
+  }
 
   .completeDate {
     font-size: 11px;
   }
 
-  .uploadProfilePictureButton > label{
+  .uploadProfilePictureButton > label {
     font-size: 13px;
   }
 }

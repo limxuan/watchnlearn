@@ -83,7 +83,7 @@ export default async function QuizDetailsPage({
                 <h1 className="text-xl font-bold tracking-tight lg:text-3xl">
                   {quiz.name}
                 </h1>
-                <div className="mt-2 flex items-center gap-2 text-muted-foreground">
+                <div className="mt-2 flex items-center gap-2 text-muted">
                   <CalendarIcon className="h-4 w-4" />
                   <span className="lg:text-md text-sm">
                     Created on {formattedDate}
@@ -98,9 +98,7 @@ export default async function QuizDetailsPage({
           </CardHeader>
 
           <CardContent className="space-y-6">
-            <p className="lg:text-md text-sm text-muted-foreground">
-              {quiz.description}
-            </p>
+            <p className="lg:text-md text-sm text-muted">{quiz.description}</p>
 
             <Separator />
 
@@ -119,7 +117,7 @@ export default async function QuizDetailsPage({
               </Avatar>
               <div>
                 <p className="lg:text-md text-sm font-medium">Lecturer</p>
-                <p className="text-xs text-muted-foreground lg:text-sm">
+                <p className="text-xs text-muted lg:text-sm">
                   {quiz.users.username}
                 </p>
               </div>

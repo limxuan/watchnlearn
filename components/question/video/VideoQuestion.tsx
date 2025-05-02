@@ -42,7 +42,7 @@ export default function VideoQuestionComponent({
         <QuestionHeader question={question.question_text} />
 
         <div className="relative">
-          <video controls autoPlay>
+          <video controls key={question.video_url}>
             <source src={question.video_url} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
