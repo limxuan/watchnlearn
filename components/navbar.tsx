@@ -28,7 +28,6 @@ export default function Navbar() {
     student: {
       "/quiz": "Explore Quizzes",
       "/leaderboard": "Leaderboard",
-      "/dashboard": "Dashboard",
     },
     lecturer: {
       "/dashboard": "Dashboard",
@@ -53,11 +52,10 @@ export default function Navbar() {
         <Link
           key={label}
           href={href}
-          className={`rounded-lg px-2 py-1 text-lg transition-colors duration-200 ${
-            isActive
+          className={`rounded-lg px-2 py-1 text-lg transition-colors duration-200 ${isActive
               ? "text-white underline-offset-1 dark:text-gray-200"
               : "text-gray-400 hover:bg-white hover:text-black"
-          }`}
+            }`}
           onClick={() => setIsMenuOpen(false)}
         >
           {label}
