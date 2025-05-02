@@ -66,6 +66,8 @@ export default function FeedbackPage() {
       .eq("user_id", user?.user_id)
       .single();
 
+    console.log({ streakData });
+
     if (!streakData) {
       await supabase
         .from("user_streaks")
@@ -80,7 +82,12 @@ export default function FeedbackPage() {
         });
     } else {
       const today = new Date();
-      const completedDate = new Date(completedTimestamp);
+      const completedDate = new Date(streakData.streak_updated_at);
+      console.log({
+        today,
+        completedDate,
+        isSameDay: isSameDay(today, completedDate),
+      });
 
       if (!isSameDay(today, completedDate)) {
         await supabase
@@ -97,6 +104,8 @@ export default function FeedbackPage() {
           .then(({ error }) => {
             console.log({ error });
           });
+      } else {
+        console.log("same day bro");
       }
     }
 
