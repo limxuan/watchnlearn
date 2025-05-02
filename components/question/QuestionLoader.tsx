@@ -12,6 +12,7 @@ import { createClient } from "@/utils/supabase/client";
 import PictureToPictureQuestionComponent from "./picture-to-picture/PictureToPictureQuestion";
 import LabelHotspotQuestionComponent from "./label-to-hotspot/LabelToHotspotQuestion";
 import { AuroraBackground } from "../background/aurora-background";
+import { shuffleArray } from "@/lib/utils";
 
 export default function QuestionLoader({
   questionsData,
@@ -56,7 +57,7 @@ export default function QuestionLoader({
             });
         }),
       ).then((q) => {
-        loadQuestions(q as Question[]);
+        loadQuestions(shuffleArray(q as Question[]));
       });
     }
     console.log("client", questionsData, quizData);
@@ -80,16 +81,19 @@ export default function QuestionLoader({
       <div className="max-h-dvh w-full max-w-3xl space-y-5 rounded-xl p-4 px-4 lg:space-y-8">
         <QuestionLoaderHeader />
 
-        {questions.map((q, index) => (
-          <div
-            className={`w-full space-y-5 rounded-xl lg:space-y-8 ${index == currentIndex ? "block" : "hidden"}`}
-            key={q.question_id}
-          >
-            <div className="max-w-xl lg:max-w-5xl">
-              <QuestionComponent question={q} />
-            </div>
-          </div>
-        ))}
+        {questions.map(
+          (q, index) =>
+            index >= currentIndex && (
+              <div
+                className={`w-full space-y-5 rounded-xl lg:space-y-8 ${index == currentIndex ? "block" : "hidden"}`}
+                key={q.question_id}
+              >
+                <div className="max-w-xl lg:max-w-5xl">
+                  <QuestionComponent question={q} />
+                </div>
+              </div>
+            ),
+        )}
       </div>
     </AuroraBackground>
   );
