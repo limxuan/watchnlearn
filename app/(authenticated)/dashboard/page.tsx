@@ -1,6 +1,5 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 import useUserStore from "@/stores/useUserStore";
 import InitUserStore from "@/components/init-user-store";
 import { useEffect } from "react";
@@ -9,13 +8,7 @@ import LecturerDashboard from "@/components/dashboard/LecturerDashboard/Lecturer
 
 export default function DashboardPage() {
   const router = useRouter();
-  const supabase = createClient();
-  const { clearUser, user } = useUserStore();
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    clearUser();
-    router.push("/sign-in");
-  };
+  const { user } = useUserStore();
 
   useEffect(() => {
     if (user?.role === "admin") {
