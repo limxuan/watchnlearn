@@ -2,16 +2,16 @@
 .container {
   display: flex;
   min-height: 100vh;
-  background-color: black;
+  background-color: #0f4c75;
   color: white;
-  font-family: 'Canva Sans', sans-serif;
+  font-family: "Canva Sans", sans-serif;
 }
 
 /* MAIN CONTENT */
 .main {
   flex: 1;
   padding: 20px;
-  background-color: black;
+  background-color: #0f4c75;
 }
 
 .header {
@@ -29,7 +29,7 @@
 
 /* BADGES */
 .badgesContainer {
-  background-color: #111;
+  background-color: #11698e;
   padding: 20px;
   border-radius: 12px;
   margin-top: 10px;
@@ -51,18 +51,18 @@
 
 .badgeUploadForm input {
   padding: 8px 10px;
-  background-color: black;
-  border: 1px solid #333;
+  background-color: #0f4c75;
+  border: 1px solid #3282b8;
   border-radius: 8px;
   color: white;
   width: 150px;
 }
 
 .dropZone {
-  border: 2px dashed #555;
+  border: 2px dashed #3282b8;
   padding: 16px;
   border-radius: 10px;
-  background-color: #111;
+  background-color: #0f4c75;
   color: #ccc;
   text-align: center;
   cursor: pointer;
@@ -136,7 +136,7 @@
   overflow-x: auto;
   margin-bottom: 20px;
   border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(15, 76, 117, 0.5);
 }
 
 .table {
@@ -151,13 +151,13 @@
 .table th,
 .table td {
   padding: 14px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #3282b8;
   text-align: left;
 }
 
 .table th {
   font-weight: bold;
-  background-color: #0a0a0a;
+  background-color: #0a4165;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -168,12 +168,12 @@
 }
 
 .table tr:hover td {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(50, 130, 184, 0.15);
 }
 
 .inlineInput {
-  background-color: black;
-  border: 1px solid #666;
+  background-color: #0f4c75;
+  border: 1px solid #3282b8;
   color: white;
   padding: 5px 10px;
   border-radius: 6px;
@@ -314,16 +314,16 @@
 
 .emptyMessage {
   text-align: center;
-  color: #9ca3af;
+  color: #bbe1fa;
   padding: 40px 20px;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(15, 76, 117, 0.4);
   border-radius: 8px;
   margin: 20px 0;
 }
 
-/* USER MANAGEMENT - from new CSS file */
+/* USER MANAGEMENT */
 .usersContainer {
-  background-color: #111;
+  background-color: #11698e;
   padding: 20px;
   border-radius: 12px;
   margin-top: 10px;
@@ -337,14 +337,14 @@
   gap: 10px;
   margin-bottom: 20px;
   padding: 15px;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(15, 76, 117, 0.6);
   border-radius: 8px;
 }
 
 .formInput {
   padding: 8px 10px;
-  background-color: black;
-  border: 1px solid #333;
+  background-color: #0f4c75;
+  border: 1px solid #3282b8;
   border-radius: 8px;
   color: white;
   width: 150px;
@@ -362,14 +362,14 @@
   margin-top: 24px;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #3282b8;
 }
 
 .modalTextarea {
   width: 100%;
   padding: 12px;
-  background-color: black;
-  border: 1px solid #333;
+  background-color: #0f4c75;
+  border: 1px solid #3282b8;
   border-radius: 8px;
   color: white;
   resize: vertical;
@@ -394,7 +394,7 @@
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #333;
+  border: 2px solid #3282b8;
 }
 
 .bannedUserRow {
@@ -449,7 +449,7 @@
 
 .paginationButton {
   padding: 8px 14px;
-  background-color: #1f2937;
+  background-color: #16a085;
   color: white;
   border: none;
   border-radius: 8px;
@@ -459,7 +459,7 @@
 }
 
 .paginationButton:hover {
-  background-color: #374151;
+  background-color: #1abc9c;
   transform: translateY(-1px);
 }
 
@@ -471,7 +471,7 @@
 
 .paginationInfo {
   font-size: 14px;
-  color: #9ca3af;
+  color: #bbe1fa;
 }
 
 /* MODAL */
@@ -490,7 +490,7 @@
 }
 
 .modalContent {
-  background-color: #111;
+  background-color: #11698e;
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
@@ -511,7 +511,7 @@
 
 .modalHeader {
   padding: 20px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #3282b8;
 }
 
 .modalTitle {
@@ -530,14 +530,14 @@
   align-items: center;
   margin-bottom: 20px;
   padding: 10px;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(15, 76, 117, 0.6);
   border-radius: 8px;
 }
 
 .modalLabel {
   font-weight: bold;
   margin-right: 10px;
-  color: #9ca3af;
+  color: #bbe1fa;
 }
 
 .modalValue {
@@ -551,8 +551,8 @@
 
 .modalInfo {
   font-size: 14px;
-  color: #9ca3af;
-  background-color: rgba(0, 0, 0, 0.3);
+  color: #bbe1fa;
+  background-color: rgba(15, 76, 117, 0.6);
   padding: 10px;
   border-radius: 8px;
   margin-top: 10px;
@@ -560,7 +560,7 @@
 
 .modalFooter {
   padding: 15px 20px;
-  border-top: 1px solid #333;
+  border-top: 1px solid #3282b8;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -568,8 +568,12 @@
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .fadeIn {
@@ -595,11 +599,11 @@
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .formInput {
     width: 100%;
   }
-  
+
   .modalContent {
     width: 95%;
   }

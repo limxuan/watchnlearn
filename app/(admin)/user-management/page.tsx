@@ -31,13 +31,13 @@ export default function UserManagement() {
   const [activeBans, setActiveBans] = useState<Set<string>>(new Set()); // Track active bans by user_id
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // For ban functionality
   const [showBanModal, setShowBanModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedUsername, setSelectedUsername] = useState<string>("");
   const [banReason, setBanReason] = useState("");
-  
+
   // Ref for the textarea to maintain focus
   const banReasonRef = useRef<HTMLTextAreaElement>(null);
 
@@ -62,11 +62,12 @@ export default function UserManagement() {
           .select("*");
 
         if (userError) throw new Error(userError.message);
-        
+
         // Fetch ban logs with username information
         const { data: banData, error: banError } = await supabase
           .from("bans")
-          .select(`
+          .select(
+            `
             ban_id,
             user_id,
             admin_id,
@@ -74,45 +75,51 @@ export default function UserManagement() {
             banned_at,
             users!bans_user_id_fkey(username),
             admin:users!bans_admin_id_fkey(username)
-          `)
+          `,
+          )
           .order("banned_at", { ascending: false });
 
         if (banError) throw new Error(banError.message);
 
         // Format ban data to include usernames
-        const formattedBans = banData.map(ban => ({
+        console.log({ banData });
+        const formattedBans = banData.map((ban) => ({
           ban_id: ban.ban_id,
           user_id: ban.user_id,
           admin_id: ban.admin_id,
           reason: ban.reason,
           banned_at: ban.banned_at,
-          username: ban.users ? ban.users.username : "Unknown User",
-          admin_username: ban.admin ? ban.admin.username : "Unknown Admin"
+          username: ban.users ? (ban.users as any).username : "Unknown User",
+          admin_username: ban.admin
+            ? (ban.admin as any).username
+            : "Unknown Admin",
         }));
 
         // Find active bans (most recent ban for each user)
         const activeBannedUserIds = new Set<string>();
         const userLatestBan = new Map<string, string>(); // user_id -> ban_id
-        
+
         // Process bans to find the latest ban per user
-        formattedBans.forEach(ban => {
-          if (!userLatestBan.has(ban.user_id) || 
-             new Date(ban.banned_at) > new Date(userLatestBan.get(ban.user_id)!)) {
+        formattedBans.forEach((ban) => {
+          if (
+            !userLatestBan.has(ban.user_id) ||
+            new Date(ban.banned_at) > new Date(userLatestBan.get(ban.user_id)!)
+          ) {
             userLatestBan.set(ban.user_id, ban.banned_at);
           }
         });
-        
+
         // Find users with active bans
         userLatestBan.forEach((_, userId) => {
           activeBannedUserIds.add(userId);
         });
-        
+
         setActiveBans(activeBannedUserIds);
 
         // Mark users who are currently banned
-        const enhancedUserData = userData?.map(user => ({
+        const enhancedUserData = userData?.map((user) => ({
           ...user,
-          is_banned: activeBannedUserIds.has(user.user_id)
+          is_banned: activeBannedUserIds.has(user.user_id),
         }));
 
         setUsers(enhancedUserData || []);
@@ -139,25 +146,25 @@ export default function UserManagement() {
   }, [showBanModal]);
 
   // Filter users based on search, role, approval status, and ban status
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = 
-      user.username.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesRole = 
-      roleFilter === "all" || 
+
+    const matchesRole =
+      roleFilter === "all" ||
       user.role?.toLowerCase() === roleFilter.toLowerCase();
-    
-    const matchesApproval = 
-      approvalFilter === "all" || 
-      (approvalFilter === "approved" && user.approved) || 
+
+    const matchesApproval =
+      approvalFilter === "all" ||
+      (approvalFilter === "approved" && user.approved) ||
       (approvalFilter === "unapproved" && !user.approved);
-    
+
     const matchesBanStatus =
       banFilter === "all" ||
       (banFilter === "banned" && user.is_banned) ||
       (banFilter === "active" && !user.is_banned);
-    
+
     return matchesSearch && matchesRole && matchesApproval && matchesBanStatus;
   });
 
@@ -173,24 +180,25 @@ export default function UserManagement() {
 
     try {
       // Get current admin user info
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error("No authenticated user found");
 
       // Insert ban record
-      const { error } = await supabase
-        .from("bans")
-        .insert({
-          user_id: selectedUserId,
-          admin_id: user.id,
-          reason: banReason.trim()
-        });
+      const { error } = await supabase.from("bans").insert({
+        user_id: selectedUserId,
+        admin_id: user.id,
+        reason: banReason.trim(),
+      });
 
       if (error) throw new Error(error.message);
 
       // Refresh data after ban
       const { data: banData, error: banError } = await supabase
         .from("bans")
-        .select(`
+        .select(
+          `
           ban_id,
           user_id,
           admin_id,
@@ -198,40 +206,42 @@ export default function UserManagement() {
           banned_at,
           users!bans_user_id_fkey(username),
           admin:users!bans_admin_id_fkey(username)
-        `)
+        `,
+        )
         .order("banned_at", { ascending: false });
 
       if (banError) throw new Error(banError.message);
 
       // Format ban data
-      const formattedBans = banData.map(ban => ({
+      const formattedBans = banData.map((ban) => ({
         ban_id: ban.ban_id,
         user_id: ban.user_id,
         admin_id: ban.admin_id,
         reason: ban.reason,
         banned_at: ban.banned_at,
-        username: ban.users ? ban.users.username : "Unknown User",
-        admin_username: ban.admin ? ban.admin.username : "Unknown Admin"
+        username: ban.users ? (ban.users as any).username : "Unknown User",
+        admin_username: ban.admin
+          ? (ban.admin as any).username
+          : "Unknown Admin",
       }));
 
       // Update ban status in local state
       const newActiveBans = new Set(activeBans);
       newActiveBans.add(selectedUserId);
       setActiveBans(newActiveBans);
-      
+
       // Update user list to mark this user as banned
-      setUsers(users.map(user => 
-        user.user_id === selectedUserId 
-          ? { ...user, is_banned: true } 
-          : user
-      ));
+      setUsers(
+        users.map((user) =>
+          user.user_id === selectedUserId ? { ...user, is_banned: true } : user,
+        ),
+      );
 
       setBans(formattedBans || []);
-      
+
       // Clear and close modal
       setBanReason("");
       setShowBanModal(false);
-      
     } catch (err) {
       console.error("Error banning user:", err);
       setError("Failed to ban user. Please try again.");
@@ -239,7 +249,10 @@ export default function UserManagement() {
   };
 
   // Handle approve lecturer
-  const handleApproveUser = async (userId: string, currentApprovalStatus: boolean) => {
+  const handleApproveUser = async (
+    userId: string,
+    currentApprovalStatus: boolean,
+  ) => {
     try {
       const { error } = await supabase
         .from("users")
@@ -249,32 +262,33 @@ export default function UserManagement() {
       if (error) throw new Error(error.message);
 
       // Update local state
-      setUsers(users.map(user => 
-        user.user_id === userId 
-          ? { ...user, approved: !currentApprovalStatus } 
-          : user
-      ));
-      
+      setUsers(
+        users.map((user) =>
+          user.user_id === userId
+            ? { ...user, approved: !currentApprovalStatus }
+            : user,
+        ),
+      );
     } catch (err) {
       console.error("Error updating approval status:", err);
       setError("Failed to update approval status. Please try again.");
     }
   };
 
-  // Ban modal component 
+  // Ban modal component
   const BanModal = () => (
     <div className={styles.modalBackdrop}>
       <div className={styles.modalContent}>
         <div className={styles.modalHeader}>
           <h3 className={styles.modalTitle}>Ban User</h3>
         </div>
-        
+
         <div className={styles.modalBody}>
           <div className={styles.modalUserInfo}>
             <span className={styles.modalLabel}>Username:</span>
             <span className={styles.modalValue}>{selectedUsername}</span>
           </div>
-          
+
           <div className={styles.modalFormGroup}>
             <label className={styles.modalLabel}>Reason for Ban:</label>
             <textarea
@@ -287,10 +301,10 @@ export default function UserManagement() {
             />
           </div>
         </div>
-        
+
         <div className={styles.modalFooter}>
-          <button 
-            className={styles.cancelButton} 
+          <button
+            className={styles.cancelButton}
             onClick={() => {
               setShowBanModal(false);
               setBanReason("");
@@ -298,8 +312,8 @@ export default function UserManagement() {
           >
             Cancel
           </button>
-          <button 
-            className={styles.deleteButton} 
+          <button
+            className={styles.deleteButton}
             onClick={handleBanUser}
             disabled={!banReason.trim()}
           >
@@ -326,7 +340,7 @@ export default function UserManagement() {
       <div className={styles.usersContainer}>
         <h2 className={styles.sectionTitle}>User Management</h2>
         <p className={styles.errorMessage}>{error}</p>
-        <button 
+        <button
           className={styles.uploadButton}
           onClick={() => window.location.reload()}
         >
@@ -339,7 +353,7 @@ export default function UserManagement() {
   return (
     <div className={styles.usersContainer}>
       <h2 className={styles.sectionTitle}>User Management</h2>
-      
+
       {/* Filters */}
       <div className={styles.filtersContainer}>
         <input
@@ -349,8 +363,8 @@ export default function UserManagement() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className={styles.formInput}
         />
-        
-        <select 
+
+        <select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
           className={styles.formInput}
@@ -360,8 +374,8 @@ export default function UserManagement() {
           <option value="lecturer">Lecturers</option>
           <option value="admin">Admins</option>
         </select>
-        
-        <select 
+
+        <select
           value={approvalFilter}
           onChange={(e) => setApprovalFilter(e.target.value)}
           className={styles.formInput}
@@ -371,7 +385,7 @@ export default function UserManagement() {
           <option value="unapproved">Unapproved</option>
         </select>
 
-        <select 
+        <select
           value={banFilter}
           onChange={(e) => setBanFilter(e.target.value)}
           className={styles.formInput}
@@ -381,7 +395,7 @@ export default function UserManagement() {
           <option value="active">Active Users</option>
         </select>
       </div>
-      
+
       {/* Users Table */}
       <h3 className={styles.subSectionTitle}>Users</h3>
       {currentUsers.length > 0 ? (
@@ -399,14 +413,17 @@ export default function UserManagement() {
             </thead>
             <tbody>
               {currentUsers.map((user) => (
-                <tr key={user.user_id} className={user.is_banned ? styles.bannedUserRow : ''}>
+                <tr
+                  key={user.user_id}
+                  className={user.is_banned ? styles.bannedUserRow : ""}
+                >
                   <td>
                     <div className={styles.userInfo}>
                       {user.pfp_url && (
-                        <img 
-                          src={user.pfp_url} 
-                          alt={user.username} 
-                          className={styles.userAvatar} 
+                        <img
+                          src={user.pfp_url}
+                          alt={user.username}
+                          className={styles.userAvatar}
                         />
                       )}
                       {user.username}
@@ -415,12 +432,16 @@ export default function UserManagement() {
                   <td>{user.email}</td>
                   <td>{user.role || "Not set"}</td>
                   <td>
-                    <span className={`${styles.statusBadge} ${user.approved ? styles.approvedBadge : styles.unapprovedBadge}`}>
+                    <span
+                      className={`${styles.statusBadge} ${user.approved ? styles.approvedBadge : styles.unapprovedBadge}`}
+                    >
                       {user.approved ? "Approved" : "Unapproved"}
                     </span>
                   </td>
                   <td>
-                    <span className={`${styles.statusBadge} ${user.is_banned ? styles.bannedBadge : styles.activeBadge}`}>
+                    <span
+                      className={`${styles.statusBadge} ${user.is_banned ? styles.bannedBadge : styles.activeBadge}`}
+                    >
                       {user.is_banned ? "Banned" : "Active"}
                     </span>
                   </td>
@@ -429,12 +450,14 @@ export default function UserManagement() {
                     {user.role === "lecturer" && (
                       <button
                         className={`${styles.statusButton} ${user.approved ? styles.inactiveButton : styles.activeButton}`}
-                        onClick={() => handleApproveUser(user.user_id, user.approved)}
+                        onClick={() =>
+                          handleApproveUser(user.user_id, user.approved)
+                        }
                       >
                         {user.approved ? "Revoke" : "Approve"}
                       </button>
                     )}
-                    
+
                     {/* Ban button for non-admin users who aren't banned */}
                     {user.role !== "admin" && !user.is_banned && (
                       <button
@@ -454,12 +477,12 @@ export default function UserManagement() {
               ))}
             </tbody>
           </table>
-          
+
           {/* Pagination */}
           {totalPages > 1 && (
             <div className={styles.pagination}>
-              <button 
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
                 className={styles.paginationButton}
               >
@@ -468,8 +491,10 @@ export default function UserManagement() {
               <span className={styles.paginationInfo}>
                 Page {currentPage} of {totalPages}
               </span>
-              <button 
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
                 className={styles.paginationButton}
               >
@@ -479,9 +504,11 @@ export default function UserManagement() {
           )}
         </div>
       ) : (
-        <p className={styles.emptyMessage}>No users found matching your filters.</p>
+        <p className={styles.emptyMessage}>
+          No users found matching your filters.
+        </p>
       )}
-      
+
       {/* Ban Logs Section */}
       <h3 className={styles.subSectionTitle}>Ban Logs</h3>
       {bans.length > 0 ? (
@@ -505,7 +532,9 @@ export default function UserManagement() {
                   <td>{ban.reason}</td>
                   <td>{new Date(ban.banned_at).toLocaleDateString()}</td>
                   <td>
-                    <span className={`${styles.statusBadge} ${isUnban ? styles.inactiveBanBadge : styles.bannedBadge}`}>
+                    <span
+                      className={`${styles.statusBadge} ${isUnban ? styles.inactiveBanBadge : styles.bannedBadge}`}
+                    >
                       {isUnban ? "Unban" : "Ban"}
                     </span>
                   </td>
@@ -517,7 +546,7 @@ export default function UserManagement() {
       ) : (
         <p className={styles.emptyMessage}>No ban records found.</p>
       )}
-      
+
       {showBanModal && <BanModal />}
     </div>
   );
