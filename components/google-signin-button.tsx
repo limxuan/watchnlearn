@@ -13,7 +13,7 @@ const getURL = () => {
   url = url.startsWith("http") ? url : `https://${url}`;
   // Make sure to include a trailing `/`.
   url = url.endsWith("/") ? url : `${url}/`;
-  return url + "/complete-profile";
+  return url + "complete-profile";
 };
 
 export default function GoogleSignInButton() {
