@@ -5,18 +5,6 @@ import { Button } from "./ui/button";
 import useUserStore from "@/stores/useUserStore";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
-import { useState } from "react";
 
 export default function AuthButton({
   closeMenuAction,
@@ -27,6 +15,7 @@ export default function AuthButton({
   const { user } = useUserStore();
 
   const handleProfileClick = () => {
+    closeMenuAction();
     router.push("/dashboard");
   };
 
