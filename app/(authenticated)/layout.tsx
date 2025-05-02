@@ -1,3 +1,4 @@
+import BannedNotice from "@/components/banned-notice";
 import WaitingApproval from "@/components/waiting-approval";
 import { createClient } from "@/utils/supabase/server";
 
@@ -16,7 +17,18 @@ export default async function AuthenticatedLayout({
 
   console.log({ profile });
 
+  const { data: banData } = await supabase
+    .from("bans")
+    .select("reason, banned_at")
+    .eq("user_id", data.user?.id)
+    .single();
+
   if (profile) {
+    if (banData) {
+      return (
+        <BannedNotice reason={banData.reason} bannedAt={banData.banned_at} />
+      );
+    }
     if (profile.role == "lecturer" && !profile.approved) {
       return <WaitingApproval />;
     }
