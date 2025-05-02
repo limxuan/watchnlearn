@@ -10,7 +10,7 @@ export default function GoogleSignInButton() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/complete-profile`,
+        redirectTo: `${process.env.NEXT_PUBLIC_VERCEL_URL}/complete-profile`,
       },
     });
   };
