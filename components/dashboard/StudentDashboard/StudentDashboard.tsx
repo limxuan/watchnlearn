@@ -625,7 +625,7 @@ const StudentDashboard = () => {
                     value={newUsername}
                     onChange={(e) => {
                       setNewUsername(e.target.value.replace(/\s/g, ''));
-                      setUsernameError(''); // Clear error on input change
+                      setUsernameError(''); 
                     }}
                     style={{ backgroundColor: '#427C83' }}
                   />
@@ -642,7 +642,7 @@ const StudentDashboard = () => {
                     value={newEmail}
                     onChange={(e) => {
                       setNewEmail(e.target.value);
-                      setEmailError(''); // Clear error on input change
+                      setEmailError('');
                     }}                
                     style={{ backgroundColor: '#427C83' }}
                   />

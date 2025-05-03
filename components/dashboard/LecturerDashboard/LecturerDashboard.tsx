@@ -57,6 +57,20 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import useUserStore from "@/stores/useUserStore";
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerClose,
+} from "@/components/ui/drawer";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import Link from 'next/link';
+
 
 const LecturerDashboard = () => {
   const supabase = createClient(); //database
@@ -192,44 +206,18 @@ const LecturerDashboard = () => {
       setUsernameError(''); 
     }
   
-    if (!newEmail.trim()) {
-      setEmailError('Email cannot be empty.'); 
-      hasError = true;
-    } else if (!/\S+@\S+\.\S+/.test(newEmail)) {
-      setEmailError('Invalid email format.');
-      hasError = true;
-    } else {
-      setEmailError('');
-    }
-  
     if (hasError) {
       return;
     }
-
-    if (newPasswordInput && !isCurrentPasswordCorrect) {
-      alert(
-        "Please enter the correct current password to update your password.",
-      );
-      return;
-    }
-
-    if (newPasswordInput && newPasswordInput !== confirmNewPasswordInput) {
-      setNewPasswordError("New passwords don't match.");
-      return;
-    } else {
-      setNewPasswordError("");
-    }
-
+    
     const updates: {
       username?: string;
       pfp_url?: string;
-      email?: string;
-      password?: string;
+
     } = {};
     if (newUsername !== user?.username) updates.username = newUsername;
     if (newPfpUrl !== user?.pfp_url && newPfpUrl) updates.pfp_url = newPfpUrl;
-    if (newEmail !== user?.email) updates.email = newEmail;
-    if (newPasswordInput) updates.password = newPasswordInput;
+ 
 
     if (Object.keys(updates).length === 0) {
       alert("No changes to save.");
@@ -242,17 +230,11 @@ const LecturerDashboard = () => {
       .eq("user_id", userId);
 
     if (error) {
-      alert("Error updating profile (duplicate value): " + error.message);
+      alert("This username already used by others user");
     } else {
       setShowConfirmation(true);
       if (Object.keys(updates).length > 0) {
       }
-
-      setCurrentPasswordInput("");
-      setIsCurrentPasswordCorrect(false);
-      setIsCollapseOpen(false);
-      setNewPasswordInput("");
-      setConfirmNewPasswordInput("");
       setNewPfpUrl("");
     }
   };
@@ -260,23 +242,7 @@ const LecturerDashboard = () => {
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  const handleCurrentPasswordEnter = async () => {
-    if (isCurrentPasswordCorrect) {
-      setIsCurrentPasswordCorrect(false);
-      setIsCollapseOpen(false);
-      setCurrentPasswordError('');
-    } else {
-      if (userInfo?.password === currentPasswordInput) {
-        setIsCurrentPasswordCorrect(true);
-        setIsCollapseOpen(true);
-        setCurrentPasswordError('');
-      } else {
-        setIsCurrentPasswordCorrect(false);
-        setIsCollapseOpen(false);
-        setCurrentPasswordError('Incorrect current password.');
-      }
-    }
-  };
+
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -410,6 +376,8 @@ const LecturerDashboard = () => {
     public_visibility: boolean;
     join_code: string;
     quiz_cover_url: string;
+    attemptCount?: number; // Ensure this is here
+
   }
 
   const [publishedQuizzes, setPublishedQuizzes] = useState<Quiz[]>([]);
@@ -423,6 +391,24 @@ const LecturerDashboard = () => {
   const [deletionNotificationOpen, setDeletionNotificationOpen] =
     useState(false);
 
+    const fetchQuizAttemptCount = async (quizId: string): Promise<number> => {
+      try {
+        const { count, error } = await supabase
+          .from("quiz_attempts")
+          .select("*", { count: "exact" })
+          .eq("quiz_id", quizId);
+  
+        if (error) {
+          console.error("Error fetching quiz attempt count:", error);
+          return 0;
+        }
+        return count || 0;
+      } catch (error: any) {
+        console.error("An unexpected error occurred:", error);
+        return 0;
+      }
+    };
+  
   const fetchPublishedQuizzes = async () => {
     setIsLoading(true);
     setError(null);
@@ -436,7 +422,13 @@ const LecturerDashboard = () => {
         console.error("Error fetching published quizzes:", error);
         setError(error.message);
       } else if (data) {
-        setPublishedQuizzes(data);
+        const quizzesWithCounts = await Promise.all(
+          data.map(async (quiz) => {
+            const attemptCount = await fetchQuizAttemptCount(quiz.quiz_id);
+            return { ...quiz, attemptCount };
+          }),
+        );
+        setPublishedQuizzes(quizzesWithCounts);
       }
     } catch (err: any) {
       console.error("An unexpected error occurred:", err);
@@ -444,7 +436,7 @@ const LecturerDashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+    };
 
   useEffect(() => {
     fetchPublishedQuizzes();
@@ -459,9 +451,7 @@ const LecturerDashboard = () => {
 
       if (error) {
         console.error("Error updating quiz visibility:", error);
-        // Optionally, revert the switch state on error
       } else {
-        // Optimistically update the state
         setPublishedQuizzes((prevQuizzes) =>
           prevQuizzes.map((quiz) =>
             quiz.quiz_id === quizId
@@ -539,6 +529,66 @@ const LecturerDashboard = () => {
       console.error("An unexpected error occurred:", err);
     }
   };
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  interface AttemptWithUser {
+    user_id: string;
+    correct_questions: number;
+    total_questions: number;
+    users: { username: string; pfp_url?: string | null } | null; // Add pfp_url (optional)
+  }
+
+  interface QuizAttempt {
+    quiz_id: string;
+    user_id: string;
+    correct_questions: number;
+    total_questions: number;
+  }
+
+  const [isAttemptsDrawerOpen, setIsAttemptsDrawerOpen] = useState(false);
+  const [currentQuizAttemptsWithUser, setCurrentQuizAttemptsWithUser] = useState<AttemptWithUser[] | null>(null);
+  const [selectedQuizForAttempts, setSelectedQuizForAttempts] = useState<Quiz | null>(null);
+  const [searchAttemptText, setSearchAttemptText] = useState("");
+  const [attemptCounts, setAttemptCounts] = useState<Record<string, number>>({});
+
+
+  const fetchQuizAttemptsWithUser = async (quizId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("quiz_attempts")
+        .select("user_id, correct_questions, total_questions, users(username, pfp_url)") // Select pfp_url as well
+        .eq("quiz_id", quizId);
+
+      if (error) {
+        console.error("Error fetching quiz attempts with user:", error);
+        return null;
+      }
+      return data;
+    } catch (error: any) {
+      console.error("An unexpected error occurred:", error);
+      return null;
+    }
+  };
+
+  const fetchAllQuizAttempts = async (quizId: string): Promise<QuizAttempt[] | null> => {
+    try {
+      const { data, error } = await supabase
+        .from("quiz_attempts")
+        .select("*")
+        .eq("quiz_id", quizId);
+  
+      if (error) {
+        console.error("Error fetching all quiz attempts:", error);
+        return null;
+      }
+      return data as QuizAttempt[] | null;
+    } catch (error: any) {
+      console.error("An unexpected error occurred:", error);
+      return null;
+    }
+  };
+  
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -673,101 +723,32 @@ const LecturerDashboard = () => {
                     value={newUsername}
                     onChange={(e) => {
                       setNewUsername(e.target.value.replace(/\s/g, ''));
-                      setUsernameError(''); // Clear error on input change
+                      setUsernameError('');
                     }}
                     style={{ backgroundColor: '#427C83' }}
                   />
                   {usernameError && <p className="text-xs text-red-500">{usernameError}</p>}
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="email" className="text-left">
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    className="col-span-3"
-                    value={newEmail}
-                    onChange={(e) => {
-                      setNewEmail(e.target.value);
-                      setEmailError(''); // Clear error on input change
-                    }}                
-                    style={{ backgroundColor: '#427C83' }}
-                  />
-                  {emailError && <p className="text-xs text-red-500">{emailError}</p>}
-                </div>
+                <div className={styles.passwordEmailContainer}>
 
-                <div className={styles.passwordContainer}>
-                  <div className="rounded-md border px-4 py-2 shadow-sm">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">Current Password</h4>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleCurrentPasswordEnter}
-                          ref={passwordToggleButtonRef}
-                        >
-                          {isCurrentPasswordCorrect ? (
-                            <ChevronsUp className="h-4 w-4" />
-                          ) : (
-                            <ChevronsDown className="h-4 w-4" />
-                          )}
-                          <span className="sr-only">Toggle</span>
-                        </Button>
-                      </div>
+                  
+                <Link href={`/protected/reset-password`} style={{ marginRight:"10%", marginBottom:"8%", marginTop:"5%" }}>
+                  <Button
+                    variant="destructive"
+                  >
+                    Change Password
+                  </Button>
+                </Link>
 
-                      <Input
-                        type="password"
-                        value={currentPasswordInput}
-                        onChange={(e) => setCurrentPasswordInput(e.target.value)}
-                        placeholder="Enter current password"
-                        style={{ backgroundColor: '#356369' }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleCurrentPasswordEnter();
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                      {currentPasswordError && (
-                        <p className="text-xs text-red-500">{currentPasswordError}</p>
-                      )}
+                <Link href={`/sign-up`}>
+                    <Button
+                      variant="outline"
+                    >
+                      Change Email
+                    </Button>
+                </Link>
 
-                      {isCurrentPasswordCorrect && (
-                        <div className="mt-4 space-y-2">
-                          <Label htmlFor="newPassword" className="text-left">
-                            New Password
-                          </Label>
-                          <Input
-                            type="password"
-                            id="newPassword"
-                            className="col-span-3"
-                            value={newPasswordInput}
-                            onChange={(e) => setNewPasswordInput(e.target.value)}
-                            style={{ backgroundColor: '#356369' }}
-
-                          />
-
-                          <Label htmlFor="confirmNewPassword" className="text-left">
-                            Confirm New Password
-                          </Label>
-                          <Input
-                            type="password"
-                            id="confirmNewPassword"
-                            className="col-span-3"
-                            value={confirmNewPasswordInput}
-                            onChange={(e) => setConfirmNewPasswordInput(e.target.value)}
-                            style={{ backgroundColor: '#356369' }}
-
-                          />
-                          {newPasswordError && (
-                            <p className="text-xs text-red-500">{newPasswordError}</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
                 </div> 
 
               </div>
@@ -786,7 +767,6 @@ const LecturerDashboard = () => {
                     className="absolute inset-y-0 left-[-8px] h-full w-0.5 bg-grey md:left-[-8px] md:top-auto md:bottom-auto md:h-auto md:w-full md:bg-transparent"
                     style={{ height: '35px' }}
                   />
-                  <Button className="ml-4">Log Out</Button>
                 </div>
               </SheetFooter>
 
@@ -955,21 +935,141 @@ const LecturerDashboard = () => {
                   </Badge>
                 </div>
 
-                <div className={styles.visibility}>
-                  <Label htmlFor={`public-${quiz.quiz_id}`}>
-                    {quiz.public_visibility ? "Public" : "Private"}
-                  </Label>
+                <div className={styles.attemptPeopleVisibility}>
+                  <div>
+                    <Drawer open={isAttemptsDrawerOpen} onOpenChange={setIsAttemptsDrawerOpen}>
+                      <DrawerTrigger asChild>
+                        <Button
+                          style={{ padding: '1px'}}
+                          variant="link"
+                          onClick={async () => {
+                            const attemptsWithUser = await fetchQuizAttemptsWithUser(quiz.quiz_id);
+                            const allAttempts = await fetchAllQuizAttempts(quiz.quiz_id);
+                          
+                            if (attemptsWithUser && allAttempts) {
+                              const highestScoresByUser: Record<string, AttemptWithUser> = {};
+                              const attemptCountsByUser: Record<string, number> = {};
+                          
+                              allAttempts.forEach(attempt => {
+                                attemptCountsByUser[attempt.user_id] = (attemptCountsByUser[attempt.user_id] || 0) + 1;
+                              });
+                          
+                              attemptsWithUser.forEach((attempt) => {
+                                if (
+                                  !highestScoresByUser[attempt.user_id] ||
+                                  attempt.correct_questions > highestScoresByUser[attempt.user_id].correct_questions
+                                ) {
+                                  highestScoresByUser[attempt.user_id] = attempt;
+                                }
+                              });
+                          
+                              setCurrentQuizAttemptsWithUser(Object.values(highestScoresByUser));
+                              setAttemptCounts(attemptCountsByUser);
+                              setSelectedQuizForAttempts(quiz);
+                              setIsAttemptsDrawerOpen(true);
+                            } else {
+                              console.log("Could not fetch attempts data.");
+                              setCurrentQuizAttemptsWithUser([]);
+                              setAttemptCounts({}); // Reset attempt counts
+                              setSelectedQuizForAttempts(quiz);
+                              setIsAttemptsDrawerOpen(true);
+                            }
+                          }}
+                        >
 
-                  <Switch
-                    id={`public-${quiz.quiz_id}`}
-                    checked={quiz.public_visibility}
-                    onCheckedChange={(checked) =>
-                      handleVisibilityChange(
-                        quiz.quiz_id,
-                        quiz.public_visibility,
-                      )
-                    }
-                  />
+                          <span className={styles.attemptPeople}>
+                            Total Attempt: {quiz.attemptCount !== undefined ? quiz.attemptCount : "..."}
+                          </span>
+                        </Button>
+                      </DrawerTrigger>
+
+                      <DrawerContent style={{backgroundColor: '#1B496C', color: '#F6F8D5'}}>
+                        <DrawerHeader>
+                          <DrawerTitle>Ranking</DrawerTitle>
+                          <DrawerDescription style={{color: '#fff'}}>Attempted Students</DrawerDescription>
+                        </DrawerHeader>
+                        <div className="p-4">
+                          <Command style={{backgroundColor: '#1B496C'}}>
+                            <CommandInput className="rounded-md font-semibold px-4 py-2 bg-[#1B496C] hover:bg-[#153A56] transition-colors duration-150"
+                              placeholder="Search username..."
+                              value={searchAttemptText}
+                              onValueChange={setSearchAttemptText}
+                            />
+                            <ScrollArea className="h-[225px] w-[1300px]">
+                              <CommandGroup
+                              className="rounded-md font-semibold px-4 py-2 bg-[#1B496C] hover:bg-[#153A56] transition-colors duration-60"
+                              heading="Students">
+                                {currentQuizAttemptsWithUser
+                                  ?.filter((attempt) =>
+                                    attempt?.users?.username
+                                      ?.toLowerCase()
+                                      .includes(searchAttemptText.toLowerCase()),
+                                  )
+                                  .sort((a, b) => b.correct_questions - a.correct_questions)
+                                  .map((attempt, index) => (
+                                    <CommandItem key={attempt.user_id} className={styles.studentRow} asChild>
+                                      <Link href={`/sign-in`}> 
+                                       <div className="flex items-center space-x-2 cursor-pointer">
+                                        <span style={{ fontWeight: 'bold', fontSize: '17px' }}>#{index + 1}</span>
+                                        {attempt.users?.pfp_url && (
+                                          <img
+                                            src={attempt.users.pfp_url}
+                                            alt={`${attempt.users.username}'s profile`}
+                                            className="rounded-full w-10 h-10 object-cover"
+                                          />
+                                        )}
+                                        <div className="flex flex-col">
+                                          <span style={{ fontWeight: 'bold' }}>
+                                            {attempt.users?.username || "Unknown User"}
+                                            {attemptCounts[attempt.user_id] > 1 ? ` ( ${attemptCounts[attempt.user_id]} Attempted )` : ''}
+                                          </span>
+                                          <span>{attempt.correct_questions} Correct</span>
+                                        </div>
+                                      </div>
+                                    </Link>
+                                  </CommandItem>
+                                  
+                                  ))}
+                                {currentQuizAttemptsWithUser?.filter((attempt) =>
+                                  attempt?.users?.username
+                                    ?.toLowerCase()
+                                    .includes(searchAttemptText.toLowerCase()),
+                                ).length === 0 && (
+                                  <CommandEmpty>No students found.</CommandEmpty>
+                                )}
+                              </CommandGroup>
+                            </ScrollArea>
+                          </Command>
+                        </div>
+                        <DrawerFooter>
+                          <DrawerClose asChild>
+                            <Button 
+                              style={{backgroundColor: '#303030'}} 
+                              variant="outline">Close
+                            </Button>
+                          </DrawerClose>
+                        </DrawerFooter>
+                      </DrawerContent>
+                    </Drawer>
+                  </div>
+
+  
+                  <div className={styles.visibility}>
+                    <Label htmlFor={`public-${quiz.quiz_id}`}>
+                      {quiz.public_visibility ? "Public" : "Private"}
+                    </Label>
+
+                    <Switch
+                      id={`public-${quiz.quiz_id}`}
+                      checked={quiz.public_visibility}
+                      onCheckedChange={(checked) =>
+                        handleVisibilityChange(
+                          quiz.quiz_id,
+                          quiz.public_visibility,
+                        )
+                      }
+                    />
+                  </div>
                 </div>
               </div>
             ))
@@ -1037,8 +1137,7 @@ const LecturerDashboard = () => {
             <DialogHeader>
               <DialogTitle>Confirm Delete</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete this quiz? This action cannot be
-                undone.
+                Are you sure you want to delete this quiz? This action cannot be undone.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
