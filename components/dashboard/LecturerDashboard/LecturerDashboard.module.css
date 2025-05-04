@@ -268,10 +268,6 @@
   color: #fff;
 }
 
-.studentRow:hover {
-  color: #f6f8d5;
-}
-
 @media (max-width: 768px) {
   .dashContent {
     flex-direction: column;

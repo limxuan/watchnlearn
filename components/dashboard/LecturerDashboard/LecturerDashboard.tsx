@@ -1037,16 +1037,16 @@ const LecturerDashboard = () => {
                         style={{ backgroundColor: "#1B496C", color: "#F6F8D5" }}
                       >
                         <DrawerHeader>
-                          <DrawerTitle>Ranking</DrawerTitle>
+                          <DrawerTitle>Student Attempts</DrawerTitle>
                           <DrawerDescription style={{ color: "#fff" }}>
-                            Attempted Students
+                            Sorted by most recent
                           </DrawerDescription>
                         </DrawerHeader>
                         <div className="p-4">
                           <Command style={{ backgroundColor: "#1B496C" }}>
                             <CommandInput
                               style={{ color: "#fff" }}
-                              className="rounded-md bg-[#1B496C] px-4 py-2 font-semibold transition-colors duration-150 hover:bg-[#153A56]"
+                              className="rounded-md bg-[#1B496C] px-4 py-2 font-semibold transition-colors duration-150"
                               placeholder="Search username..."
                               value={searchAttemptText}
                               onValueChange={setSearchAttemptText}
@@ -1054,16 +1054,28 @@ const LecturerDashboard = () => {
                             <ScrollArea className="h-[225px] w-[1300px]">
                               <CommandGroup
                                 style={{ color: "#fff" }}
-                                className="duration-60 rounded-md bg-[#1B496C] px-4 py-2 font-semibold transition-colors hover:bg-[#153A56]"
+                                className="duration-60 rounded-md bg-[#1B496C] px-4 py-2 font-semibold transition-colors"
                                 heading="Students"
                               >
                                 {currentQuizAttemptsWithUser
-                                  ?.filter((attempt) =>
-                                    attempt?.users?.username
-                                      ?.toLowerCase()
-                                      .includes(
-                                        searchAttemptText.toLowerCase(),
-                                      ),
+                                  ?.filter(
+                                    (attempt) =>
+                                      attempt?.users?.username
+                                        ?.toLowerCase()
+                                        .includes(
+                                          searchAttemptText.toLowerCase(),
+                                        ) ||
+                                      new Date(attempt.started_at)
+                                        .toLocaleString("en-GB", {
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                          second: "2-digit",
+                                          day: "2-digit",
+                                          month: "2-digit",
+                                          year: "numeric",
+                                        })
+                                        .replace(",", " -")
+                                        .includes(searchAttemptText),
                                   )
                                   .sort(
                                     (a, b) =>
@@ -1111,6 +1123,7 @@ const LecturerDashboard = () => {
                                             <div className="flex items-center space-x-2">
                                               <span
                                                 style={{ fontWeight: "bold" }}
+                                                className="text-white"
                                               >
                                                 {attempt.users?.username ||
                                                   "Unknown User"}
@@ -1123,7 +1136,7 @@ const LecturerDashboard = () => {
                                             {attempt.started_at && (
                                               <span
                                                 style={{ marginTop: "2.9%" }}
-                                                className="text-muted"
+                                                className="text-gray-400"
                                               >
                                                 Started:{" "}
                                                 {new Date(
