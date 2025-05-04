@@ -454,7 +454,10 @@ const StudentDashboard = () => {
                   )}
                 </div>
                 <div>
-                  <Badge className={styles.badgesContainer}>
+                  <Badge
+                    className={styles.badgesContainer}
+                    onClick={() => router.push("/badges")}
+                  >
                     {userBadgesInfo.length > 0 &&
                       userBadgesInfo.map((badgeInfo, index) => (
                         <div
@@ -833,7 +836,7 @@ const StudentDashboard = () => {
                 <div className={styles.startComplete}>
                   <div className={styles.startDate}>
                     <h1>Started</h1>
-                    <p>{new Date(attempt.started_at).toLocaleDateString()}</p>
+                    <p>{new Date(attempt.started_at).toLocaleDateString(('en-GB'))}</p>
                   </div>
 
                   <img
@@ -846,7 +849,7 @@ const StudentDashboard = () => {
                     <h1>Completed</h1>
                     <p>
                       {attempt.completed_at
-                        ? new Date(attempt.completed_at).toLocaleDateString()
+                        ? new Date(attempt.completed_at).toLocaleDateString(('en-GB'))
                         : "Not Completed Yet !"}
                     </p>
                   </div>
