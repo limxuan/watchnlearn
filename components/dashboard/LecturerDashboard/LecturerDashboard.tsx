@@ -5,17 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import uploadProfilePicture from "@/utils/uploadProfilePicture";
 
 import styles from "./LecturerDashboard.module.css";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -74,18 +64,34 @@ import {
   DrawerFooter,
   DrawerClose,
 } from "@/components/ui/drawer";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import Link from 'next/link';
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const LecturerDashboard = () => {
   const supabase = createClient(); //database
 
   const [isLoading, setIsLoading] = useState(true);
   const { user, clearUser } = useUserStore();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const userId = user?.user_id;
+  const router = useRouter();
 
   interface UserInfo {
     user_id: string;
@@ -93,27 +99,16 @@ const LecturerDashboard = () => {
     role?: string;
     pfp_url: string;
     email: string;
-    password: string;
   }
 
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [newUsername, setNewUsername] = useState(userInfo?.username || '');
-  const [newEmail, setNewEmail] = useState(userInfo?.email || '');
-  const [usernameError, setUsernameError] = useState('');
-  const [emailError, setEmailError] = useState('');
+  const [newUsername, setNewUsername] = useState(userInfo?.username || "");
+  const [usernameError, setUsernameError] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newPfpUrl, setNewPfpUrl] = useState("");
-  const [currentPasswordInput, setCurrentPasswordInput] = useState("");
-  const [isCurrentPasswordCorrect, setIsCurrentPasswordCorrect] =
-    useState(false);
-  const [currentPasswordError, setCurrentPasswordError] = useState("");
-  const [newPasswordInput, setNewPasswordInput] = useState("");
-  const [confirmNewPasswordInput, setConfirmNewPasswordInput] = useState("");
-  const [isCollapseOpen, setIsCollapseOpen] = useState(false);
-  const [newPasswordError, setNewPasswordError] = useState("");
+  useState(false);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const passwordToggleButtonRef = useRef(null);
-
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -124,28 +119,26 @@ const LecturerDashboard = () => {
         setIsLoading(false); // Ensure loading is false if userId is invalid
         return;
       }
-  
+
       try {
         const { data, error } = await supabase
           .from("users")
-          .select("user_id, username, role, pfp_url, email, password")
-          .eq('user_id', userId)
+          .select("user_id, username, role, pfp_url, email ")
+          .eq("user_id", userId)
           .single();
-  
+
         if (error) {
           console.error("Error fetching user data:", error);
         } else if (data) {
           setUserInfo(data);
           setNewUsername(data.username);
           setNewPfpUrl(data.pfp_url);
-          setNewEmail(data.email);
-
         }
       } finally {
         setIsLoading(false); // Ensure loading is set to false regardless of success or failure
       }
     };
-  
+
     fetchUserData();
   }, [userId]);
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,6 +146,12 @@ const LecturerDashboard = () => {
   const [userBadgesInfo, setUserBadgesInfo] = useState<
     { url: string; name: string }[]
   >([]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    clearUser();
+    router.push("/sign-in");
+  };
 
   const handleBadges = async () => {
     setIsLoading(true);
@@ -200,32 +199,31 @@ const LecturerDashboard = () => {
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleEditProfile = async () => {
-
     let hasError = false;
     const usernameRegex = /^[a-zA-Z0-9_]+$/;
-  
+
     if (!newUsername.trim()) {
-      setUsernameError('Username cannot be empty.');
+      setUsernameError("Username cannot be empty.");
       hasError = true;
     } else if (!usernameRegex.test(newUsername)) {
-      setUsernameError('Username can only contain letters, numbers, and underscores.');
+      setUsernameError(
+        "Username can only contain letters, numbers, and underscores.",
+      );
       hasError = true;
     } else {
-      setUsernameError(''); 
+      setUsernameError("");
     }
-  
+
     if (hasError) {
       return;
     }
-    
+
     const updates: {
       username?: string;
       pfp_url?: string;
-
     } = {};
     if (newUsername !== user?.username) updates.username = newUsername;
     if (newPfpUrl !== user?.pfp_url && newPfpUrl) updates.pfp_url = newPfpUrl;
- 
 
     if (Object.keys(updates).length === 0) {
       alert("No changes to save.");
@@ -247,10 +245,7 @@ const LecturerDashboard = () => {
     }
   };
 
-
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -385,7 +380,6 @@ const LecturerDashboard = () => {
     join_code: string;
     quiz_cover_url: string;
     attemptCount?: number; // Ensure this is here
-
   }
 
   const [publishedQuizzes, setPublishedQuizzes] = useState<Quiz[]>([]);
@@ -399,31 +393,24 @@ const LecturerDashboard = () => {
   const [deletionNotificationOpen, setDeletionNotificationOpen] =
     useState(false);
 
-    const fetchQuizAttemptCount = async (quizId: string): Promise<number> => {
-      try {
-        const { count, error } = await supabase
-          .from("quiz_attempts")
-          .select("*", { count: "exact" })
-          .eq("quiz_id", quizId);
-  
-        if (error) {
-          console.error("Error fetching quiz attempt count:", error);
-          return 0;
-        }
-        return count || 0;
-      } catch (error: any) {
-        console.error("An unexpected error occurred:", error);
+  const fetchQuizAttemptCount = async (quizId: string): Promise<number> => {
+    try {
+      const { count, error } = await supabase
+        .from("quiz_attempts")
+        .select("*", { count: "exact" })
+        .eq("quiz_id", quizId);
+
+      if (error) {
+        console.error("Error fetching quiz attempt count:", error);
         return 0;
       }
-    };
-
-  const router = useRouter();
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    clearUser();
-    router.push("/sign-in");
+      return count || 0;
+    } catch (error: any) {
+      console.error("An unexpected error occurred:", error);
+      return 0;
+    }
   };
+
   const fetchPublishedQuizzes = async () => {
     setIsLoading(true);
     setError(null);
@@ -451,7 +438,7 @@ const LecturerDashboard = () => {
     } finally {
       setIsLoading(false);
     }
-    };
+  };
 
   useEffect(() => {
     fetchPublishedQuizzes();
@@ -502,10 +489,10 @@ const LecturerDashboard = () => {
           prevQuizzes.map((quiz) =>
             quiz.quiz_id === selectedQuiz.quiz_id
               ? {
-                ...quiz,
-                name: editQuizName,
-                description: editQuizDescription,
-              }
+                  ...quiz,
+                  name: editQuizName,
+                  description: editQuizDescription,
+                }
               : quiz,
           ),
         );
@@ -562,17 +549,22 @@ const LecturerDashboard = () => {
   }
 
   const [isAttemptsDrawerOpen, setIsAttemptsDrawerOpen] = useState(false);
-  const [currentQuizAttemptsWithUser, setCurrentQuizAttemptsWithUser] = useState<AttemptWithUser[] | null>(null);
-  const [selectedQuizForAttempts, setSelectedQuizForAttempts] = useState<Quiz | null>(null);
+  const [currentQuizAttemptsWithUser, setCurrentQuizAttemptsWithUser] =
+    useState<AttemptWithUser[] | null>(null);
+  const [selectedQuizForAttempts, setSelectedQuizForAttempts] =
+    useState<Quiz | null>(null);
   const [searchAttemptText, setSearchAttemptText] = useState("");
-  const [attemptCounts, setAttemptCounts] = useState<Record<string, number>>({});
-
+  const [attemptCounts, setAttemptCounts] = useState<Record<string, number>>(
+    {},
+  );
 
   const fetchQuizAttemptsWithUser = async (quizId: string) => {
     try {
       const { data, error } = await supabase
         .from("quiz_attempts")
-        .select("user_id, correct_questions, total_questions, users(username, pfp_url)") // Select pfp_url as well
+        .select(
+          "user_id, correct_questions, total_questions, users(username, pfp_url)",
+        ) // Select pfp_url as well
         .eq("quiz_id", quizId);
 
       if (error) {
@@ -586,13 +578,15 @@ const LecturerDashboard = () => {
     }
   };
 
-  const fetchAllQuizAttempts = async (quizId: string): Promise<QuizAttempt[] | null> => {
+  const fetchAllQuizAttempts = async (
+    quizId: string,
+  ): Promise<QuizAttempt[] | null> => {
     try {
       const { data, error } = await supabase
         .from("quiz_attempts")
         .select("*")
         .eq("quiz_id", quizId);
-  
+
       if (error) {
         console.error("Error fetching all quiz attempts:", error);
         return null;
@@ -603,7 +597,6 @@ const LecturerDashboard = () => {
       return null;
     }
   };
-  
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -667,135 +660,142 @@ const LecturerDashboard = () => {
 
         {/* ============================================================================================================ */}
 
-        <div className={styles.settingButton}>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline">
-                <img src="data:image/png;base64,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"
-                 alt="Settings"/>
-              </Button>
-            </SheetTrigger>
-            <SheetContent style={{ overflowY: 'scroll', backgroundColor: '#1B496C', color: '#F6F8D5'}}>
-              <SheetHeader>
-                <SheetTitle className={styles.settingTitle}>
-                  Edit Profile
+        <section className="flex flex-row gap-2">
+          <div className={styles.settingButton}>
+            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="z-[10000]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure you want to sign out?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will log you out of your current session.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setIsDialogOpen(false)}>
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction onClick={handleSignOut}>
+                    Yes, Sign Out
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+
+          {/* ============================================================================================================ */}
+
+          <div className={styles.settingButton}>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline">
                   <img
-                    src="data:image/png;base64,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"
-                    alt="Settings Icon"
-                    className="w-5 h-5"
+                    src="data:image/png;base64,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"
+                    alt="Settings"
                   />
-                </SheetTitle>
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                style={{
+                  overflowY: "scroll",
+                  backgroundColor: "#1B496C",
+                  color: "#F6F8D5",
+                }}
+              >
+                <SheetHeader>
+                  <SheetTitle className={styles.settingTitle}>
+                    Edit Profile
+                    <img
+                      src="data:image/png;base64,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"
+                      alt="Settings Icon"
+                      className="h-5 w-5"
+                    />
+                  </SheetTitle>
 
-                <SheetDescription>
-                  Make changes to your profile here. Click save when you're done.
-                </SheetDescription>
-              </SheetHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="profilePicture" className="text-left">
-                    Profile Picture
-                  </Label>
-                  <div className="flex items-center space-x-4">
-                  <Avatar>
-                    <AvatarImage src={newPfpUrl || userInfo?.pfp_url} alt={userInfo?.username} />
-                    <AvatarFallback>{userInfo?.username?.slice(0, 2)?.toUpperCase() || '?'}</AvatarFallback>
-                  </Avatar>
-                    <div className={styles.uploadProfilePictureButton}>
-                      <Input
-                        type="file"
-                        id="profilePicture"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={async (e) => {
-                          if (e.target.files && e.target.files.length > 0) {
-                            const file = e.target.files[0];
-                            const newUrl = await uploadProfilePicture(file);
-                            if (newUrl) {
-                              setNewPfpUrl(newUrl);
-                            } else {
-                              console.error("Failed to upload profile picture.");
+                  <SheetDescription>
+                    Make changes to your profile here. Click save when you're
+                    done.
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="profilePicture" className="text-left">
+                      Profile Picture
+                    </Label>
+                    <div className="flex items-center space-x-4">
+                      <Avatar>
+                        <AvatarImage
+                          src={newPfpUrl || user?.pfp_url}
+                          alt={user?.username}
+                        />
+                        <AvatarFallback>
+                          {user?.username?.slice(0, 2)?.toUpperCase() || "?"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className={styles.uploadProfilePictureButton}>
+                        <Input
+                          type="file"
+                          id="profilePicture"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={async (e) => {
+                            if (e.target.files && e.target.files.length > 0) {
+                              const file = e.target.files[0];
+                              const newUrl = await uploadProfilePicture(file);
+                              if (newUrl) {
+                                setNewPfpUrl(newUrl);
+                              } else {
+                                console.error(
+                                  "Failed to upload profile picture.",
+                                );
+                              }
                             }
-                          }
-                        }}
-                      />
-                      <Label htmlFor="profilePicture" className="cursor-pointer rounded-md border font-semibold px-4 py-2 bg-[#427C83] hover:bg-[#356369] transition-colors duration-150">
-                        Upload Profile Picture
-                      </Label>
+                          }}
+                        />
+                        <Label
+                          htmlFor="profilePicture"
+                          className="cursor-pointer rounded-md border bg-[#427C83] px-4 py-2 font-semibold transition-colors duration-150 hover:bg-[#356369]"
+                        >
+                          Upload Profile Picture
+                        </Label>
+                      </div>
                     </div>
+                    {newPfpUrl && (
+                      <p className="mt-1 text-xs text-gray-500">
+                        New profile picture will be updated after "Save
+                        Changes".
+                      </p>
+                    )}
                   </div>
-                  {newPfpUrl && (
-                    <p className="text-xs text-gray-500 mt-1">New profile picture will be updated after "Save Changes".</p>
-                  )}
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="username" className="text-left">
+                      Username
+                    </Label>
+                    <Input
+                      id="username"
+                      className="col-span-3"
+                      value={newUsername}
+                      onChange={(e) =>
+                        setNewUsername(e.target.value.replace(/\s/g, ""))
+                      }
+                      style={{ backgroundColor: "#427C83" }}
+                    />
+                  </div>
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="username" className="text-left">
-                    Username
-                  </Label>
-                  <Input
-                    id="username"
-                    className="col-span-3"
-                    value={newUsername}
-                    onChange={(e) => {
-                      setNewUsername(e.target.value.replace(/\s/g, ''));
-                      setUsernameError('');
-                    }}
-                    style={{ backgroundColor: '#427C83' }}
-                  />
-                  {usernameError && <p className="text-xs text-red-500">{usernameError}</p>}
-                </div>
-
-                <div className={styles.passwordEmailContainer}>
-
-                  
-                <Link href={`/protected/reset-password`} style={{ marginRight:"10%", marginBottom:"8%", marginTop:"5%" }}>
-                  <Button
-                    variant="destructive"
-                  >
-                    Change Password
-                  </Button>
+                <Link href="/protected/reset-password" className="underline">
+                  Change Password
                 </Link>
 
-                <Link href={`/sign-up`}>
-                    <Button
-                      variant="outline"
-                    >
-                      Change Email
-                    </Button>
-                </Link>
-
-                </div> 
-
-              </div>
-
-              <SheetFooter className="flex flex-col items-end md:flex-row md:items-center justify-between md:justify-end gap-2 md:gap-0">
-                <div className="flex items-center space-x-2 mb-2 md:mb-0">
-                  <SheetClose asChild>
-                    <Button>Close</Button>
-                  </SheetClose>
-                  <Button type="submit" onClick={handleEditProfile}>
-                    Save Changes
-                  </Button>
-                </div>
-                <div className="relative">
-                  <div
-                    className="absolute inset-y-0 left-[-8px] h-full w-0.5 bg-grey md:left-[-8px] md:top-auto md:bottom-auto md:h-auto md:w-full md:bg-transparent"
-                    style={{ height: '35px' }}
-                  />
-                </div>
-              </SheetFooter>
-
-
-            </SheetContent>
-
-            {showConfirmation && (
-              <Sheet open={showConfirmation} onOpenChange={setShowConfirmation}>
-                <SheetContent>
-                  <SheetHeader>
-                    <SheetTitle>Changes Saved</SheetTitle>
-                    <SheetDescription>Your profile has been updated successfully.</SheetDescription>
-                  </SheetHeader>
-                  <SheetFooter>
+                <SheetFooter className="mt-3 flex flex-col items-end justify-between gap-2 md:flex-row md:items-center md:justify-end md:gap-0">
+                  <div className="mb-2 flex items-center space-x-2 md:mb-0">
                     <SheetClose asChild>
                       <Button>Close</Button>
                     </SheetClose>
@@ -805,10 +805,9 @@ const LecturerDashboard = () => {
                   </div>
                   <div className="relative">
                     <div
-                      className="t-y-0 bg-grey absolute left-[-8px] h-full w-0.5 md:bottom-auto md:left-[-8px] md:top-auto md:h-auto md:w-full md:bg-transparent"
+                      className="bg-grey pointer-events-none absolute inset-y-0 left-[-8px] h-full w-0.5 md:bottom-auto md:left-[-8px] md:top-auto md:h-auto md:w-full md:bg-transparent"
                       style={{ height: "35px" }}
                     />
-                    <Button className="ml-4">Log Out</Button>
                   </div>
                 </SheetFooter>
               </SheetContent>
@@ -983,33 +982,52 @@ const LecturerDashboard = () => {
 
                 <div className={styles.attemptPeopleVisibility}>
                   <div>
-                    <Drawer open={isAttemptsDrawerOpen} onOpenChange={setIsAttemptsDrawerOpen}>
+                    <Drawer
+                      open={isAttemptsDrawerOpen}
+                      onOpenChange={setIsAttemptsDrawerOpen}
+                    >
                       <DrawerTrigger asChild>
                         <Button
-                          style={{ padding: '1px'}}
+                          style={{ padding: "1px" }}
                           variant="link"
                           onClick={async () => {
-                            const attemptsWithUser = await fetchQuizAttemptsWithUser(quiz.quiz_id);
-                            const allAttempts = await fetchAllQuizAttempts(quiz.quiz_id);
-                          
+                            const attemptsWithUser =
+                              await fetchQuizAttemptsWithUser(quiz.quiz_id);
+                            const allAttempts = await fetchAllQuizAttempts(
+                              quiz.quiz_id,
+                            );
+
                             if (attemptsWithUser && allAttempts) {
-                              const highestScoresByUser: Record<string, AttemptWithUser> = {};
-                              const attemptCountsByUser: Record<string, number> = {};
-                          
-                              allAttempts.forEach(attempt => {
-                                attemptCountsByUser[attempt.user_id] = (attemptCountsByUser[attempt.user_id] || 0) + 1;
+                              const highestScoresByUser: Record<
+                                string,
+                                AttemptWithUser
+                              > = {};
+                              const attemptCountsByUser: Record<
+                                string,
+                                number
+                              > = {};
+
+                              allAttempts.forEach((attempt) => {
+                                attemptCountsByUser[attempt.user_id] =
+                                  (attemptCountsByUser[attempt.user_id] || 0) +
+                                  1;
                               });
-                          
+
                               attemptsWithUser.forEach((attempt) => {
                                 if (
                                   !highestScoresByUser[attempt.user_id] ||
-                                  attempt.correct_questions > highestScoresByUser[attempt.user_id].correct_questions
+                                  attempt.correct_questions >
+                                    highestScoresByUser[attempt.user_id]
+                                      .correct_questions
                                 ) {
-                                  highestScoresByUser[attempt.user_id] = attempt;
+                                  highestScoresByUser[attempt.user_id] =
+                                    attempt;
                                 }
                               });
-                          
-                              setCurrentQuizAttemptsWithUser(Object.values(highestScoresByUser));
+
+                              setCurrentQuizAttemptsWithUser(
+                                Object.values(highestScoresByUser),
+                              );
                               setAttemptCounts(attemptCountsByUser);
                               setSelectedQuizForAttempts(quiz);
                               setIsAttemptsDrawerOpen(true);
@@ -1022,66 +1040,103 @@ const LecturerDashboard = () => {
                             }
                           }}
                         >
-
                           <span className={styles.attemptPeople}>
-                            Total Attempt: {quiz.attemptCount !== undefined ? quiz.attemptCount : "..."}
+                            Total Attempt:{" "}
+                            {quiz.attemptCount !== undefined
+                              ? quiz.attemptCount
+                              : "..."}
                           </span>
                         </Button>
                       </DrawerTrigger>
 
-                      <DrawerContent style={{backgroundColor: '#1B496C', color: '#F6F8D5'}}>
+                      <DrawerContent
+                        style={{ backgroundColor: "#1B496C", color: "#F6F8D5" }}
+                      >
                         <DrawerHeader>
                           <DrawerTitle>Ranking</DrawerTitle>
-                          <DrawerDescription style={{color: '#fff'}}>Attempted Students</DrawerDescription>
+                          <DrawerDescription style={{ color: "#fff" }}>
+                            Attempted Students
+                          </DrawerDescription>
                         </DrawerHeader>
                         <div className="p-4">
-                          <Command style={{backgroundColor: '#1B496C'}}>
-                            <CommandInput className="rounded-md font-semibold px-4 py-2 bg-[#1B496C] hover:bg-[#153A56] transition-colors duration-150"
+                          <Command style={{ backgroundColor: "#1B496C" }}>
+                            <CommandInput
+                              className="rounded-md bg-[#1B496C] px-4 py-2 font-semibold transition-colors duration-150 hover:bg-[#153A56]"
                               placeholder="Search username..."
                               value={searchAttemptText}
                               onValueChange={setSearchAttemptText}
                             />
                             <ScrollArea className="h-[225px] w-[1300px]">
                               <CommandGroup
-                              className="rounded-md font-semibold px-4 py-2 bg-[#1B496C] hover:bg-[#153A56] transition-colors duration-60"
-                              heading="Students">
+                                className="duration-60 rounded-md bg-[#1B496C] px-4 py-2 font-semibold transition-colors hover:bg-[#153A56]"
+                                heading="Students"
+                              >
                                 {currentQuizAttemptsWithUser
                                   ?.filter((attempt) =>
                                     attempt?.users?.username
                                       ?.toLowerCase()
-                                      .includes(searchAttemptText.toLowerCase()),
+                                      .includes(
+                                        searchAttemptText.toLowerCase(),
+                                      ),
                                   )
-                                  .sort((a, b) => b.correct_questions - a.correct_questions)
+                                  .sort(
+                                    (a, b) =>
+                                      b.correct_questions - a.correct_questions,
+                                  )
                                   .map((attempt, index) => (
-                                    <CommandItem key={attempt.user_id} className={styles.studentRow} asChild>
-                                      <Link href={`/sign-in`}> 
-                                       <div className="flex items-center space-x-2 cursor-pointer">
-                                        <span style={{ fontWeight: 'bold', fontSize: '17px' }}>#{index + 1}</span>
-                                        {attempt.users?.pfp_url && (
-                                          <img
-                                            src={attempt.users.pfp_url}
-                                            alt={`${attempt.users.username}'s profile`}
-                                            className="rounded-full w-10 h-10 object-cover"
-                                          />
-                                        )}
-                                        <div className="flex flex-col">
-                                          <span style={{ fontWeight: 'bold' }}>
-                                            {attempt.users?.username || "Unknown User"}
-                                            {attemptCounts[attempt.user_id] > 1 ? ` ( ${attemptCounts[attempt.user_id]} Attempted )` : ''}
+                                    <CommandItem
+                                      key={attempt.user_id}
+                                      className={styles.studentRow}
+                                      asChild
+                                    >
+                                      <Link href={`/sign-in`}>
+                                        <div className="flex cursor-pointer items-center space-x-2">
+                                          <span
+                                            style={{
+                                              fontWeight: "bold",
+                                              fontSize: "17px",
+                                            }}
+                                          >
+                                            #{index + 1}
                                           </span>
-                                          <span>{attempt.correct_questions} Correct</span>
+                                          {attempt.users?.pfp_url && (
+                                            <img
+                                              src={attempt.users.pfp_url}
+                                              alt={`${attempt.users.username}'s profile`}
+                                              className="h-10 w-10 rounded-full object-cover"
+                                            />
+                                          )}
+                                          <div className="flex flex-col">
+                                            <span
+                                              style={{ fontWeight: "bold" }}
+                                            >
+                                              {attempt.users?.username ||
+                                                "Unknown User"}
+                                              {attemptCounts[attempt.user_id] >
+                                              1
+                                                ? ` ( ${attemptCounts[attempt.user_id]} Attempted )`
+                                                : ""}
+                                            </span>
+                                            <span>
+                                              {attempt.correct_questions}{" "}
+                                              Correct
+                                            </span>
+                                          </div>
                                         </div>
-                                      </div>
-                                    </Link>
-                                  </CommandItem>
-                                  
+                                      </Link>
+                                    </CommandItem>
                                   ))}
-                                {currentQuizAttemptsWithUser?.filter((attempt) =>
-                                  attempt?.users?.username
-                                    ?.toLowerCase()
-                                    .includes(searchAttemptText.toLowerCase()),
+                                {currentQuizAttemptsWithUser?.filter(
+                                  (attempt) =>
+                                    attempt?.users?.username
+                                      ?.toLowerCase()
+                                      .includes(
+                                        searchAttemptText.toLowerCase(),
+                                      ),
                                 ).length === 0 && (
-                                  <CommandEmpty>No students found.</CommandEmpty>
+                                  <CommandEmpty>
+                                    No students found.
+                                  </CommandEmpty>
                                 )}
                               </CommandGroup>
                             </ScrollArea>
@@ -1089,9 +1144,11 @@ const LecturerDashboard = () => {
                         </div>
                         <DrawerFooter>
                           <DrawerClose asChild>
-                            <Button 
-                              style={{backgroundColor: '#303030'}} 
-                              variant="outline">Close
+                            <Button
+                              style={{ backgroundColor: "#303030" }}
+                              variant="outline"
+                            >
+                              Close
                             </Button>
                           </DrawerClose>
                         </DrawerFooter>
@@ -1099,7 +1156,6 @@ const LecturerDashboard = () => {
                     </Drawer>
                   </div>
 
-  
                   <div className={styles.visibility}>
                     <Label htmlFor={`public-${quiz.quiz_id}`}>
                       {quiz.public_visibility ? "Public" : "Private"}
@@ -1183,7 +1239,8 @@ const LecturerDashboard = () => {
             <DialogHeader>
               <DialogTitle>Confirm Delete</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete this quiz? This action cannot be undone.
+                Are you sure you want to delete this quiz? This action cannot be
+                undone.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
