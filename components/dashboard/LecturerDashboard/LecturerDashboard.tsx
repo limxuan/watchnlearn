@@ -535,9 +535,11 @@ const LecturerDashboard = () => {
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   interface AttemptWithUser {
+    attempt_id: string;
     user_id: string;
     correct_questions: number;
     total_questions: number;
+    started_at: string;
     users: { username: any; pfp_url?: any } | any;
   }
 
@@ -563,8 +565,8 @@ const LecturerDashboard = () => {
       const { data, error } = await supabase
         .from("quiz_attempts")
         .select(
-          "user_id, correct_questions, total_questions, users(username, pfp_url)",
-        ) // Select pfp_url as well
+          "attempt_id, user_id, correct_questions, total_questions, started_at, users(username, pfp_url)",
+        )
         .eq("quiz_id", quizId);
 
       if (error) {
@@ -991,50 +993,24 @@ const LecturerDashboard = () => {
                           style={{ padding: "1px" }}
                           variant="link"
                           onClick={async () => {
-                            const attemptsWithUser =
-                              await fetchQuizAttemptsWithUser(quiz.quiz_id);
-                            const allAttempts = await fetchAllQuizAttempts(
-                              quiz.quiz_id,
-                            );
-
+                            const attemptsWithUser = await fetchQuizAttemptsWithUser(quiz.quiz_id);
+                            const allAttempts = await fetchAllQuizAttempts(quiz.quiz_id);
+                          
                             if (attemptsWithUser && allAttempts) {
-                              const highestScoresByUser: Record<
-                                string,
-                                AttemptWithUser
-                              > = {};
-                              const attemptCountsByUser: Record<
-                                string,
-                                number
-                              > = {};
-
-                              allAttempts.forEach((attempt) => {
-                                attemptCountsByUser[attempt.user_id] =
-                                  (attemptCountsByUser[attempt.user_id] || 0) +
-                                  1;
+                              const attemptCountsByUser: Record<string, number> = {};
+                          
+                              allAttempts.forEach(attempt => {
+                                attemptCountsByUser[attempt.user_id] = (attemptCountsByUser[attempt.user_id] || 0) + 1;
                               });
-
-                              attemptsWithUser.forEach((attempt) => {
-                                if (
-                                  !highestScoresByUser[attempt.user_id] ||
-                                  attempt.correct_questions >
-                                    highestScoresByUser[attempt.user_id]
-                                      .correct_questions
-                                ) {
-                                  highestScoresByUser[attempt.user_id] =
-                                    attempt;
-                                }
-                              });
-
-                              setCurrentQuizAttemptsWithUser(
-                                Object.values(highestScoresByUser),
-                              );
+                          
+                              setCurrentQuizAttemptsWithUser(attemptsWithUser); // Show all attempts
                               setAttemptCounts(attemptCountsByUser);
                               setSelectedQuizForAttempts(quiz);
                               setIsAttemptsDrawerOpen(true);
                             } else {
                               console.log("Could not fetch attempts data.");
                               setCurrentQuizAttemptsWithUser([]);
-                              setAttemptCounts({}); // Reset attempt counts
+                              setAttemptCounts({});
                               setSelectedQuizForAttempts(quiz);
                               setIsAttemptsDrawerOpen(true);
                             }
@@ -1061,6 +1037,7 @@ const LecturerDashboard = () => {
                         <div className="p-4">
                           <Command style={{ backgroundColor: "#1B496C" }}>
                             <CommandInput
+                              style={{ color: "#fff" }}
                               className="rounded-md bg-[#1B496C] px-4 py-2 font-semibold transition-colors duration-150 hover:bg-[#153A56]"
                               placeholder="Search username..."
                               value={searchAttemptText}
@@ -1068,6 +1045,7 @@ const LecturerDashboard = () => {
                             />
                             <ScrollArea className="h-[225px] w-[1300px]">
                               <CommandGroup
+                                style={{ color: "#fff" }}
                                 className="duration-60 rounded-md bg-[#1B496C] px-4 py-2 font-semibold transition-colors hover:bg-[#153A56]"
                                 heading="Students"
                               >
@@ -1080,51 +1058,55 @@ const LecturerDashboard = () => {
                                       ),
                                   )
                                   .sort(
-                                    (a, b) =>
-                                      b.correct_questions - a.correct_questions,
+                                    (a, b) => 
+                                      new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
                                   )
                                   .map((attempt, index) => (
                                     <CommandItem
-                                      key={attempt.user_id}
+                                      key={attempt.attempt_id}
                                       className={styles.studentRow}
                                       asChild
                                     >
-                                      <Link href={`/sign-in`}>
-                                        <div className="flex cursor-pointer items-center space-x-2">
-                                          <span
-                                            style={{
-                                              fontWeight: "bold",
-                                              fontSize: "17px",
-                                            }}
-                                          >
+                                      <Link href={`/attempt-summary/${attempt.attempt_id}`}>
+                                       <div className="flex cursor-pointer items-center space-x-2">
+                                          <span style={{ fontWeight: "bold", fontSize: "17px" }}>
                                             #{index + 1}
                                           </span>
-                                          {attempt.users?.pfp_url && (
-                                            <img
-                                              src={attempt.users.pfp_url}
-                                              alt={`${attempt.users.username}'s profile`}
-                                              className="h-10 w-10 rounded-full object-cover"
-                                            />
-                                          )}
-                                          <div className="flex flex-col">
-                                            <span
-                                              style={{ fontWeight: "bold" }}
-                                            >
-                                              {attempt.users?.username ||
-                                                "Unknown User"}
-                                              {attemptCounts[attempt.user_id] >
-                                              1
-                                                ? ` ( ${attemptCounts[attempt.user_id]} Attempted )`
-                                                : ""}
-                                            </span>
-                                            <span>
-                                              {attempt.correct_questions}{" "}
-                                              Correct
-                                            </span>
+                                          <Avatar>
+                                            {attempt.users?.pfp_url ? (
+                                              <AvatarImage
+                                                src={attempt.users.pfp_url}
+                                                alt={attempt.users.username}
+                                              />
+                                            ) : (
+                                              <AvatarFallback
+                                                style={{ backgroundColor: '#7DA995', color: '#F6F8D5' }}
+                                              >
+                                                {attempt.users?.username?.slice(0, 2).toUpperCase()}
+                                              </AvatarFallback>
+                                            )}
+                                          </Avatar>
+                                          <div className="flex flex-col items-start">
+                                            <div className="flex items-center space-x-2">
+                                              <span style={{ fontWeight: "bold" }}>
+                                                {attempt.users?.username || "Unknown User"}
+                                              </span>
+                                              <Badge>
+                                                {attempt.correct_questions}/{attempt.total_questions}
+                                              </Badge>
+                                            </div>
+                                            {attempt.started_at && (
+                                              <span style={{marginTop:'2.9%'}}>
+                                              Started:{" "}
+                                                {new Date(attempt.started_at).toLocaleTimeString()} -{" "}
+                                                {new Date(attempt.started_at).toLocaleDateString(('en-GB'))}
+                                              </span>
+                                            )}
                                           </div>
                                         </div>
                                       </Link>
                                     </CommandItem>
+
                                   ))}
                                 {currentQuizAttemptsWithUser?.filter(
                                   (attempt) =>
@@ -1145,8 +1127,15 @@ const LecturerDashboard = () => {
                         <DrawerFooter>
                           <DrawerClose asChild>
                             <Button
-                              style={{ backgroundColor: "#303030" }}
+                              style={{ backgroundColor: "#F6F8D5" , color:"#205781"}}
                               variant="outline"
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = "#CDCFB2";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = "#F6F8D5";
+                              }}
+
                             >
                               Close
                             </Button>
