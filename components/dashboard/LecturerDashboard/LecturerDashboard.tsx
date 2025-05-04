@@ -24,7 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronsUp, ChevronsDown, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 import {
