@@ -538,7 +538,7 @@ const LecturerDashboard = () => {
     user_id: string;
     correct_questions: number;
     total_questions: number;
-    users: { username: string; pfp_url?: string | null } | null; // Add pfp_url (optional)
+    users: { username: any; pfp_url?: any } | any;
   }
 
   interface QuizAttempt {
