@@ -7,7 +7,7 @@ interface FlexCenterProps extends HTMLAttributes<HTMLDivElement> {
 export default function FlexCenter({ children, ...props }: FlexCenterProps) {
   return (
     <div
-      className="flex h-full w-full flex-1 flex-col items-center justify-center"
+      className="flex h-[90dvh] w-[100dvw] flex-1 flex-col items-center justify-center"
       {...props}
     >
       {children}
