@@ -454,7 +454,10 @@ const StudentDashboard = () => {
                   )}
                 </div>
                 <div>
-                  <Badge className={styles.badgesContainer}>
+                  <Badge
+                    className={styles.badgesContainer}
+                    onClick={() => router.push("/badges")}
+                  >
                     {userBadgesInfo.length > 0 &&
                       userBadgesInfo.map((badgeInfo, index) => (
                         <div
