@@ -133,39 +133,39 @@ export default function Home() {
             >
               {isLoading
                 ? Array.from({ length: 9 }).map((_, index) => (
-                  <Skeleton
-                    key={index}
-                    className="aspect-square w-full rounded-md"
-                  />
-                ))
+                    <Skeleton
+                      key={index}
+                      className="aspect-square w-full rounded-md"
+                    />
+                  ))
                 : badgesData.map((badge) => {
-                  const userBadge = userBadges.find(
-                    (ub) => ub.badge_id === badge.badge_id,
-                  );
-                  return (
-                    <div
-                      key={badge.badge_id}
-                      onClick={() => {
-                        setSelectedBadge({ ...badge, ...userBadge! });
-                        if (window.innerWidth < 1024)
-                          setShowMobileModal(true);
-                      }}
-                      className={cn(
-                        "flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md border-4 p-2 text-center transition-transform duration-200 ease-in-out hover:-translate-y-1 hover:bg-[#1b4e72] hover:shadow-lg",
-                        userBadge ? "border-green-300" : "border-gray-500",
-                      )}
-                    >
-                      <img
-                        src={badge.image_url}
-                        alt={badge.name}
-                        className="h-12 w-12 object-contain"
-                      />
-                      <p className="mt-2 text-sm font-semibold">
-                        {badge.name}
-                      </p>
-                    </div>
-                  );
-                })}
+                    const userBadge = userBadges.find(
+                      (ub) => ub.badge_id === badge.badge_id,
+                    );
+                    return (
+                      <div
+                        key={badge.badge_id}
+                        onClick={() => {
+                          setSelectedBadge({ ...badge, ...userBadge! });
+                          if (window.innerWidth < 1024)
+                            setShowMobileModal(true);
+                        }}
+                        className={cn(
+                          "flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md border-4 p-2 text-center transition-transform duration-200 ease-in-out hover:-translate-y-1 hover:bg-[#1b4e72] hover:shadow-lg",
+                          userBadge ? "border-green-300" : "border-gray-500",
+                        )}
+                      >
+                        <img
+                          src={badge.image_url}
+                          alt={badge.name}
+                          className="h-12 w-12 object-contain"
+                        />
+                        <p className="mt-2 text-sm font-semibold">
+                          {badge.name}
+                        </p>
+                      </div>
+                    );
+                  })}
             </main>
           </ScrollArea>
 

@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from "@/utils/supabase/client";
 
 async function uploadProfilePicture(file: File): Promise<string | null> {
   try {
@@ -9,28 +9,27 @@ async function uploadProfilePicture(file: File): Promise<string | null> {
 
     // Upload the file to Supabase Storage
     const { data, error: uploadError } = await supabase.storage
-      .from('profile-pictures')
+      .from("profile-pictures")
       .upload(filename, file, {
-        cacheControl: '3600',
+        cacheControl: "3600",
         upsert: false,
       });
 
-    console.log({ data }) 
+    console.log({ data });
 
     if (uploadError) {
-      console.error('Error uploading file:', uploadError);
+      console.error("Error uploading file:", uploadError);
       return null;
     }
 
     // Get the public URL
     const publicUrlData = await supabase.storage
-      .from('profile-pictures')
+      .from("profile-pictures")
       .getPublicUrl(data.path);
-
 
     return publicUrlData.data.publicUrl;
   } catch (error) {
-    console.error('Error uploading profile picture:', error);
+    console.error("Error uploading profile picture:", error);
     return null;
   }
 }
