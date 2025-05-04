@@ -243,9 +243,23 @@ export default function Home() {
                 <strong>Date Obtained:</strong>{" "}
                 {new Date(selectedBadge.created_at).toLocaleDateString()}
               </p>
-              <p>
-                <strong>Description:</strong> {selectedBadge.description}
-              </p>
+              {selectedBadge.earned_at && (
+                <p>
+                  <strong>Earned At:</strong>{" "}
+                  {new Intl.DateTimeFormat("en-GB", {
+                    timeZone: "Asia/Singapore",
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  }).format(new Date("2025-04-30T08:37:41.25+00:00"))}
+                </p>
+              )}
+
+              {selectedBadge.description && (
+                <p>
+                  <strong>Description:</strong> {selectedBadge.description}
+                </p>
+              )}
             </div>
           </div>
         </div>
