@@ -12,6 +12,7 @@
   gap: 10px;
   font-size: 20px;
   font-weight: bold;
+  justify-content: space-between;
 }
 
 .badgesContainer {
@@ -114,10 +115,7 @@
 .badgesEarned img {
   margin-top: 9%;
   margin-left: 15px;
-  filter: brightness(110%)
-    invert(100%)
-    hue-rotate(203deg) 
-    saturate(5);
+  filter: brightness(110%) invert(100%) hue-rotate(203deg) saturate(5);
   mix-blend-mode: color-dodge;
   background-color: white;
 }
@@ -291,9 +289,7 @@
   }
 
   .badgesEarned {
-    width: calc(
-      50% - 15px
-    );
+    width: calc(50% - 15px);
     height: auto;
   }
 
@@ -381,7 +377,6 @@
   .editDelete {
     gap: 8px;
   }
-
   .uploadProfilePictureButton > label{
     font-size: 10px;
   }
@@ -391,4 +386,3 @@
     margin-left: 0;
   }
 }
-

@@ -28,15 +28,15 @@ export default function Navbar() {
     student: {
       "/quiz": "Explore Quizzes",
       "/leaderboard": "Leaderboard",
-      "/dashboard": "Dashboard",
     },
     lecturer: {
       "/dashboard": "Dashboard",
       "/schedule": "Schedule",
     },
     admin: {
-      "/dashboard": "Admin Panel",
-      "/users": "Users",
+      "/badges-management": "Badges",
+      "/user-management": "Users",
+      "/admin-logout": "Log Out",
     },
   };
 
@@ -70,7 +70,7 @@ export default function Navbar() {
       {!quizOngoing && (
         <>
           <nav
-            className={`${lato.className} sticky top-0 z-50 flex w-full items-center justify-between border-b bg-black/30 px-10 py-3 text-sm font-semibold backdrop-blur-lg`}
+            className={`${lato.className} sticky top-0 z-50 flex w-full items-center justify-between border-b bg-background/30 px-10 py-3 text-sm font-semibold backdrop-blur-lg`}
           >
             {/* Logo */}
             <span
@@ -100,7 +100,7 @@ export default function Navbar() {
 
           {/* 🛑 Move Fullscreen Menu OUTSIDE of nav */}
           {isMenuOpen && (
-            <div className="fixed inset-0 z-[999] flex h-full w-full flex-col items-center justify-center gap-8 overflow-y-hidden bg-black bg-opacity-80 text-white backdrop-blur-lg transition-all duration-300 ease-in-out">
+            <div className="fixed inset-0 z-[998] flex h-full w-full flex-col items-center justify-center gap-8 overflow-y-hidden bg-black bg-opacity-80 text-white backdrop-blur-lg transition-all duration-300 ease-in-out">
               <button
                 className="absolute right-6 top-6"
                 onClick={() => setIsMenuOpen(false)}

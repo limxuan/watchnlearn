@@ -31,7 +31,8 @@ export default async function RootLayout({
       <body className={`${geistSans.className} bg-background text-foreground`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
+          forcedTheme="dark"
           enableSystem
           disableTransitionOnChange
         >

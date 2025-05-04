@@ -19,7 +19,7 @@ type Player = {
   user_id: string;
   username: string;
   xp: number;
-  profile_url: string;
+  pfp_url: string;
 };
 
 export default function HomePage() {
@@ -41,6 +41,7 @@ export default function HomePage() {
       try {
         const res = await fetch(`/api/leaderboard?type=${type}`);
         const data = (await res.json()) as Player[];
+        console.log({ data });
         setFilteredData(data);
 
         // Set random phrase
@@ -163,7 +164,7 @@ export default function HomePage() {
                   </div>
                   <Avatar className="h-12 w-12">
                     <AvatarImage
-                      src={player.profile_url}
+                      src={player.pfp_url}
                       alt={`@${player?.username}`}
                     />
                     <AvatarFallback>👤</AvatarFallback>

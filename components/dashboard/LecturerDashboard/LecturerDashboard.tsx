@@ -5,7 +5,17 @@ import { createClient } from "@/utils/supabase/client";
 import uploadProfilePicture from "@/utils/uploadProfilePicture";
 
 import styles from "./LecturerDashboard.module.css";
-import { useRouter } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -24,11 +34,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronsUp, ChevronsDown } from "lucide-react";
-import {
-  ChartContainer,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { ChevronsUp, ChevronsDown, LogOut } from "lucide-react";
+import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 import {
   XAxis,
@@ -70,13 +77,14 @@ import {
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from 'next/link';
-
+import { useRouter } from "next/navigation";
 
 const LecturerDashboard = () => {
   const supabase = createClient(); //database
 
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useUserStore();
+  const { user, clearUser } = useUserStore();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const userId = user?.user_id;
 
   interface UserInfo {
@@ -408,7 +416,14 @@ const LecturerDashboard = () => {
         return 0;
       }
     };
-  
+
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    clearUser();
+    router.push("/sign-in");
+  };
   const fetchPublishedQuizzes = async () => {
     setIsLoading(true);
     setError(null);
@@ -487,10 +502,10 @@ const LecturerDashboard = () => {
           prevQuizzes.map((quiz) =>
             quiz.quiz_id === selectedQuiz.quiz_id
               ? {
-                  ...quiz,
-                  name: editQuizName,
-                  description: editQuizDescription,
-                }
+                ...quiz,
+                name: editQuizName,
+                description: editQuizDescription,
+              }
               : quiz,
           ),
         );
@@ -782,21 +797,52 @@ const LecturerDashboard = () => {
                   </SheetHeader>
                   <SheetFooter>
                     <SheetClose asChild>
-                      <Button
-                        onClick={() => {
-                          setShowConfirmation(false);
-                          window.location.reload();
-                        }}
-                      >
-                        OK
-                      </Button>
+                      <Button>Close</Button>
                     </SheetClose>
-                  </SheetFooter>
-                </SheetContent>
-              </Sheet>
-            )}
-          </Sheet>
-        </div>
+                    <Button type="submit" onClick={handleEditProfile}>
+                      Save Changes
+                    </Button>
+                  </div>
+                  <div className="relative">
+                    <div
+                      className="t-y-0 bg-grey absolute left-[-8px] h-full w-0.5 md:bottom-auto md:left-[-8px] md:top-auto md:h-auto md:w-full md:bg-transparent"
+                      style={{ height: "35px" }}
+                    />
+                    <Button className="ml-4">Log Out</Button>
+                  </div>
+                </SheetFooter>
+              </SheetContent>
+
+              {showConfirmation && (
+                <Sheet
+                  open={showConfirmation}
+                  onOpenChange={setShowConfirmation}
+                >
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Changes Saved</SheetTitle>
+                      <SheetDescription>
+                        Your profile has been updated successfully.
+                      </SheetDescription>
+                    </SheetHeader>
+                    <SheetFooter>
+                      <SheetClose asChild>
+                        <Button
+                          onClick={() => {
+                            setShowConfirmation(false);
+                            window.location.reload();
+                          }}
+                        >
+                          OK
+                        </Button>
+                      </SheetClose>
+                    </SheetFooter>
+                  </SheetContent>
+                </Sheet>
+              )}
+            </Sheet>
+          </div>
+        </section>
       </div>
       {/* ============================================================================================================ */}
       <div className={styles.dashContent}>

@@ -66,6 +66,8 @@ export default function FeedbackPage() {
       .eq("user_id", user?.user_id)
       .single();
 
+    console.log({ streakData });
+
     if (!streakData) {
       await supabase
         .from("user_streaks")
@@ -80,7 +82,12 @@ export default function FeedbackPage() {
         });
     } else {
       const today = new Date();
-      const completedDate = new Date(completedTimestamp);
+      const completedDate = new Date(streakData.streak_updated_at);
+      console.log({
+        today,
+        completedDate,
+        isSameDay: isSameDay(today, completedDate),
+      });
 
       if (!isSameDay(today, completedDate)) {
         await supabase
@@ -97,11 +104,23 @@ export default function FeedbackPage() {
           .then(({ error }) => {
             console.log({ error });
           });
+      } else {
+        console.log("same day bro");
       }
     }
 
     // saving user xp
-    const totalXpToIncrement = answers.filter((a) => a.isCorrect).length * 10;
+    const correctQuestions = answers.filter((a) => a.isCorrect).length;
+    const timeTakenInSeconds = Math.floor(
+      (completedTimestamp - startTimestamp) / 1000,
+    );
+    const maxTimeAllowed = 4 * 60;
+    const speedBonus =
+      correctQuestions > 0
+        ? Math.max(0, Math.floor((maxTimeAllowed - timeTakenInSeconds) / 5))
+        : 0;
+
+    const totalXpToIncrement = correctQuestions * 10 + speedBonus;
     incrementXp(user!.user_id, totalXpToIncrement);
     return attemptData.attempt_id;
   };

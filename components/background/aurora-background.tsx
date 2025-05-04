@@ -17,29 +17,29 @@ export const AuroraBackground = ({
     <main>
       <div
         className={cn(
-          "transition-bg relative flex h-dvh flex-col items-center justify-center bg-[#111827] text-white",
+          "transition-bg relative flex min-h-dvh flex-1 flex-col items-center justify-center bg-background text-foreground",
           className,
         )}
         {...props}
       >
         <div
-          className="absolute inset-0 overflow-hidden"
+          className="pointer-events-none absolute inset-0 overflow-hidden"
           style={
             {
               "--aurora": `
                 repeating-linear-gradient(
                   115deg,
-                  rgba(244,114,182,0.08) 5%,    /* pink-400 */
-                  rgba(96,165,250,0.08) 10%,    /* blue-400 */
-                  rgba(167,139,250,0.08) 15%,   /* violet-400 */
-                  rgba(94,234,212,0.08) 20%,    /* teal-300 */
-                  rgba(52,211,153,0.08) 25%,    /* green-400 */
-                  rgba(34,211,238,0.08) 30%,    /* cyan-400 */
+                  rgba(32,87,129,0.08) 5%,   /* Primary dark blue */
+                  rgba(79,149,157,0.08) 10%, /* Secondary teal */
+                  rgba(152,210,192,0.08) 15%,/* Accent green */
+                  rgba(246,248,213,0.08) 20%,/* Background yellow */
+                  rgba(79,149,157,0.08) 25%, /* Teal again */
+                  rgba(32,87,129,0.08) 30%,  /* Primary again */
                   transparent 35%
                 )
               `,
               "--dark-gradient":
-                "repeating-linear-gradient(115deg, #111827 0%, #111827 7%, transparent 10%, transparent 12%, #111827 16%)",
+                "repeating-linear-gradient(115deg, rgba(32,87,129,0.4) 0%, rgba(32,87,129,0.3) 7%, transparent 10%, transparent 12%, rgba(32,87,129,0.3) 16%)",
               "--white-gradient":
                 "repeating-linear-gradient(115deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.02) 7%, transparent 10%, transparent 12%, rgba(255,255,255,0.02) 16%)",
               "--transparent": "transparent",
@@ -50,8 +50,7 @@ export const AuroraBackground = ({
         >
           <div
             className={cn(
-              `after:animate-aurora pointer-events-none absolute -inset-[10px] opacity-60 blur-[10px] filter will-change-transform [background-image:var(--white-gradient),var(--aurora)] [background-position:center] [background-size:300%,_200%] after:absolute after:inset-0 after:mix-blend-lighten after:content-[""] after:[background-attachment:fixed] after:[background-image:var(--white-gradient),var(--aurora)] after:[background-size:200%,_100%] dark:[background-image:var(--dark-gradient),var(--aurora)] after:dark:[background-image:var(--dark-gradient),var(--aurora)]`,
-
+              `pointer-events-none absolute -inset-[10px] opacity-60 blur-[10px] filter will-change-transform [background-image:var(--white-gradient),var(--aurora)] [background-position:center] [background-size:300%,_200%] after:absolute after:inset-0 after:animate-aurora after:mix-blend-lighten after:content-[""] after:[background-attachment:fixed] after:[background-image:var(--white-gradient),var(--aurora)] after:[background-size:200%,_100%] dark:[background-image:var(--dark-gradient),var(--aurora)] after:dark:[background-image:var(--dark-gradient),var(--aurora)]`,
               showRadialGradient &&
                 `[mask-image:radial-gradient(ellipse_at_100%_0%, black 10%, transparent 70%)]`,
             )}

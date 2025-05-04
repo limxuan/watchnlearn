@@ -24,8 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronsUp, ChevronsDown } from "lucide-react";
-import {ChartTooltip} from "@/components/ui/chart";
+import { LogOut, ChevronsUp, ChevronsDown } from "lucide-react";
+import { ChartTooltip } from "@/components/ui/chart";
 
 import { GitCommitVertical } from "lucide-react";
 import {
@@ -44,6 +44,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import useUserStore from "@/stores/useUserStore";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const StudentDashboard = () => {
   const supabase = createClient(); //database
@@ -52,6 +63,7 @@ const StudentDashboard = () => {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   interface UserInfo {
     user_id: string;
@@ -551,8 +563,36 @@ const StudentDashboard = () => {
             <p>No User Found</p>
           )}
         </div>
+        <section className="flex flex-row gap-2">
+          <div className={styles.settingButton}>
+            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="z-[10000]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure you want to sign out?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will log you out of your current session.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setIsDialogOpen(false)}>
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction onClick={handleSignOut}>
+                    Yes, Sign Out
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
 
-        {/* ============================================================================================================ */}
+          {/* ============================================================================================================ */}
 
         <div className={styles.settingButton}>
           <Sheet>
@@ -660,14 +700,17 @@ const StudentDashboard = () => {
                           onClick={handleCurrentPasswordEnter}
                           ref={passwordToggleButtonRef}
                         >
-                          {isCurrentPasswordCorrect ? (
-                            <ChevronsUp className="h-4 w-4" />
-                          ) : (
-                            <ChevronsDown className="h-4 w-4" />
-                          )}
-                          <span className="sr-only">Toggle</span>
-                        </Button>
+                          Upload Profile Picture
+                        </Label>
                       </div>
+                    </div>
+                    {newPfpUrl && (
+                      <p className="mt-1 text-xs text-gray-500">
+                        New profile picture will be updated after "Save
+                        Changes".
+                      </p>
+                    )}
+                  </div>
 
                       <Input
                         type="password"
@@ -718,7 +761,62 @@ const StudentDashboard = () => {
                             <p className="text-xs text-red-500">{newPasswordError}</p>
                           )}
                         </div>
-                      )}
+
+                        <Input
+                          type="password"
+                          value={currentPasswordInput}
+                          onChange={(e) =>
+                            setCurrentPasswordInput(e.target.value)
+                          }
+                          placeholder="Enter current password"
+                          style={{ backgroundColor: "#356369" }}
+                        />
+                        {currentPasswordError && (
+                          <p className="text-xs text-red-500">
+                            {currentPasswordError}
+                          </p>
+                        )}
+
+                        {isCurrentPasswordCorrect && (
+                          <div className="mt-4 space-y-2">
+                            <Label htmlFor="newPassword" className="text-left">
+                              New Password
+                            </Label>
+                            <Input
+                              type="password"
+                              id="newPassword"
+                              className="col-span-3"
+                              value={newPasswordInput}
+                              onChange={(e) =>
+                                setNewPasswordInput(e.target.value)
+                              }
+                              style={{ backgroundColor: "#356369" }}
+                            />
+
+                            <Label
+                              htmlFor="confirmNewPassword"
+                              className="text-left"
+                            >
+                              Confirm New Password
+                            </Label>
+                            <Input
+                              type="password"
+                              id="confirmNewPassword"
+                              className="col-span-3"
+                              value={confirmNewPasswordInput}
+                              onChange={(e) =>
+                                setConfirmNewPasswordInput(e.target.value)
+                              }
+                              style={{ backgroundColor: "#356369" }}
+                            />
+                            {newPasswordError && (
+                              <p className="text-xs text-red-500">
+                                {newPasswordError}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div> 
@@ -755,21 +853,58 @@ const StudentDashboard = () => {
                   </SheetHeader>
                   <SheetFooter>
                     <SheetClose asChild>
-                      <Button
-                        onClick={() => {
-                          setShowConfirmation(false);
-                          window.location.reload();
-                        }}
-                      >
-                        OK
-                      </Button>
+                      <Button>Close</Button>
                     </SheetClose>
-                  </SheetFooter>
-                </SheetContent>
-              </Sheet>
-            )}
-          </Sheet>
-        </div>
+                    <Button type="submit" onClick={handleEditProfile}>
+                      Save Changes
+                    </Button>
+                  </div>
+                  <div className="relative">
+                    <div
+                      className="bg-grey pointer-events-none absolute inset-y-0 left-[-8px] h-full w-0.5 md:bottom-auto md:left-[-8px] md:top-auto md:h-auto md:w-full md:bg-transparent"
+                      style={{ height: "35px" }}
+                    />
+                    <Button
+                      className="ml-4"
+                      type="submit"
+                      onClick={handleSignOut}
+                    >
+                      Log Out
+                    </Button>
+                  </div>
+                </SheetFooter>
+              </SheetContent>
+
+              {showConfirmation && (
+                <Sheet
+                  open={showConfirmation}
+                  onOpenChange={setShowConfirmation}
+                >
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Changes Saved</SheetTitle>
+                      <SheetDescription>
+                        Your profile has been updated successfully.
+                      </SheetDescription>
+                    </SheetHeader>
+                    <SheetFooter>
+                      <SheetClose asChild>
+                        <Button
+                          onClick={() => {
+                            setShowConfirmation(false);
+                            window.location.reload();
+                          }}
+                        >
+                          OK
+                        </Button>
+                      </SheetClose>
+                    </SheetFooter>
+                  </SheetContent>
+                </Sheet>
+              )}
+            </Sheet>
+          </div>
+        </section>
       </div>
       {/* ============================================================================================================ */}
       <div className={styles.dashContent}>
