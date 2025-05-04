@@ -47,9 +47,11 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
             Sign in
           </SubmitButton>
 
+          <GoogleSignInButton />
+        </div>
+        <div className="mt-2">
           <FormMessage message={searchParams} />
         </div>
-        <GoogleSignInButton />
       </form>
     </FlexCenter>
   );
