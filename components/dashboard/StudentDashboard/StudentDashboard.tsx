@@ -322,7 +322,10 @@ const StudentDashboard = () => {
       setIsLoading(false);
       return Array.from(dailyXP.entries())
         .sort(([a], [b]) => a - b)
-        .map(([day, xp]) => ({ day, XP: xp }));
+        .map(([day, xp]) => ({
+          day,
+          XP: xp,
+        }));
     } finally {
       setIsLoading(false);
     }
@@ -332,7 +335,9 @@ const StudentDashboard = () => {
   const [xptotal, setXPTotal] = useState<number>(0);
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.toLocaleString("default", { month: "long" });
+  const currentMonth = currentDate.toLocaleString("default", {
+    month: "long",
+  });
   const currentMonthNumber = currentDate.getMonth();
 
   const ordinal = (n: number) => {
@@ -454,7 +459,10 @@ const StudentDashboard = () => {
                   )}
                 </div>
                 <div>
-                  <Badge className={styles.badgesContainer}>
+                  <Badge
+                    className={styles.badgesContainer}
+                    onClick={() => router.push("/badges")}
+                  >
                     {userBadgesInfo.length > 0 &&
                       userBadgesInfo.map((badgeInfo, index) => (
                         <div
@@ -605,7 +613,9 @@ const StudentDashboard = () => {
                       onChange={(e) =>
                         setNewUsername(e.target.value.replace(/\s/g, ""))
                       }
-                      style={{ backgroundColor: "#427C83" }}
+                      style={{
+                        backgroundColor: "#427C83",
+                      }}
                     />
                   </div>
                 </div>
@@ -625,7 +635,9 @@ const StudentDashboard = () => {
                   <div className="relative">
                     <div
                       className="bg-grey pointer-events-none absolute inset-y-0 left-[-8px] h-full w-0.5 md:bottom-auto md:left-[-8px] md:top-auto md:h-auto md:w-full md:bg-transparent"
-                      style={{ height: "35px" }}
+                      style={{
+                        height: "35px",
+                      }}
                     />
                   </div>
                 </SheetFooter>
@@ -712,8 +724,18 @@ const StudentDashboard = () => {
             }}
           >
             <CardHeader>
-              <CardTitle style={{ color: "#6B8474" }}>XP Earned</CardTitle>
-              <CardDescription style={{ color: "#F6F8D5" }}>
+              <CardTitle
+                style={{
+                  color: "#6B8474",
+                }}
+              >
+                XP Earned
+              </CardTitle>
+              <CardDescription
+                style={{
+                  color: "#F6F8D5",
+                }}
+              >
                 Your Journey ({currentMonth})
               </CardDescription>
             </CardHeader>
@@ -738,8 +760,13 @@ const StudentDashboard = () => {
                       axisLine={false}
                       tickMargin={10}
                       tickFormatter={(value) => `${value}${ordinal(value)}`}
-                      style={{ color: "#fff" }}
-                      tick={{ fill: "#E8E9CC", stroke: "#E8E9CC" }}
+                      style={{
+                        color: "#fff",
+                      }}
+                      tick={{
+                        fill: "#E8E9CC",
+                        stroke: "#E8E9CC",
+                      }}
                     />
                     <ChartTooltip
                       cursor={false}
@@ -750,8 +777,12 @@ const StudentDashboard = () => {
                         borderRadius: "13px",
                       }}
                       labelFormatter={(value) => `Day ${value}`}
-                      labelStyle={{ color: "#F6F8D5" }}
-                      itemStyle={{ color: "#fff" }}
+                      labelStyle={{
+                        color: "#F6F8D5",
+                      }}
+                      itemStyle={{
+                        color: "#fff",
+                      }}
                       formatter={(value) => [`XP: ${value}`]}
                     />
                     <Line
@@ -833,7 +864,9 @@ const StudentDashboard = () => {
                 <div className={styles.startComplete}>
                   <div className={styles.startDate}>
                     <h1>Started</h1>
-                    <p>{new Date(attempt.started_at).toLocaleDateString()}</p>
+                    <p>
+                      {new Date(attempt.started_at).toLocaleDateString("en-GB")}
+                    </p>
                   </div>
 
                   <img
@@ -846,7 +879,9 @@ const StudentDashboard = () => {
                     <h1>Completed</h1>
                     <p>
                       {attempt.completed_at
-                        ? new Date(attempt.completed_at).toLocaleDateString()
+                        ? new Date(attempt.completed_at).toLocaleDateString(
+                            "en-GB",
+                          )
                         : "Not Completed Yet !"}
                     </p>
                   </div>

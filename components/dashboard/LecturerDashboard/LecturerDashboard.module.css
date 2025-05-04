@@ -61,7 +61,6 @@
 }
 
 .passwordEmailContainer {
-
 }
 
 .dashContent {
@@ -242,7 +241,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  ;
 }
 
 .attemptPeople {
@@ -251,6 +249,8 @@
   padding: 0px;
   flex-grow: 1;
   color: #f6f8d5;
+  text-decoration: underline;
+  cursor: grab;
 }
 
 .visibility {
@@ -266,10 +266,6 @@
   align-items: center;
   margin-bottom: 20px;
   color: #fff;
-}
-
-.studentRow:hover {
-  color: #F6F8D5;
 }
 
 @media (max-width: 768px) {
@@ -377,12 +373,12 @@
   .editDelete {
     gap: 8px;
   }
-  .uploadProfilePictureButton > label{
+  .uploadProfilePictureButton > label {
     font-size: 10px;
   }
 
   .attemptPeople {
-    font-size:12px;
+    font-size: 12px;
     margin-left: 0;
   }
 }

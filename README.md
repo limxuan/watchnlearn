@@ -1,10 +1,13 @@
 # Steps on setting up
-1. Cloning this repository 
+
+1. Cloning this repository
+
 ```
 git clone https://github.com/theducksinapu/capstone && cd capstone
 ```
+
 2. [Create a new database](https://database.new/)
-3. Go to [step 3](https://supabase.com/docs/guides/getting-started/quickstarts/nextjs) copy your credentials 
+3. Go to [step 3](https://supabase.com/docs/guides/getting-started/quickstarts/nextjs) copy your credentials
 4. change the file which you cloned earlier from `env.example` to `env.local`
 5. Run `npm install` to install dependencies
 6. Run `npm run dev` to start the development env

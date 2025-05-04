@@ -72,16 +72,16 @@ export default function ImageMCQQuestionComponent({
                 className={cn(
                   "group relative cursor-pointer overflow-hidden border bg-background/40 transition-all duration-200",
                   !isSubmitted &&
-                  isSelected &&
-                  "ring-2 ring-primary ring-offset-2 ring-offset-background",
+                    isSelected &&
+                    "ring-2 ring-primary ring-offset-2 ring-offset-background",
                   !isSubmitted && "hover:border-white/40",
                   isSubmitted &&
-                  isCorrect &&
-                  "border-green-500 ring-2 ring-green-500",
+                    isCorrect &&
+                    "border-green-500 ring-2 ring-green-500",
                   isSubmitted &&
-                  isSelected &&
-                  !isCorrect &&
-                  "border-red-500 ring-2 ring-red-500",
+                    isSelected &&
+                    !isCorrect &&
+                    "border-red-500 ring-2 ring-red-500",
                 )}
               >
                 {/* Mobile square aspect */}

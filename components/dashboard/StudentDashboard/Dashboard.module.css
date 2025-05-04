@@ -61,7 +61,7 @@
 .dashContent {
   margin-left: 45px;
   margin-top: 60px;
-  display: flex; 
+  display: flex;
   align-items: flex-start;
   gap: 70px;
 }
