@@ -6,26 +6,26 @@ import VidQn from "@/components/questions/vidqn/page";
 import WhichOfImg from "@/components/questions/whichofimg/page";
 import DragNDrop from "@/components/questions/dragndrop/page";
 
-export default function QuestionTypePage({
+export default async function QuestionTypePage({
   params,
 }: {
-  params: { quizid: string; questiontype: string };
+  params: Promise<{ quizid: string; questiontype: string }>;
 }) {
-  const { quizid, questiontype } = params;
+  const { quizid, questiontype } = await params;
 
   switch (questiontype) {
     case "slideshow":
-      return <Slideshow quizId={quizid} />;
+      return <Slideshow />;
     case "imghotspot":
-      return <ImgHotspot quizId={quizid} />;
+      return <ImgHotspot />;
     case "pic2pic":
-      return <Pic2Pic quizId={quizid} />;
+      return <Pic2Pic />;
     case "vidqn":
-      return <VidQn quizId={quizid} />;
+      return <VidQn />;
     case "whichofimg":
-      return <WhichOfImg quizId={quizid} />;
+      return <WhichOfImg />;
     case "dragndrop":
-      return <DragNDrop quizId={quizid} />;
+      return <DragNDrop />;
     default:
       return <div>Invalid question type</div>;
   }

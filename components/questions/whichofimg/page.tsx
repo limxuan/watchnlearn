@@ -161,7 +161,9 @@ const WhichOfImg = () => {
                   <input
                     type="file"
                     accept="image/*"
-                    ref={(el) => (fileInputRefs.current[index] = el)}
+                    ref={(el) => {
+                      fileInputRefs.current[index] = el;
+                    }}
                     className="hidden"
                     onChange={(e) => {
                       if (e.target.files?.[0]) {
@@ -179,7 +181,9 @@ const WhichOfImg = () => {
                     <input
                       type="file"
                       accept="image/*"
-                      ref={(el) => (fileInputRefs.current[index] = el)}
+                      ref={(el) => {
+                        fileInputRefs.current[index] = el;
+                      }}
                       className="hidden"
                       onChange={(e) => {
                         if (e.target.files?.[0]) {
