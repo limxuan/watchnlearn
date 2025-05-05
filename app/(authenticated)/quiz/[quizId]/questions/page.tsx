@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 
-export default function QuizQuestionsClient({ quizid }: { quizid: string }) {
+export default function QuizQuestionsClient({ params }: any) {
+  const { quizId } = use<{ quizId: string }>(params);
   const [quizData, setQuizData] = useState<any>(null);
   const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,13 +17,13 @@ export default function QuizQuestionsClient({ quizid }: { quizid: string }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!quizid) return;
+      if (!quizId) return;
       setLoading(true);
 
       const { data: quiz, error: quizError } = await supabase
         .from("quizzes")
         .select("*")
-        .eq("quiz_id", quizid)
+        .eq("quiz_id", quizId)
         .single();
 
       if (quizError) {
@@ -34,7 +35,7 @@ export default function QuizQuestionsClient({ quizid }: { quizid: string }) {
       const { data: questionsData, error: questionsError } = await supabase
         .from("questions")
         .select("*")
-        .eq("quiz_id", quizid)
+        .eq("quiz_id", quizId)
         .eq("is_active", true);
 
       if (questionsError) {
@@ -47,7 +48,7 @@ export default function QuizQuestionsClient({ quizid }: { quizid: string }) {
     };
 
     fetchData();
-  }, [quizid]);
+  }, [quizId]);
 
   const handleSoftDelete = async (questionId: string) => {
     const { error } = await supabase
@@ -130,7 +131,7 @@ export default function QuizQuestionsClient({ quizid }: { quizid: string }) {
             {typeOptions.map(({ label, path }) => (
               <Button
                 key={path}
-                onClick={() => router.push(`/quiz/${quizid}/questions/${path}`)}
+                onClick={() => router.push(`/quiz/${quizId}/questions/${path}`)}
                 className="border border-[#205781] bg-[#F5F5F5] text-[#205781] hover:bg-[#E0F2F1]"
               >
                 {label}
