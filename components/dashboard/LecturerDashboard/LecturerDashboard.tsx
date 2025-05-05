@@ -775,20 +775,30 @@ const LecturerDashboard = () => {
                       </p>
                     )}
                   </div>
-
                   <div className="grid gap-2">
                     <Label htmlFor="username" className="text-left">
                       Username
                     </Label>
-                    <Input
-                      id="username"
-                      className="col-span-3"
-                      value={newUsername}
-                      onChange={(e) =>
-                        setNewUsername(e.target.value.replace(/\s/g, ""))
-                      }
-                      style={{ backgroundColor: "#427C83" }}
-                    />
+                    <div className="flex flex-col">
+                      <Input
+                        id="username"
+                        className="col-span-3"
+                        value={newUsername}
+                        onChange={(e) => {
+                          const inputElement = e.target;
+                          const newValue = inputElement.value.replace(/\s/g, "");
+                          if (newValue.length <= 25) {
+                            setNewUsername(newValue);
+                          } else {
+                            inputElement.value = newValue.slice(0, 25);
+                          }
+                        }}
+                        style={{ backgroundColor: "#427C83" }}
+                      />
+                      <div className="text-xs text-gray-500 text-right self-end" style={{ color: '#F6F8D5', marginTop: '17px', fontWeight:'bold'}}>
+                        {newUsername.length}/25 characters
+                      </div>
+                    </div>
                   </div>
                 </div>
 
