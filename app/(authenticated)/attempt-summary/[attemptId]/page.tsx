@@ -122,47 +122,49 @@ export default async function QuizSummaryPage({
   );
 
   return (
-    <div className="min-h-dvh bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4 text-white md:p-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div className="space-y-6">
-            {/* Quiz details card */}
-            <Link href={`/quiz/${quizAttempt.quiz_id}`}>
-              <QuizSummaryHeader
-                quizTitle={quiz.name}
-                quizDescription={quiz.description}
+    <AuroraBackground>
+      <div className="min-h-dvh p-4 text-white md:p-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div className="space-y-6">
+              {/* Quiz details card */}
+              <Link href={`/quiz/${quizAttempt.quiz_id}`}>
+                <QuizSummaryHeader
+                  quizTitle={quiz.name}
+                  quizDescription={quiz.description}
+                  scorePercentage={scorePercentage}
+                  difficultyRating={difficultyRating}
+                  lecturerName={creator.username}
+                  lecturerAvatar={creator.pfp_url}
+                />
+              </Link>
+
+              {/* User info card */}
+              <UserInfoCard
+                timeTaken={`${minutes}m ${seconds}s`}
+                studentName={attemptUser.username}
+                studentAvatar={attemptUser.pfp_url}
                 scorePercentage={scorePercentage}
-                difficultyRating={difficultyRating}
-                lecturerName={creator.username}
-                lecturerAvatar={creator.pfp_url}
+                correctQuestions={quizAttempt.correct_questions}
+                totalQuestions={quizAttempt.total_questions}
+                timeInMs={timeTaken}
               />
-            </Link>
+            </div>
 
-            {/* User info card */}
-            <UserInfoCard
-              timeTaken={`${minutes}m ${seconds}s`}
-              studentName={attemptUser.username}
-              studentAvatar={attemptUser.pfp_url}
-              scorePercentage={scorePercentage}
-              correctQuestions={quizAttempt.correct_questions}
-              totalQuestions={quizAttempt.total_questions}
-              timeInMs={timeTaken}
-            />
+            {/* Performance by question type card */}
+            <div>
+              <SummaryStats
+                correctQuestions={quizAttempt.correct_questions}
+                totalQuestions={quizAttempt.total_questions}
+                questionAttempts={questionAttempts}
+              />
+            </div>
           </div>
 
-          {/* Performance by question type card */}
-          <div>
-            <SummaryStats
-              correctQuestions={quizAttempt.correct_questions}
-              totalQuestions={quizAttempt.total_questions}
-              questionAttempts={questionAttempts}
-            />
-          </div>
+          {/* Questions list */}
+          <QuestionsList questionAttempts={questionAttempts} />
         </div>
-
-        {/* Questions list */}
-        <QuestionsList questionAttempts={questionAttempts} />
       </div>
-    </div>
+    </AuroraBackground>
   );
 }
