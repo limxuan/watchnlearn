@@ -364,8 +364,17 @@
     width: 100%;
   }
 
+  .namePercentage {
+    align-items: center;
+  }
+
   .namePercentage h1 {
     font-size: 25px;
+  }
+
+  .namePercentage p {
+    font-size: 15px;
+    white-space: nowrap;
   }
 
   .completeDate {
