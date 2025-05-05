@@ -11,7 +11,7 @@ const VidQn: React.FC = () => {
   const supabase = createClient();
   const router = useRouter();
   const params = useParams();
-  const quizId = params.quizid as string;
+  const quizId = params.quizId as string;
 
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [videoURL, setVideoURL] = useState<string | null>(null);

@@ -9,7 +9,7 @@ const WhichOfImg = () => {
   const router = useRouter();
   const supabase = createClient();
   const params = useParams();
-  const quizId = params.quizid as string;
+  const quizId = params.quizId as string;
 
   const [quizQuestion, setQuizQuestion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);

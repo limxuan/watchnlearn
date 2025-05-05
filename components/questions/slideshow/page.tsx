@@ -11,7 +11,7 @@ const SlideShowPage: React.FC = () => {
   const router = useRouter();
   const supabase = createClient();
   const params = useParams();
-  const quizId = params.quizid as string;
+  const quizId = params.quizId as string;
 
   const [images, setImages] = useState<
     Array<{

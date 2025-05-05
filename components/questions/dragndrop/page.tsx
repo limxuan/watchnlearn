@@ -9,7 +9,7 @@ const dnd = () => {
   const router = useRouter();
   const supabase = createClient();
   const params = useParams();
-  const quizId = params.quizid as string;
+  const quizId = params.quizId as string;
 
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [imageURL, setImageURL] = useState<string | null>(null);
@@ -261,7 +261,7 @@ const dnd = () => {
               if (e.target.files?.[0]) {
                 await handleImageDrop({
                   dataTransfer: { files: [e.target.files[0]] },
-                  preventDefault: () => {},
+                  preventDefault: () => { },
                 } as unknown as React.DragEvent<HTMLDivElement>);
               }
             }}

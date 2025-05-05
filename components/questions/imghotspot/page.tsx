@@ -9,7 +9,7 @@ const ImgHotspot: React.FC = () => {
   const router = useRouter();
   const supabase = createClient();
   const params = useParams();
-  const quizId = params.quizid as string;
+  const quizId = params.quizId as string;
 
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [imageURL, setImageURL] = useState<string | null>(null);
@@ -270,11 +270,10 @@ const ImgHotspot: React.FC = () => {
                 {hotspots.map((spot, i) => (
                   <div
                     key={i}
-                    className={`absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 cursor-move rounded-full ${
-                      spot.isCorrect
+                    className={`absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 cursor-move rounded-full ${spot.isCorrect
                         ? "bg-red-500 ring-2 ring-white"
                         : "bg-blue-500"
-                    }`}
+                      }`}
                     style={{
                       left: `${spot.x}%`,
                       top: `${spot.y}%`,
@@ -330,7 +329,7 @@ const ImgHotspot: React.FC = () => {
               if (e.target.files?.[0]) {
                 await handleImageDrop({
                   dataTransfer: { files: [e.target.files[0]] },
-                  preventDefault: () => {},
+                  preventDefault: () => { },
                 } as unknown as React.DragEvent<HTMLDivElement>);
               }
             }}

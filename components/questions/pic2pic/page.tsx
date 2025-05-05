@@ -8,7 +8,7 @@ const PictureToPictureCreator = () => {
   const router = useRouter();
   const supabase = createClient();
   const params = useParams();
-  const quizId = params.quizid as string;
+  const quizId = params.quizId as string;
   const fileInputRefs = useRef<(HTMLInputElement | null)[][]>([]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -174,8 +174,7 @@ const PictureToPictureCreator = () => {
     } catch (error) {
       console.error("Submission error:", error);
       alert(
-        `Failed to create quiz: ${
-          error instanceof Error ? error.message : "Unknown error"
+        `Failed to create quiz: ${error instanceof Error ? error.message : "Unknown error"
         }`,
       );
     } finally {
