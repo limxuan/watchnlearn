@@ -68,7 +68,7 @@ const WhichOfImg = () => {
         .insert([
           {
             quiz_id: quizId,
-            question_type: "which_of_images",
+            question_type: "image-mcq",
             question_text: quizQuestion,
             is_active: true,
           },

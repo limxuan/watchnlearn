@@ -69,14 +69,17 @@ const dnd = () => {
         return;
       }
 
+      // Store image URL as an array
+      const imageUrlsArray = imageURL ? [imageURL] : [];
+
       const { data: question, error: questionError } = await supabase
         .from("questions")
         .insert([
           {
             quiz_id: quizId,
-            question_type: "drag_n_drop",
+            question_type: "label-to-hotspot",
             question_text: quizQuestion,
-            image_urls: imageURL,
+            image_urls: imageUrlsArray,
             is_active: true,
           },
         ])
@@ -93,7 +96,7 @@ const dnd = () => {
             option_text: option.text,
             pos_x: Math.round(option.x),
             pos_y: Math.round(option.y),
-            is_correct: true, // All options are correct
+            is_correct: true,
             is_active: true,
           })),
         );
@@ -110,7 +113,6 @@ const dnd = () => {
       setIsSubmitting(false);
     }
   };
-
   const handleImageDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];

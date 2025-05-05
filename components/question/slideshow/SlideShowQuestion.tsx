@@ -17,11 +17,17 @@ export default function SlideShowQuestionComponent({
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
   const { answerQuestion, nextQuestion } = useQuizStore();
-  const mappedSlides: any[] = question.image_urls!.map((url, idx) => ({
+
+  const imageUrlsArray: string[] = Array.isArray(question.image_urls)
+    ? question.image_urls
+    : JSON.parse(question.image_urls || "[]");
+
+  const mappedSlides: any[] = imageUrlsArray.map((url, idx) => ({
     id: idx.toString(),
     imageUrl: url,
     alt: url,
   }));
+
   const currentSlide = mappedSlides[currentSlideIndex];
 
   const handlePrevious = () => {

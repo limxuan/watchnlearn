@@ -141,7 +141,7 @@ const VidQn: React.FC = () => {
         .insert([
           {
             quiz_id: quizId,
-            question_type: "videoqn",
+            question_type: "video",
             question_text: quizQuestion,
             video_url: videoURL,
             is_active: true,

@@ -13,11 +13,9 @@ const ImgHotspot: React.FC = () => {
 
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [imageURL, setImageURL] = useState<string | null>(null);
-
   const [quizQuestion, setQuizQuestion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // middle one is correct when spawn
   const [hotspots, setHotspots] = useState<
     { x: number; y: number; isCorrect: boolean }[]
   >([
@@ -35,7 +33,6 @@ const ImgHotspot: React.FC = () => {
     const bucket = "quiz-images";
     let imageFile = file;
 
-    // Apply 16:9 crop ONLY if not a cover image
     if (!isCover) {
       const imageBitmap = await createImageBitmap(file);
       const canvas = document.createElement("canvas");
@@ -132,14 +129,16 @@ const ImgHotspot: React.FC = () => {
         return;
       }
 
+      const imageUrlsArray = imageURL ? [imageURL] : [];
+
       const { data: question, error: questionError } = await supabase
         .from("questions")
         .insert([
           {
             quiz_id: quizId,
-            question_type: "image_hotspot",
-            question_text: quizQuestion || "Identify the correct spot",
-            image_urls: imageURL,
+            question_type: "hotspot-mcq",
+            question_text: quizQuestion,
+            image_urls: imageUrlsArray,
             video_url: null,
             is_active: true,
           },
@@ -149,18 +148,22 @@ const ImgHotspot: React.FC = () => {
 
       if (questionError) throw questionError;
 
+      // Prepare all hotspot options (1 correct and 2 incorrect)
+      const hotspotOptions = hotspots.map((hotspot) => ({
+        question_id: question.question_id,
+        option_text: hotspot.isCorrect
+          ? "Correct hotspot location"
+          : "Incorrect hotspot location",
+        pos_x: Math.round(hotspot.x),
+        pos_y: Math.round(hotspot.y),
+        is_correct: hotspot.isCorrect,
+        is_active: true,
+      }));
+
+      // Insert all hotspot options at once
       const { error: optionsError } = await supabase
         .from("question_options")
-        .insert([
-          {
-            question_id: question.question_id,
-            option_text: "Correct hotspot location",
-            pos_x: Math.round(correctHotspot.x),
-            pos_y: Math.round(correctHotspot.y),
-            is_correct: true,
-            is_active: true,
-          },
-        ]);
+        .insert(hotspotOptions);
 
       if (optionsError) throw optionsError;
 
@@ -190,7 +193,6 @@ const ImgHotspot: React.FC = () => {
     }
   };
 
-  // clear btn
   const handleClear = () => {
     setImageSrc(null);
     setImageURL(null);
@@ -202,8 +204,6 @@ const ImgHotspot: React.FC = () => {
     ]);
   };
 
-  //  handle setting the correct hotspot
-  //  it updates hotspots state so even if middle is true by default once any is clicked it will make others false
   const setCorrectHotspot = (index: number) => {
     setHotspots((prevHotspots) =>
       prevHotspots.map((hotspot, i) => ({
@@ -214,13 +214,11 @@ const ImgHotspot: React.FC = () => {
   };
 
   const handleHotspotInteraction = (index: number, e: React.MouseEvent) => {
-    // If it's a click (not drag), set as correct
     if (e.type === "click") {
       setCorrectHotspot(index);
       return;
     }
 
-    // Otherwise handle movement
     if (!imageRef.current) return;
 
     const img = imageRef.current;
@@ -270,10 +268,11 @@ const ImgHotspot: React.FC = () => {
                 {hotspots.map((spot, i) => (
                   <div
                     key={i}
-                    className={`absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 cursor-move rounded-full ${spot.isCorrect
+                    className={`absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 cursor-move rounded-full ${
+                      spot.isCorrect
                         ? "bg-red-500 ring-2 ring-white"
                         : "bg-blue-500"
-                      }`}
+                    }`}
                     style={{
                       left: `${spot.x}%`,
                       top: `${spot.y}%`,
@@ -329,7 +328,7 @@ const ImgHotspot: React.FC = () => {
               if (e.target.files?.[0]) {
                 await handleImageDrop({
                   dataTransfer: { files: [e.target.files[0]] },
-                  preventDefault: () => { },
+                  preventDefault: () => {},
                 } as unknown as React.DragEvent<HTMLDivElement>);
               }
             }}

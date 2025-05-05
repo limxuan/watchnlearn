@@ -174,7 +174,8 @@ const PictureToPictureCreator = () => {
     } catch (error) {
       console.error("Submission error:", error);
       alert(
-        `Failed to create quiz: ${error instanceof Error ? error.message : "Unknown error"
+        `Failed to create quiz: ${
+          error instanceof Error ? error.message : "Unknown error"
         }`,
       );
     } finally {
