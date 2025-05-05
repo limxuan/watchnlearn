@@ -119,6 +119,7 @@ export default function UserManagement() {
         // Mark users who are currently banned
         const enhancedUserData = userData?.map((user) => ({
           ...user,
+          approved: user.role == "student" ? true : user.approved,
           is_banned: activeBannedUserIds.has(user.user_id),
         }));
 
