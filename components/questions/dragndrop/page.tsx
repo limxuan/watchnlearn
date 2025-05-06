@@ -69,7 +69,6 @@ const dnd = () => {
         return;
       }
 
-      // Store image URL as an array
       const imageUrlsArray = imageURL ? [imageURL] : [];
 
       const { data: question, error: questionError } = await supabase
