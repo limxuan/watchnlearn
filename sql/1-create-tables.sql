@@ -6,10 +6,8 @@ CREATE TABLE users (
     user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE, -- Foreign key to auth.users
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    password TEXT,       -- Consider using a more secure way to store passwords (e.g., hashed)
     role TEXT,
     pfp_url TEXT,
-    google_id TEXT,
     approved BOOLEAN,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
@@ -87,7 +85,7 @@ CREATE TABLE questions (
     quiz_id UUID REFERENCES quizzes(quiz_id) ON DELETE CASCADE, -- Foreign key to quizzes
     question_type TEXT NOT NULL,
     question_text TEXT NOT NULL,
-    image_urls TEXT,
+    image_urls TEXT[],
     video_url TEXT,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
     is_active BOOLEAN
@@ -131,5 +129,6 @@ CREATE TABLE question_attempts(
     question_id UUID REFERENCES questions(question_id) ON DELETE CASCADE,  -- Foreign Key to questions
     selected_option_id UUID REFERENCES question_options(option_id) ON DELETE CASCADE, -- Foreign Key to question_options
     correct_option_id  UUID REFERENCES question_options(option_id) ON DELETE CASCADE,
-    is_correct BOOLEAN
+    is_correct BOOLEAN,
+    mistake_count INTEGER
 );
