@@ -16,7 +16,7 @@ const PictureToPictureCreator = () => {
     Array(4)
       .fill(null)
       .map(() => ({
-        id: Math.random().toString(36).substring(2, 11),
+        id: crypto.randomUUID(),
         source: { src: null as string | null, file: null as File | null },
         target: { src: null as string | null, file: null as File | null },
       })),
@@ -27,7 +27,7 @@ const PictureToPictureCreator = () => {
       Array(4)
         .fill(null)
         .map(() => ({
-          id: Math.random().toString(36).substring(2, 11),
+          id: crypto.randomUUID(),
           source: { src: null, file: null },
           target: { src: null, file: null },
         })),
@@ -41,18 +41,10 @@ const PictureToPictureCreator = () => {
   ) => {
     if (!file || !file.type.startsWith("image/")) return;
 
-    try {
-      const url = URL.createObjectURL(file);
-      const newPairs = [...pairs];
-      newPairs[pairIndex] = {
-        ...newPairs[pairIndex],
-        [type]: { src: url, file },
-      };
-      setPairs(newPairs);
-    } catch (err) {
-      console.error("Image upload failed:", err);
-      alert("Please upload a valid image file");
-    }
+    const url = URL.createObjectURL(file);
+    const newPairs = [...pairs];
+    newPairs[pairIndex][type] = { src: url, file };
+    setPairs(newPairs);
   };
 
   const handleDrop = (
@@ -66,28 +58,20 @@ const PictureToPictureCreator = () => {
   };
 
   const handleClickUpload = (pairIndex: number, type: "source" | "target") => {
-    if (!fileInputRefs.current[pairIndex]) {
-      fileInputRefs.current[pairIndex] = [];
-    }
-    const input = fileInputRefs.current[pairIndex][type === "source" ? 0 : 1];
+    const input = fileInputRefs.current[pairIndex]?.[type === "source" ? 0 : 1];
     if (input) input.click();
   };
 
   const uploadImageToSupabase = async (file: File): Promise<string> => {
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${crypto.randomUUID()}.${fileExt}`;
-
+    const ext = file.name.split(".").pop();
+    const name = `${crypto.randomUUID()}.${ext}`;
     const { error } = await supabase.storage
       .from("quiz-images")
-      .upload(fileName, file);
-
+      .upload(name, file);
     if (error) throw error;
 
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from("quiz-images").getPublicUrl(fileName);
-
-    return publicUrl;
+    const { data } = supabase.storage.from("quiz-images").getPublicUrl(name);
+    return data.publicUrl;
   };
 
   const handleSubmit = async () => {
@@ -99,6 +83,7 @@ const PictureToPictureCreator = () => {
       } = await supabase.auth.getUser();
 
       if (authError || !user) {
+        console.error("Authentication error:", authError);
         alert("You need to be logged in to create quizzes");
         return;
       }
@@ -112,127 +97,173 @@ const PictureToPictureCreator = () => {
         return;
       }
 
-      for (const pair of validPairs) {
-        if (!pair.source.file || !pair.target.file) continue;
+      // 1. Insert ONE question row
+      const { data: question, error: questionError } = await supabase
+        .from("questions")
+        .insert({
+          quiz_id: quizId,
+          question_type: "picture-to-picture",
+          question_text: "Match the pairs",
+          is_active: true,
+        })
+        .select("question_id")
+        .single();
 
-        const sourceUrl = await uploadImageToSupabase(pair.source.file);
-        const targetUrl = await uploadImageToSupabase(pair.target.file);
-
-        const { data: question, error: questionError } = await supabase
-          .from("questions")
-          .insert({
-            quiz_id: quizId,
-            question_type: "picture_to_picture",
-            question_text: "Match the pairs",
-            is_active: true,
-          })
-          .select("question_id")
-          .single();
-
-        if (questionError) throw questionError;
-
-        const { data: sourceOption, error: sourceError } = await supabase
-          .from("question_options")
-          .insert({
-            question_id: question.question_id,
-            option_text: "Source image",
-            option_url: sourceUrl,
-            is_correct: false,
-            is_active: true,
-          })
-          .select("option_id")
-          .single();
-
-        if (sourceError) throw sourceError;
-
-        const { data: targetOption, error: targetError } = await supabase
-          .from("question_options")
-          .insert({
-            question_id: question.question_id,
-            option_text: "Target image",
-            option_url: targetUrl,
-            is_correct: false,
-            is_active: true,
-          })
-          .select("option_id")
-          .single();
-
-        if (targetError) throw targetError;
-
-        const { error: matchError } = await supabase
-          .from("question_matches")
-          .insert({
-            question_id: question.question_id,
-            source_option_id: sourceOption.option_id,
-            target_option_id: targetOption.option_id,
-          });
-
-        if (matchError) throw matchError;
+      if (questionError) {
+        console.error("Error inserting question:", questionError);
+        throw questionError;
       }
 
-      alert("Quiz created successfully!");
+      const insertedOptionIds: {
+        [key: string]: { source: string; target: string };
+      } = {};
+
+      for (const pair of validPairs) {
+        if (pair.source.file && pair.target.file) {
+          let sourceImageUrl: string | null = null;
+          let targetImageUrl: string | null = null;
+
+          try {
+            sourceImageUrl = await uploadImageToSupabase(pair.source.file);
+          } catch (uploadError) {
+            console.error("Error uploading source image:", uploadError);
+            throw uploadError;
+          }
+
+          try {
+            targetImageUrl = await uploadImageToSupabase(pair.target.file);
+          } catch (uploadError) {
+            console.error("Error uploading target image:", uploadError);
+            throw uploadError;
+          }
+
+          const { data: sourceOption, error: sourceOptionError } =
+            await supabase
+              .from("question_options")
+              .insert({
+                question_id: question.question_id,
+                option_text: "Source image",
+                option_url: sourceImageUrl,
+                is_correct: true,
+                is_active: true,
+              })
+              .select("option_id")
+              .single();
+
+          if (sourceOptionError) {
+            console.error("Error inserting source option:", sourceOptionError);
+            throw sourceOptionError;
+          }
+
+          const { data: targetOption, error: targetOptionError } =
+            await supabase
+              .from("question_options")
+              .insert({
+                question_id: question.question_id,
+                option_text: "Target image",
+                option_url: targetImageUrl,
+                is_correct: true,
+                is_active: true,
+              })
+              .select("option_id")
+              .single();
+
+          if (targetOptionError) {
+            console.error("Error inserting target option:", targetOptionError);
+            throw targetOptionError;
+          }
+
+          insertedOptionIds[pair.id] = {
+            source: sourceOption.option_id,
+            target: targetOption.option_id,
+          };
+        }
+      }
+
+      // 3. Insert matches by linking source & target option_ids
+      for (const pair of validPairs) {
+        const optionIds = insertedOptionIds[pair.id];
+        if (optionIds) {
+          const { source, target } = optionIds;
+          const { error: matchError } = await supabase
+            .from("question_matches")
+            .insert({
+              question_id: question.question_id,
+              source_option_id: source,
+              target_option_id: target,
+            });
+
+          if (matchError) {
+            console.error("Error inserting match:", matchError);
+            throw matchError;
+          }
+        }
+      }
+
+      alert("Picture-to-picture question created successfully!");
+      router.push(`/quiz/${quizId}/questions`);
     } catch (error) {
       console.error("Submission error:", error);
       alert(
-        `Failed to create quiz: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`,
+        `Failed to create quiz: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     } finally {
       setIsSubmitting(false);
     }
-    router.push(`/quiz/${quizId}/questions`);
   };
 
   return (
     <div className="min-h-screen bg-[#98d5c0] pb-40 pt-20">
       <h1 className="text-center text-3xl font-bold text-[#205781]">
-        Create Picture to Picture Quiz
+        Create Picture to Picture Question
       </h1>
 
-      <div className="mx-auto mt-12 w-[90%] bg-[#98d5c0] px-4">
+      <div className="mx-auto mt-12 w-[90%] px-4">
         <h2 className="mb-6 text-center text-xl font-bold text-[#205781]">
-          Create 4 Matching Pairs (Click to upload images)
+          Upload Matching Image Pairs
         </h2>
 
-        <div className="grid grid-cols-1 gap-8 bg-[#98d5c0] md:grid-cols-2 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {pairs.map((pair, index) => (
             <div
               key={pair.id}
-              className="space-y-4 rounded-lg border-[3px] border-[#205781] bg-[#f8f8d5] p-4 shadow-md"
+              className="rounded-lg border-[3px] border-[#205781] bg-[#f8f8d5] p-4 shadow-md"
             >
               <h3 className="text-center font-medium text-[#205781]">
                 Pair {index + 1}
               </h3>
 
+              {/* Hidden Inputs */}
               <input
                 type="file"
                 accept="image/*"
                 ref={(el) => {
-                  if (!fileInputRefs.current[index])
-                    fileInputRefs.current[index] = [];
+                  fileInputRefs.current[index] ||= [];
                   fileInputRefs.current[index][0] = el;
                 }}
-                onChange={(e) => {
-                  if (e.target.files?.[0]) {
-                    handleImageUpload(index, "source", e.target.files[0]);
-                  }
-                }}
+                onChange={(e) =>
+                  handleImageUpload(
+                    index,
+                    "source",
+                    e.target.files?.[0] ?? null,
+                  )
+                }
                 className="hidden"
               />
               <input
                 type="file"
                 accept="image/*"
                 ref={(el) => {
-                  if (!fileInputRefs.current[index])
-                    fileInputRefs.current[index] = [];
+                  fileInputRefs.current[index] ||= [];
                   fileInputRefs.current[index][1] = el;
                 }}
-                onChange={(e) => {
-                  if (e.target.files?.[0]) {
-                    handleImageUpload(index, "target", e.target.files[0]);
-                  }
-                }}
+                onChange={(e) =>
+                  handleImageUpload(
+                    index,
+                    "target",
+                    e.target.files?.[0] ?? null,
+                  )
+                }
                 className="hidden"
               />
 
@@ -240,12 +271,12 @@ const PictureToPictureCreator = () => {
                 onDrop={(e) => handleDrop(e, index, "source")}
                 onDragOver={(e) => e.preventDefault()}
                 onClick={() => handleClickUpload(index, "source")}
-                className="flex h-40 cursor-pointer items-center justify-center rounded-xl border-4 border-dashed border-[#205781] bg-[#98d5c0] text-center text-[#205781] transition hover:bg-[#98D2C0]"
+                className="mt-3 flex h-40 cursor-pointer items-center justify-center rounded-xl border-4 border-dashed border-[#205781] bg-[#98d5c0] text-[#205781] hover:bg-[#98D2C0]"
               >
                 {pair.source.src ? (
                   <img
                     src={pair.source.src}
-                    alt={`Source ${index + 1}`}
+                    alt="source"
                     className="h-full w-full object-contain"
                   />
                 ) : (
@@ -253,7 +284,7 @@ const PictureToPictureCreator = () => {
                 )}
               </div>
 
-              <div className="text-center text-lg font-bold text-[#205781]">
+              <div className="my-2 text-center font-bold text-[#205781]">
                 ↓ Match to ↓
               </div>
 
@@ -261,12 +292,12 @@ const PictureToPictureCreator = () => {
                 onDrop={(e) => handleDrop(e, index, "target")}
                 onDragOver={(e) => e.preventDefault()}
                 onClick={() => handleClickUpload(index, "target")}
-                className="flex h-40 cursor-pointer items-center justify-center rounded-xl border-4 border-dashed border-[#205781] bg-[#98d5c0] text-center text-[#205781] transition hover:bg-[#98D2C0]"
+                className="flex h-40 cursor-pointer items-center justify-center rounded-xl border-4 border-dashed border-[#205781] bg-[#98d5c0] text-[#205781] hover:bg-[#98D2C0]"
               >
                 {pair.target.src ? (
                   <img
                     src={pair.target.src}
-                    alt={`Target ${index + 1}`}
+                    alt="target"
                     className="h-full w-full object-contain"
                   />
                 ) : (
@@ -278,25 +309,25 @@ const PictureToPictureCreator = () => {
         </div>
       </div>
 
-      <div className="mt-12 flex justify-center gap-6 bg-[#98d5c0] pb-48">
+      <div className="mt-12 flex justify-center gap-6">
         <Button
-          className="w-35 h-15 border-[3px] border-[#205781] bg-white text-xl font-bold text-[#205781] transition-all duration-300 ease-linear hover:bg-[#205781] hover:text-[#f6f8d5]"
           onClick={() => router.push(`/quiz/${quizId}/questions`)}
+          className="border-[3px] border-[#205781] bg-white text-xl font-bold text-[#205781] hover:bg-[#205781] hover:text-[#f6f8d5]"
         >
-          &#x2190; Back
+          ← Back
         </Button>
         <Button
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-35 h-15 border-[3px] border-[#205781] bg-white text-xl font-bold text-[#205781] transition duration-300 ease-linear hover:bg-[#98d5c0]"
+          className="border-[3px] border-[#205781] bg-white text-xl font-bold text-[#205781] hover:bg-[#98d5c0]"
         >
-          {isSubmitting ? "Adding..." : "Add"}
+          {isSubmitting ? "Submitting..." : "Create Question"}
         </Button>
         <Button
           onClick={handleClear}
-          className="w-35 h-15 border-[3px] border-[#205781] bg-white text-xl font-bold text-[#205781] transition duration-300 ease-linear hover:bg-[#F29898]"
+          className="border-[3px] border-[#205781] bg-white text-xl font-bold text-[#205781] hover:bg-[#F29898]"
         >
-          &#x2715; Clear
+          ✕ Clear
         </Button>
       </div>
     </div>
