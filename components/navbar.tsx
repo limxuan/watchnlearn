@@ -31,7 +31,7 @@ export default function Navbar() {
     },
     lecturer: {
       "/dashboard": "Dashboard",
-      "/schedule": "Schedule",
+      "/dashboard/quizzes": "Manage Quizzes",
     },
     admin: {
       "/badges-management": "Badges",
