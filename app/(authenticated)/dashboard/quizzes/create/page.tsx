@@ -75,7 +75,7 @@ export default function CreateQuizPage() {
       name: quizName,
       description: description,
       quiz_cover_url: coverUrl,
-      join_code: Math.random().toString(36).substring(2, 8),
+      join_code: Math.floor(Math.random() * 900000) + 100000,
       public_visibility: publicVisibility,
     });
 
