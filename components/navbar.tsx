@@ -32,6 +32,8 @@ export default function Navbar() {
     lecturer: {
       "/dashboard": "Dashboard",
       "/dashboard/quizzes": "Manage Quizzes",
+      "/quiz": "Explore Quizzes",
+      "/leaderboard": "Student Leaderboard",
     },
     admin: {
       "/badges-management": "Badges",

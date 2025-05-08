@@ -119,7 +119,10 @@ export default function UserManagement() {
         // Mark users who are currently banned
         const enhancedUserData = userData?.map((user) => ({
           ...user,
+          approved: user.role == "student" ? true : user.approved,
           is_banned: activeBannedUserIds.has(user.user_id),
+          username: user.username ?? "No username set",
+          role: user.role ?? "No role set",
         }));
 
         setUsers(enhancedUserData || []);
@@ -147,6 +150,7 @@ export default function UserManagement() {
 
   // Filter users based on search, role, approval status, and ban status
   const filteredUsers = users.filter((user) => {
+    console.log({ user });
     const matchesSearch =
       user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -233,7 +237,14 @@ export default function UserManagement() {
       // Update user list to mark this user as banned
       setUsers(
         users.map((user) =>
-          user.user_id === selectedUserId ? { ...user, is_banned: true } : user,
+          user.user_id === selectedUserId
+            ? {
+              ...user,
+              is_banned: true,
+              username: user.username ?? "No username set",
+              role: user.role ?? "No role set",
+            }
+            : user,
         ),
       );
 
@@ -265,7 +276,12 @@ export default function UserManagement() {
       setUsers(
         users.map((user) =>
           user.user_id === userId
-            ? { ...user, approved: !currentApprovalStatus }
+            ? {
+              ...user,
+              approved: !currentApprovalStatus,
+              username: user.username ?? "No username set",
+              role: user.role ?? "No role set",
+            }
             : user,
         ),
       );
