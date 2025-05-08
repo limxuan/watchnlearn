@@ -11,7 +11,6 @@ import { Dialog, DialogTitle, DialogContent } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useRouter } from "next/navigation";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
-import { Search } from "lucide-react";
 
 export default function ExplorePage() {
    const router = useRouter();
@@ -21,6 +20,11 @@ export default function ExplorePage() {
    const [mostPlayed, setMostPlayed] = useState<any[]>([]);
    const [recent, setRecent] = useState<any[]>([]);
    const [open, setOpen] = useState(false)
+
+   function getRandomQuizzes<T>(array: T[], count: number): T[] {
+      const shuffled = [...array].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count);
+   }
 
    const handleComplete = async (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
@@ -250,7 +254,7 @@ export default function ExplorePage() {
                >
                   {loading
                      ? renderSkeletonCards(3)
-                     : quizzes.map((quiz, id) => (
+                     : getRandomQuizzes(quizzes, 6).map((quiz, id) => (
                         <button key={id} onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}>
                            <motion.div
                               whileHover={{ scale: 1.03 }}
