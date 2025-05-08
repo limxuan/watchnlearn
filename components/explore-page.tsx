@@ -11,6 +11,7 @@ import { Dialog, DialogTitle, DialogContent } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useRouter } from "next/navigation";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
+import { Search } from "lucide-react";
 
 export default function ExplorePage() {
    const router = useRouter();
@@ -21,17 +22,12 @@ export default function ExplorePage() {
    const [recent, setRecent] = useState<any[]>([]);
    const [open, setOpen] = useState(false)
 
-   type Quiz = {
-      quiz_id: string;
-      join_code: string;
-   };
-
    const handleComplete = async (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
 
       const supabase = createClient();
       const { data, error } = await supabase
-         .from<Quiz>("quizzes")
+         .from("quizzes")
          .select("quiz_id, join_code")
          .eq("join_code", join_code);
 
@@ -168,8 +164,34 @@ export default function ExplorePage() {
                      </DialogContent>
                   </Dialog>
 
-                  <Button onClick={() => setOpen((open) => !open)}>
+                  <Button
+                     onClick={() => setOpen((open) => !open)}
+                     className="hidden sm:inline-flex"
+                  >
                      Search Quiz
+                  </Button>
+
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     onClick={() => setOpen((open) => !open)}
+                     className="sm:hidden p-2"
+                  >
+                     <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-search"
+                     >
+                        <path d="M21 21L16.65 16.65" />
+                        <circle cx="11" cy="11" r="8" />
+                     </svg>
                   </Button>
 
                   <CommandDialog open={open} onOpenChange={setOpen}>
