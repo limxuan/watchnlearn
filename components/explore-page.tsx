@@ -67,7 +67,8 @@ export default function ExplorePage() {
          // Fetch Most Played
          const { data, error } = await supabase
             .from("quiz_attempts")
-            .select("quiz_id");
+            .select("quiz_id")
+            .eq("public_visibility", true);
 
          if (error) {
             console.error("Error fetching quiz attempts:", error);
