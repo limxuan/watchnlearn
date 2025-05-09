@@ -11,6 +11,7 @@ import { Dialog, DialogTitle, DialogContent } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useRouter } from "next/navigation";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
+import { useMemo } from "react";
 
 export default function ExplorePage() {
    const router = useRouter();
@@ -25,6 +26,7 @@ export default function ExplorePage() {
       const shuffled = [...array].sort(() => 0.5 - Math.random());
       return shuffled.slice(0, count);
    }
+   const randomQuizzes = useMemo(() => getRandomQuizzes(quizzes, 6), [quizzes]);
 
    const handleComplete = async (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
@@ -68,10 +70,9 @@ export default function ExplorePage() {
          const { data, error } = await supabase
             .from("quiz_attempts")
             .select("quiz_id")
-            .eq("public_visibility", true);
 
          if (error) {
-            console.error("Error fetching quiz attempts:", error);
+            console.log("Error fetching quiz attempts:", error);
          } else {
             // Count attempts per quiz_id
             const attemptCount: Record<number, number> = {};
@@ -97,8 +98,9 @@ export default function ExplorePage() {
                   const { data, error } = await supabase
                      .from("quizzes")
                      .select("*")
+                     .eq("public_visibility", true)
                      .eq("quiz_id", quiz_id)
-                     .single();
+                     .maybeSingle();
 
                   if (error) {
                      console.log("Error fetching quiz details:", error);
@@ -246,7 +248,7 @@ export default function ExplorePage() {
                </div>
 
                {/* All Quizzes */}
-               <h1 className="mb-6 text-center text-3xl font-bold text-[#f6f8d5]" > Popular Quizzes </h1>
+               <h1 className="mb-6 text-center text-3xl font-bold text-[#f6f8d5]" > Hot Quizzes </h1>
                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -255,7 +257,7 @@ export default function ExplorePage() {
                >
                   {loading
                      ? renderSkeletonCards(3)
-                     : getRandomQuizzes(quizzes, 6).map((quiz, id) => (
+                     : randomQuizzes.map((quiz, id) => (
                         <button key={id} onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}>
                            <motion.div
                               whileHover={{ scale: 1.03 }}
@@ -329,6 +331,7 @@ export default function ExplorePage() {
                   {loading
                      ? renderSkeletonCards(3)
                      : mostPlayed.map((quiz, id) => {
+                        if (!quiz) return null;
                         return (
                            <button key={id} onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}>
                               <motion.div
