@@ -5,33 +5,28 @@ import { motion } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import {
-   CommandDialog,
-   CommandEmpty,
-   CommandGroup,
-   CommandInput,
-   CommandItem,
-   CommandList,
-} from "@/components/ui/command";
-import {
-   InputOTP,
-   InputOTPGroup,
-   InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 import { Dialog, DialogTitle, DialogContent } from "@radix-ui/react-dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useRouter } from "next/navigation";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
-import { Search } from "lucide-react";
+import { useMemo } from "react";
 
 export default function ExplorePage() {
    const router = useRouter();
-   const [join_code, setJoinCode] = useState("");
+   const [join_code, setJoinCode] = useState("")
    const [loading, setLoading] = useState(true);
    const [quizzes, setQuizzes] = useState<any[]>([]);
    const [mostPlayed, setMostPlayed] = useState<any[]>([]);
    const [recent, setRecent] = useState<any[]>([]);
-   const [open, setOpen] = useState(false);
+   const [open, setOpen] = useState(false)
+
+   function getRandomQuizzes<T>(array: T[], count: number): T[] {
+      const shuffled = [...array].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count);
+   }
+   const randomQuizzes = useMemo(() => getRandomQuizzes(quizzes, 6), [quizzes]);
 
    const handleComplete = async (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
@@ -46,6 +41,89 @@ export default function ExplorePage() {
          console.log(error);
          return;
       }
+
+      if (data && data.length > 0) {
+         router.push(`/quiz/${data[0].quiz_id}`);
+      } else {
+         alert("Invalid OTP code");
+      }
+   };
+
+   useEffect(() => {
+      const fetchQuizzes = async () => {
+         const supabase = createClient();
+
+         // Fetch All Public Quiz
+         const quizzesRes = await supabase
+            .from("quizzes")
+            .select("*, users (username)")
+            .eq("public_visibility", true);
+
+         if (quizzesRes.error) {
+            console.log(quizzesRes.error.message);
+            return;
+         }
+         const quizzesData = quizzesRes.data || [];
+         setQuizzes(quizzesData);
+
+         // Fetch Most Played
+         const { data, error } = await supabase
+            .from("quiz_attempts")
+            .select("quiz_id")
+
+         if (error) {
+            console.log("Error fetching quiz attempts:", error);
+         } else {
+            // Count attempts per quiz_id
+            const attemptCount: Record<number, number> = {};
+
+            console.log({ data });
+
+            data.forEach((attempt) => {
+               attemptCount[attempt.quiz_id] =
+                  (attemptCount[attempt.quiz_id] || 0) + 1;
+            });
+
+            // Sort quiz_ids by number of attempts (descending) and limit to top 5
+            const mostPlayed = Object.entries(attemptCount)
+               .sort((a, b) => b[1] - a[1])
+               .slice(0, 5)
+               .map(([quiz_id, count]) => ({
+                  quiz_id: quiz_id,
+                  attempt_count: count,
+               }));
+
+            const mostPlayedDetails = await Promise.all(
+               mostPlayed.map(async ({ quiz_id }) => {
+                  const { data, error } = await supabase
+                     .from("quizzes")
+                     .select("*")
+                     .eq("public_visibility", true)
+                     .eq("quiz_id", quiz_id)
+                     .maybeSingle();
+
+                  if (error) {
+                     console.log("Error fetching quiz details:", error);
+                     return null;
+                  }
+                  return data;
+               }),
+            );
+
+            if (error) {
+               console.log(error);
+               return;
+            }
+            setMostPlayed(mostPlayedDetails);
+         }
+
+         // Fetch Recent Quiz
+         const recentQuizzesRes = await supabase
+            .from("quizzes")
+            .select("*, users (username)")
+            .eq("public_visibility", true)
+            .order("created_at", { ascending: false })
+            .limit(3);
 
       if (data && data.length > 0) {
          router.push(`/quiz/${data[0].quiz_id}`);
@@ -165,6 +243,7 @@ export default function ExplorePage() {
          <nav className="px-4 py-8 text-foreground">
             <div className="mx-auto max-w-5xl">
                <div className="mb-8 flex items-center justify-between">
+
                   <Dialog>
                      <DialogContent>
                         <VisuallyHidden>
@@ -184,7 +263,8 @@ export default function ExplorePage() {
                      variant="outline"
                      size="icon"
                      onClick={() => setOpen((open) => !open)}
-                     className="p-2 sm:hidden"
+                     className="sm:hidden p-2"
+
                   >
                      <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -244,13 +324,13 @@ export default function ExplorePage() {
                      >
                         Join
                      </Button>
+
                   </div>
                </div>
 
                {/* All Quizzes */}
-               <h1 className="mb-6 text-center text-3xl font-bold text-[#f6f8d5]">
-                  Hot Quizzes
-               </h1>
+               <h1 className="mb-6 text-center text-3xl font-bold text-[#f6f8d5]" > Hot Quizzes </h1>
+
                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -259,11 +339,9 @@ export default function ExplorePage() {
                >
                   {loading
                      ? renderSkeletonCards(3)
-                     : quizzes.map((quiz, id) => (
-                        <button
-                           key={id}
-                           onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}
-                        >
+                     : randomQuizzes.map((quiz, id) => (
+                        <button key={id} onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}>
+
                            <motion.div
                               whileHover={{ scale: 1.03 }}
                               transition={{ type: "spring", stiffness: 300 }}
@@ -298,10 +376,7 @@ export default function ExplorePage() {
                   {loading
                      ? renderSkeletonCards(3)
                      : recent.map((quiz, id) => (
-                        <button
-                           key={id}
-                           onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}
-                        >
+                        <button key={id} onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}>
                            <motion.div
                               whileHover={{ scale: 1.03 }}
                               transition={{ type: "spring", stiffness: 300 }}
@@ -339,11 +414,9 @@ export default function ExplorePage() {
                   {loading
                      ? renderSkeletonCards(3)
                      : mostPlayed.map((quiz, id) => {
+                        if (!quiz) return null;
                         return (
-                           <button
-                              key={id}
-                              onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}
-                           >
+                           <button key={id} onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}>
                               <motion.div
                                  whileHover={{ scale: 1.03 }}
                                  transition={{ type: "spring", stiffness: 300 }}
@@ -367,6 +440,7 @@ export default function ExplorePage() {
                </motion.div>
             </div>
          </nav>
-      </main>
+      </main >
+
    );
 }
