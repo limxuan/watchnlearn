@@ -364,9 +364,7 @@ export default function ExplorePage() {
                </motion.div>
 
                {/* Recently Quizzes */}
-               <h1 className="mb-6 mt-12 text-center text-3xl font-bold text-[#f6f8d5]">
-                  Recently Created
-               </h1>
+               <h1 className="mb-6 mt-12 text-center text-3xl font-bold text-[#f6f8d5]"> Recently Created </h1>
                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
