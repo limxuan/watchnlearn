@@ -35,7 +35,7 @@ export default function ExplorePage() {
       const { data, error } = await supabase
          .from("quizzes")
          .select("quiz_id, join_code")
-         .ilike("join_code", join_code.toLowerCase());
+         .eq("join_code", join_code);
 
       if (error) {
          console.log(error);
@@ -125,88 +125,6 @@ export default function ExplorePage() {
             .order("created_at", { ascending: false })
             .limit(3);
 
-      if (data && data.length > 0) {
-         router.push(`/quiz/${data[0].quiz_id}`);
-      } else {
-         alert("Invalid OTP code");
-      }
-   };
-
-   useEffect(() => {
-      const fetchQuizzes = async () => {
-         const supabase = createClient();
-
-         // Fetch All Public Quiz
-         const quizzesRes = await supabase
-            .from("quizzes")
-            .select("*, users (username)")
-            .eq("public_visibility", true);
-
-         if (quizzesRes.error) {
-            console.log(quizzesRes.error.message);
-            return;
-         }
-         const quizzesData = quizzesRes.data || [];
-         setQuizzes(quizzesData);
-
-         // Fetch Most Played
-         const { data, error } = await supabase
-            .from("quiz_attempts")
-            .select("quiz_id");
-
-         if (error) {
-            console.error("Error fetching quiz attempts:", error);
-         } else {
-            // Count attempts per quiz_id
-            const attemptCount: Record<number, number> = {};
-
-            console.log({ data });
-
-            data.forEach((attempt) => {
-               attemptCount[attempt.quiz_id] =
-                  (attemptCount[attempt.quiz_id] || 0) + 1;
-            });
-
-            // Sort quiz_ids by number of attempts (descending) and limit to top 5
-            const mostPlayed = Object.entries(attemptCount)
-               .sort((a, b) => b[1] - a[1])
-               .slice(0, 5)
-               .map(([quiz_id, count]) => ({
-                  quiz_id: quiz_id,
-                  attempt_count: count,
-               }));
-
-            const mostPlayedDetails = await Promise.all(
-               mostPlayed.map(async ({ quiz_id }) => {
-                  const { data, error } = await supabase
-                     .from("quizzes")
-                     .select("*")
-                     .eq("quiz_id", quiz_id)
-                     .single();
-
-                  if (error) {
-                     console.log("Error fetching quiz details:", error);
-                     return null;
-                  }
-                  return data;
-               }),
-            );
-
-            if (error) {
-               console.log(error);
-               return;
-            }
-            setMostPlayed(mostPlayedDetails);
-         }
-
-         // Fetch Recent Quiz
-         const recentQuizzesRes = await supabase
-            .from("quizzes")
-            .select("*, users (username)")
-            .eq("public_visibility", true)
-            .order("created_at", { ascending: false })
-            .limit(3);
-
          if (recentQuizzesRes.error) {
             console.log(recentQuizzesRes.error.message);
             return;
@@ -221,12 +139,13 @@ export default function ExplorePage() {
 
       const down = (e: KeyboardEvent) => {
          if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-            e.preventDefault();
-            setOpen((open) => !open);
+            e.preventDefault()
+            setOpen((open) => !open)
          }
-      };
-      document.addEventListener("keydown", down);
-      return () => document.removeEventListener("keydown", down);
+      }
+      document.addEventListener("keydown", down)
+      return () => document.removeEventListener("keydown", down)
+
    }, []);
 
    const renderSkeletonCards = (count = 3) =>
@@ -264,7 +183,6 @@ export default function ExplorePage() {
                      size="icon"
                      onClick={() => setOpen((open) => !open)}
                      className="sm:hidden p-2"
-
                   >
                      <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -292,9 +210,10 @@ export default function ExplorePage() {
                               <CommandItem
                                  key={quiz.quiz_id}
                                  onSelect={() => {
-                                    router.push(`/quiz/${quiz.quiz_id}`);
-                                    setOpen(false);
-                                 }}
+                                    router.push(`/quiz/${quiz.quiz_id}`)
+                                    setOpen(false)
+                                 }
+                                 }
                               >
                                  {quiz.name}
                               </CommandItem>
@@ -330,7 +249,6 @@ export default function ExplorePage() {
 
                {/* All Quizzes */}
                <h1 className="mb-6 text-center text-3xl font-bold text-[#f6f8d5]" > Hot Quizzes </h1>
-
                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -341,7 +259,6 @@ export default function ExplorePage() {
                      ? renderSkeletonCards(3)
                      : randomQuizzes.map((quiz, id) => (
                         <button key={id} onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}>
-
                            <motion.div
                               whileHover={{ scale: 1.03 }}
                               transition={{ type: "spring", stiffness: 300 }}
@@ -439,6 +356,5 @@ export default function ExplorePage() {
             </div>
          </nav>
       </main >
-
    );
 }
