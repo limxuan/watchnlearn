@@ -5,33 +5,28 @@ import { motion } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import {
-   CommandDialog,
-   CommandEmpty,
-   CommandGroup,
-   CommandInput,
-   CommandItem,
-   CommandList,
-} from "@/components/ui/command";
-import {
-   InputOTP,
-   InputOTPGroup,
-   InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 import { Dialog, DialogTitle, DialogContent } from "@radix-ui/react-dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useRouter } from "next/navigation";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
-import { Search } from "lucide-react";
+import { useMemo } from "react";
 
 export default function ExplorePage() {
    const router = useRouter();
-   const [join_code, setJoinCode] = useState("");
+   const [join_code, setJoinCode] = useState("")
    const [loading, setLoading] = useState(true);
    const [quizzes, setQuizzes] = useState<any[]>([]);
    const [mostPlayed, setMostPlayed] = useState<any[]>([]);
    const [recent, setRecent] = useState<any[]>([]);
-   const [open, setOpen] = useState(false);
+   const [open, setOpen] = useState(false)
+
+   function getRandomQuizzes<T>(array: T[], count: number): T[] {
+      const shuffled = [...array].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count);
+   }
+   const randomQuizzes = useMemo(() => getRandomQuizzes(quizzes, 6), [quizzes]);
 
    const handleComplete = async (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
@@ -40,7 +35,7 @@ export default function ExplorePage() {
       const { data, error } = await supabase
          .from("quizzes")
          .select("quiz_id, join_code")
-         .ilike("join_code", join_code.toLowerCase());
+         .eq("join_code", join_code);
 
       if (error) {
          console.log(error);
@@ -74,10 +69,10 @@ export default function ExplorePage() {
          // Fetch Most Played
          const { data, error } = await supabase
             .from("quiz_attempts")
-            .select("quiz_id");
+            .select("quiz_id")
 
          if (error) {
-            console.error("Error fetching quiz attempts:", error);
+            console.log("Error fetching quiz attempts:", error);
          } else {
             // Count attempts per quiz_id
             const attemptCount: Record<number, number> = {};
@@ -103,8 +98,9 @@ export default function ExplorePage() {
                   const { data, error } = await supabase
                      .from("quizzes")
                      .select("*")
+                     .eq("public_visibility", true)
                      .eq("quiz_id", quiz_id)
-                     .single();
+                     .maybeSingle();
 
                   if (error) {
                      console.log("Error fetching quiz details:", error);
@@ -143,12 +139,13 @@ export default function ExplorePage() {
 
       const down = (e: KeyboardEvent) => {
          if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-            e.preventDefault();
-            setOpen((open) => !open);
+            e.preventDefault()
+            setOpen((open) => !open)
          }
-      };
-      document.addEventListener("keydown", down);
-      return () => document.removeEventListener("keydown", down);
+      }
+      document.addEventListener("keydown", down)
+      return () => document.removeEventListener("keydown", down)
+
    }, []);
 
    const renderSkeletonCards = (count = 3) =>
@@ -165,6 +162,7 @@ export default function ExplorePage() {
          <nav className="px-4 py-8 text-foreground">
             <div className="mx-auto max-w-5xl">
                <div className="mb-8 flex items-center justify-between">
+
                   <Dialog>
                      <DialogContent>
                         <VisuallyHidden>
@@ -184,7 +182,7 @@ export default function ExplorePage() {
                      variant="outline"
                      size="icon"
                      onClick={() => setOpen((open) => !open)}
-                     className="p-2 sm:hidden"
+                     className="sm:hidden p-2"
                   >
                      <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -212,9 +210,10 @@ export default function ExplorePage() {
                               <CommandItem
                                  key={quiz.quiz_id}
                                  onSelect={() => {
-                                    router.push(`/quiz/${quiz.quiz_id}`);
-                                    setOpen(false);
-                                 }}
+                                    router.push(`/quiz/${quiz.quiz_id}`)
+                                    setOpen(false)
+                                 }
+                                 }
                               >
                                  {quiz.name}
                               </CommandItem>
@@ -244,13 +243,12 @@ export default function ExplorePage() {
                      >
                         Join
                      </Button>
+
                   </div>
                </div>
 
                {/* All Quizzes */}
-               <h1 className="mb-6 text-center text-3xl font-bold text-[#f6f8d5]">
-                  Hot Quizzes
-               </h1>
+               <h1 className="mb-6 text-center text-3xl font-bold text-[#f6f8d5]" > Hot Quizzes </h1>
                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -259,11 +257,8 @@ export default function ExplorePage() {
                >
                   {loading
                      ? renderSkeletonCards(3)
-                     : quizzes.map((quiz, id) => (
-                        <button
-                           key={id}
-                           onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}
-                        >
+                     : randomQuizzes.map((quiz, id) => (
+                        <button key={id} onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}>
                            <motion.div
                               whileHover={{ scale: 1.03 }}
                               transition={{ type: "spring", stiffness: 300 }}
@@ -286,9 +281,7 @@ export default function ExplorePage() {
                </motion.div>
 
                {/* Recently Quizzes */}
-               <h1 className="mb-6 mt-12 text-center text-3xl font-bold text-[#f6f8d5]">
-                  Recently Created
-               </h1>
+               <h1 className="mb-6 mt-12 text-center text-3xl font-bold text-[#f6f8d5]"> Recently Created </h1>
                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -298,10 +291,7 @@ export default function ExplorePage() {
                   {loading
                      ? renderSkeletonCards(3)
                      : recent.map((quiz, id) => (
-                        <button
-                           key={id}
-                           onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}
-                        >
+                        <button key={id} onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}>
                            <motion.div
                               whileHover={{ scale: 1.03 }}
                               transition={{ type: "spring", stiffness: 300 }}
@@ -339,11 +329,9 @@ export default function ExplorePage() {
                   {loading
                      ? renderSkeletonCards(3)
                      : mostPlayed.map((quiz, id) => {
+                        if (!quiz) return null;
                         return (
-                           <button
-                              key={id}
-                              onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}
-                           >
+                           <button key={id} onClick={() => router.push(`/quiz/${quiz.quiz_id}`)}>
                               <motion.div
                                  whileHover={{ scale: 1.03 }}
                                  transition={{ type: "spring", stiffness: 300 }}
@@ -367,6 +355,6 @@ export default function ExplorePage() {
                </motion.div>
             </div>
          </nav>
-      </main>
+      </main >
    );
 }
