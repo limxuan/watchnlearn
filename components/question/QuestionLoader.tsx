@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import SlideShowQuestionComponent from "./slideshow/SlideShowQuestion";
 import QuestionLoaderHeader from "./QuestionLoaderHeader";
 import ImageMCQQuestionComponent from "@/components/question/image-mcq/ImageMCQQuestion";
-import { AnimatePresence, motion } from "framer-motion";
 import VideoQuestionComponent from "./video/VideoQuestion";
 import HotspotMCQQuestionComponent from "@/components/question/hostpot-mcq/HotspotMCQQuestion";
 import { useRouter } from "next/navigation";
@@ -31,8 +30,6 @@ export default function QuestionLoader({
   } = useQuizStore();
   const router = useRouter();
   const supabase = createClient();
-
-  // Track direction for animation
 
   useEffect(() => {
     if (questions.length === 0) {

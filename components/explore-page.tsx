@@ -50,7 +50,7 @@ export default function ExplorePage() {
       if (data && data.length > 0) {
          router.push(`/quiz/${data[0].quiz_id}`);
       } else {
-         alert("Invalid OTP code");
+         alert("Invalid Join Code");
       }
    };
 
