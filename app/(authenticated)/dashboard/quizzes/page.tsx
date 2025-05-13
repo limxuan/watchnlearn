@@ -24,9 +24,19 @@ export default function QuizDashboardPage() {
   useEffect(() => {
     const fetchQuizzes = async () => {
       setLoading(true);
+
+      const {data : { session }, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.user) {
+        console.error("Error getting session:", sessionError?.message);
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from("quizzes")
         .select("quiz_id, name, description, public_visibility, quiz_cover_url")
+        .eq("user_id", session.user.id)
         .order("created_at", { ascending: false });
 
       if (error) {
