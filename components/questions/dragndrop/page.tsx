@@ -181,7 +181,7 @@ const dnd = () => {
   return (
     <div className="min-h-screen bg-[#98d5c0]">
       <h1 className="pb-5 pt-7 text-center text-3xl font-bold text-[#205781]">
-        Quiz Type: Drag & Drop
+        Question Type: Label to Hotspot
       </h1>
 
       <div className="mx-auto mt-8 w-[80%] space-y-4">
@@ -204,7 +204,7 @@ const dnd = () => {
 
       <div className="mt-8 space-y-4">
         <h2 className="text-center text-xl font-bold text-[#205781]">
-          Create your drag & drop question
+          Create label-to-hotspot
         </h2>
         <div className="mx-auto w-[90%] max-w-[800px] overflow-hidden rounded-xl border-4 border-dashed border-[#205781] bg-[#98d5c0]">
           <div className="relative aspect-[16/9] w-full">
