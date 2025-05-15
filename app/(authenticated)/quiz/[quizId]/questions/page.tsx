@@ -70,7 +70,7 @@ export default function QuizQuestionsClient({ params }: any) {
     { label: "Picture Matching", path: "pic2pic" },
     { label: "Video Question", path: "vidqn" },
     { label: "Image MCQ", path: "whichofimg" },
-    { label: "Drag-and-Drop", path: "dragndrop" },
+    { label: "Label to Hotspot", path: "dragndrop" },
   ];
 
   return (
