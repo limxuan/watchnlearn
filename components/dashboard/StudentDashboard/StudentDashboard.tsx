@@ -613,7 +613,10 @@ const StudentDashboard = () => {
                         value={newUsername}
                         onChange={(e) => {
                           const inputElement = e.target;
-                          const newValue = inputElement.value.replace(/\s/g, "");
+                          const newValue = inputElement.value.replace(
+                            /\s/g,
+                            "",
+                          );
                           if (newValue.length <= 25) {
                             setNewUsername(newValue);
                           } else {
@@ -622,7 +625,14 @@ const StudentDashboard = () => {
                         }}
                         style={{ backgroundColor: "#427C83" }}
                       />
-                      <div className="text-xs text-gray-500 text-right self-end" style={{ color: '#F6F8D5', marginTop: '17px', fontWeight:'bold'}}>
+                      <div
+                        className="self-end text-right text-xs text-gray-500"
+                        style={{
+                          color: "#F6F8D5",
+                          marginTop: "17px",
+                          fontWeight: "bold",
+                        }}
+                      >
                         {newUsername.length}/25 characters
                       </div>
                     </div>
@@ -735,7 +745,7 @@ const StudentDashboard = () => {
             <CardHeader>
               <CardTitle
                 style={{
-                  color: "#6B8474",
+                  color: "#F6F8D5",
                 }}
               >
                 XP Earned
@@ -820,7 +830,7 @@ const StudentDashboard = () => {
             </CardContent>
             <CardFooter className="flex-col items-start gap-2 text-sm">
               <div className="flex gap-2 font-medium leading-none text-[#E8E9CC]">
-                Total Earned: {xptotal} xp
+                Total Earned: {xptotal} XP
               </div>
               <div className="leading-none text-[#fff] text-muted-foreground">
                 Showing daily XP for {currentMonth} {currentYear}
@@ -889,8 +899,8 @@ const StudentDashboard = () => {
                     <p>
                       {attempt.completed_at
                         ? new Date(attempt.completed_at).toLocaleDateString(
-                            "en-GB",
-                          )
+                          "en-GB",
+                        )
                         : "Not Completed Yet !"}
                     </p>
                   </div>

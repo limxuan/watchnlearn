@@ -189,7 +189,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#0F1521] text-white">
       {/* Hero Section */}
-      <div className="container mx-auto grid items-center gap-12 px-4 pb-16 pt-20 md:grid-cols-2">
+      <div className="container mx-auto grid items-center gap-12 px-10 pb-16 pt-20 md:grid-cols-2">
         <div className="space-y-6">
           <h1 className="text-5xl font-bold">
             Learn Better with{" "}
@@ -219,7 +219,7 @@ export default function Home() {
           <div className="absolute inset-0 rounded-xl bg-cyan-500/20 blur-2xl"></div>
           <div className="relative z-10 overflow-hidden rounded-xl shadow-2xl">
             <Image
-              src="/landing.jpg"
+              src="/video-mcq.png"
               alt="Learning Platform Interface"
               width={600}
               height={400}
@@ -307,7 +307,10 @@ export default function Home() {
             understanding and retention with our unique approach.
           </p>
           <div className="flex justify-center space-x-4">
-            <button className="rounded-lg bg-cyan-500 px-8 py-4 font-semibold text-black transition-colors hover:bg-cyan-400">
+            <button
+              className="rounded-lg bg-cyan-500 px-8 py-4 font-semibold text-black transition-colors hover:bg-cyan-400"
+              onClick={() => router.push("/sign-in")}
+            >
               Get Started Free
             </button>
           </div>

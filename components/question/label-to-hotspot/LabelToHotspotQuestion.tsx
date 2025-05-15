@@ -125,7 +125,7 @@ export default function LabelHotspotQuestionComponent({
   };
 
   return (
-    <div className="flex w-full flex-col gap-4 md:gap-6">
+    <div className="flex max-h-dvh w-full flex-col gap-4 md:gap-6">
       <Card className="flex flex-col items-center border border-white/20 bg-gray-500/10 p-4 md:p-7">
         <div className="mb-4 flex w-full items-center justify-between md:mb-6">
           <h2 className="pl-1 text-sm font-semibold text-white lg:pr-16 lg:text-2xl">
